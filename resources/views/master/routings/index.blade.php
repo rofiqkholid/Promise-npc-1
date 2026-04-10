@@ -1,0 +1,98 @@
+@extends('layouts.app')
+
+@section('title', 'Master Data Routing')
+@section('page_title', 'Master Data / Routing (Flow Process)')
+
+@section('content')
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
+        <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-route text-blue-500"></i> Daftar Master Routing
+        </h2>
+        <a href="{{ route('master.routings.create') }}" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-md shadow-blue-500/20 font-medium text-sm flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Tambah Routing
+        </a>
+    </div>
+    
+    @if(session('success'))
+    <div class="bg-green-50 border-l-4 border-green-500 p-4 mx-6 mt-4 rounded">
+        <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
+    </div>
+    @endif
+
+    <div class="p-6">
+        <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+            <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
+                <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
+                    <tr>
+                        <th scope="col" class="px-6 py-4 font-semibold w-16">#</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Part No</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Part Name</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Alur Proses (Routing)</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right w-32">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    @forelse($routings as $index => $routing)
+                    <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group">
+                        <td class="px-6 py-4 text-slate-800 dark:text-slate-200 text-sm">{{ $routings->firstItem() + $index }}</td>
+                        <td class="px-6 py-4 text-blue-600 dark:text-blue-400 font-semibold text-sm">{{ optional($routing->part)->part_no ?? 'N/A' }}</td>
+                        <td class="px-6 py-4">
+                            <div class="text-slate-600 dark:text-slate-400 text-sm font-medium">{{ optional($routing->part)->part_name ?? '-' }}</div>
+                            <div class="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                                <i class="fa-solid fa-car text-gray-400"></i>
+                                {{ optional(optional($routing->part)->vehicleModel)->name ?? 'Unknown Model' }}
+                                <span class="text-gray-400 mx-1">|</span>
+                                <i class="fa-solid fa-building text-gray-400 text-[10px]"></i>
+                                {{ optional(optional(optional($routing->part)->vehicleModel)->customer)->name ?? 'Unknown Customer' }}
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-slate-700 dark:text-slate-300 text-sm">
+                            <div class="flex flex-wrap gap-2 items-center">
+                                @foreach($routing->processes as $i => $procRouting)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-xs font-semibold text-slate-700 dark:text-slate-300">
+                                        {{ optional($procRouting->process)->process_name ?? 'Unknown' }}
+                                    </span>
+                                    @if(!$loop->last)
+                                        <i class="fa-solid fa-arrow-right text-slate-300 dark:text-slate-500 text-xs mx-1"></i>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end gap-1 opacity-50 group-hover:opacity-100 transition">
+                                <a href="{{ route('master.routings.edit', $routing->part_id) }}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-md transition" title="Edit">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <form action="{{ route('master.routings.destroy', $routing->part_id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus routing untuk part ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Hapus">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="5" class="p-12 text-center text-gray-500 dark:text-gray-400">
+                            <div class="flex flex-col items-center justify-center gap-3">
+                                <i class="fa-solid fa-route text-4xl text-gray-300 dark:text-gray-600"></i>
+                                <p>Belum ada data master routing. Klik "Tambah Routing" untuk memulai.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    @if($routings->hasPages())
+    <div class="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+        {{ $routings->links() }}
+    </div>
+    @endif
+</div>
+@endsection

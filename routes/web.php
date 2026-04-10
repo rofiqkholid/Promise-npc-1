@@ -25,6 +25,8 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('delivery-targets', \App\Http\Controllers\NpcDeliveryTargetController::class)->except(['show']);
         Route::resource('checkpoints', \App\Http\Controllers\NpcMasterCheckpointController::class)->except(['show']);
         Route::resource('departments', \App\Http\Controllers\NpcMasterDepartmentController::class)->except(['show']);
+        // Menambahkan Routings Route tapi dengan parameter part_id khusus
+        Route::resource('routings', \App\Http\Controllers\NpcMasterRoutingController::class)->except(['show']);
     });
 
     // Dummy API Routes for Dashboard Filters
@@ -35,10 +37,12 @@ Route::middleware(['auth'])->group(function () {
         })->name('data.models');
         
         Route::post('/data/products', function (\Illuminate\Http\Request $request) {
-            $query = \App\Models\Product::query();
+            $query = \App\Models\Product::with('vehicleModel.customer');
             
-            // Hapus filter model_id agar part dari model manapun bisa dicari
-            // (Karena terkadang part order bisa lintas model atau modelnya di set 'All' di Drawing)
+            // Filter by model_id if provided
+            if ($request->filled('model_id')) {
+                $query->where('model_id', $request->model_id);
+            }
 
             if ($request->filled('search')) {
                 $query->where(function($q) use ($request) {
@@ -49,7 +53,20 @@ Route::middleware(['auth'])->group(function () {
             // Tambahkan order by untuk relevansi
             $query->orderBy('part_no', 'asc');
             
-            $products = $query->limit(30)->get(['id', 'part_no', 'part_name']);
+            $products = $query->limit(30)->get();
+            
+            // Include default process_name from NpcMasterRouting mapping
+            foreach ($products as $prod) {
+                $routing = \App\Models\NpcMasterRouting::with('process')
+                            ->where('part_id', $prod->id)
+                            ->orderBy('sequence_order', 'asc')
+                            ->first();
+                            
+                $prod->process_name = ($routing && $routing->process) ? $routing->process->process_name : null;
+                $prod->model_name = $prod->vehicleModel ? $prod->vehicleModel->name : 'N/A';
+                $prod->customer_name = ($prod->vehicleModel && $prod->vehicleModel->customer) ? $prod->vehicleModel->customer->name : 'N/A';
+            }
+            
             return response()->json(['results' => $products]);
         })->name('data.products');
 

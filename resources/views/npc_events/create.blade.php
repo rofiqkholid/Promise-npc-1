@@ -255,13 +255,18 @@
 
             displayInput.addEventListener('input', function() {
                 clearTimeout(acTimer);
+                
+                // Hapus nilai part yang sudah dipilih sebelumnya jika user mengetik ulang
+                partNoInput.value = '';
+                partNameInput.value = '';
+                
                 const q = this.value.trim();
                 if (q.length < 2) { dropdown.classList.add('hidden'); return; }
                 acTimer = setTimeout(() => {
                     fetch("{{ route('api.data.products') }}", {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}'},
-                        body: JSON.stringify({ search: q })
+                        body: JSON.stringify({ search: q, model_id: document.getElementById('model_select').value })
                     })
                     .then(r => r.json())
                     .then(data => {

@@ -56,6 +56,30 @@
     }
 </script>
 
+@if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.toast('success', 'Berhasil!', `{!! str_replace("'", "\'", session('success')) !!}`);
+        });
+    </script>
+@endif
+
+@if(session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.toast('error', 'Gagal!', `{!! str_replace("'", "\'", session('error')) !!}`);
+        });
+    </script>
+@endif
+
+@if($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            window.toast('error', 'Validasi Gagal', `{!! str_replace("'", "\'", $errors->first()) !!}`);
+        });
+    </script>
+@endif
+
 <style>
     /* Refined Premium Toast - The Perfect Middle Ground */
     .swal2-popup.swal2-slim-toast {

@@ -16,6 +16,35 @@ class NpcPartProcessController extends Controller
     public function edit(NpcPart $part)
     {
         $part->load('processes', 'npcEvent');
+
+        // Jika belum ada proses, ambil dari NpcMasterRouting sebagai default
+        if ($part->processes->isEmpty()) {
+            $product = \App\Models\Product::where('part_no', $part->part_no)->first();
+            if ($product) {
+                $masterRoutings = \App\Models\NpcMasterRouting::with('process')
+                    ->where('part_id', $product->id)
+                    ->orderBy('sequence_order', 'asc')
+                    ->get();
+                
+                $defaultProcesses = collect();
+                foreach ($masterRoutings as $mr) {
+                    if ($mr->process) {
+                        $defaultProcesses->push([
+                            'process_name' => $mr->process->process_name,
+                            'department' => $mr->process->department,
+                            'target_completion_date' => '',
+                            'sequence_order' => $mr->sequence_order
+                        ]);
+                    }
+                }
+                
+                // Gunakan mapping bawaan / setrika data menjadi format yang dipahami Javascript existingData
+                if ($defaultProcesses->isNotEmpty()) {
+                    $part->setRelation('processes', $defaultProcesses);
+                }
+            }
+        }
+
         $masterProcesses = tap(NpcProcess::orderBy('process_name')->get(), function ($q) {
             $q->transform(function ($p) {
                 // Ensure legacy standard naming match

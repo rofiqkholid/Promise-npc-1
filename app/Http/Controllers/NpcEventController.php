@@ -39,15 +39,21 @@ class NpcEventController extends Controller
         $request->validate([
             'event_name' => 'required|string|max:255',
             'customer_id' => 'required|exists:customers,id',
-            'model_id' => 'required|exists:models,id',
+            'model_id' => 'required',
             'delivery_to' => 'nullable|string|max:255',
             'parts' => 'required|array|min:1',
             'parts.*.po_no' => 'required|string',
-            'parts.*.part_no' => 'required|string',
+            'parts.*.part_no' => [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::exists('products', 'part_no')->where('model_id', $request->model_id)
+            ],
             'parts.*.part_name' => 'nullable|string',
             'parts.*.qty' => 'required|integer|min:1',
             'parts.*.delivery_date' => 'required|date',
             'parts.*.checkpoints' => 'nullable|array'
+        ], [
+            'parts.*.part_no.exists' => 'Salah satu Part Number yang Anda masukkan tidak valid atau bukan merupakan part dari Model tersebut.'
         ]);
 
         $event = \App\Models\NpcEvent::create([
@@ -58,6 +64,24 @@ class NpcEventController extends Controller
         ]);
 
         foreach ($request->parts as $partData) {
+            // Coba cari produk berdasarkan part_no
+            $product = \App\Models\Product::where('part_no', $partData['part_no'])->first();
+            $processName = null;
+            $departmentName = 'PUD';
+
+            if ($product) {
+                // Ambil master routing urutan pertama
+                $routing = \App\Models\NpcMasterRouting::with('process')
+                            ->where('part_id', $product->id)
+                            ->orderBy('sequence_order', 'asc')
+                            ->first();
+
+                if ($routing && $routing->process) {
+                    $processName = $routing->process->process_name;
+                    $departmentName = $routing->process->department ?? 'PUD';
+                }
+            }
+
             $part = \App\Models\NpcPart::create([
                 'npc_event_id' => $event->id,
                 'po_no' => $partData['po_no'],
@@ -65,6 +89,8 @@ class NpcEventController extends Controller
                 'part_name' => $partData['part_name'] ?? '-', 
                 'qty' => $partData['qty'],
                 'delivery_date' => $partData['delivery_date'],
+                'process' => $processName,
+                'department' => $departmentName,
                 'status' => 'PO_REGISTERED',
             ]);
 

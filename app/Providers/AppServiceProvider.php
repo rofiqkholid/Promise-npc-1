@@ -46,7 +46,8 @@ class AppServiceProvider extends ServiceProvider
                     'icon' => 'fa-solid fa-database',
                     'children' => collect([
                         (object)['title' => 'Data Event (PO)', 'route' => 'events.index'],
-                        (object)['title' => 'Master Proses (Routing)', 'route' => 'master.processes.index'],
+                        (object)['title' => 'Routing per Part ID', 'route' => 'master.routings.index'],
+                        (object)['title' => 'Master Proses', 'route' => 'master.processes.index'],
                         (object)['title' => 'Master Department', 'route' => 'master.departments.index'],
                         (object)['title' => 'Master Poin QA', 'route' => 'master.checkpoints.index'],
                         (object)['title' => 'Master Tujuan Kirim', 'route' => 'master.delivery-targets.index'],

@@ -179,7 +179,6 @@
     </div>
     @endif
 </div>
-@endsection
 
 {{-- Modal: Produksi Selesai --}}
 <div id="modal-complete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -215,7 +214,9 @@
         </form>
     </div>
 </div>
+@endsection
 
+@push('scripts')
 <script>
 function openCompleteModal(partId, actionUrl) {
     document.getElementById('form-complete').action = actionUrl;
@@ -232,3 +233,4 @@ document.getElementById('modal-complete').addEventListener('click', function(e) 
     if (e.target === this) closeCompleteModal();
 });
 </script>
+@endpush

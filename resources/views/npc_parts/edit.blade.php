@@ -52,8 +52,8 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Part No <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" id="part_no_input" name="part_no" required value="{{ old('part_no', $part->part_no) }}"
-                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
+                    <input type="text" id="part_no_input" name="part_no" required value="{{ old('part_no', $part->part_no) }}" readonly
+                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm sm:text-sm dark:bg-gray-800 dark:text-gray-400 bg-gray-100 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300">
                     @error('part_no') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
 
@@ -61,8 +61,8 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Part Name <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" id="part_name_input" name="part_name" required value="{{ old('part_name', $part->part_name) }}"
-                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
+                    <input type="text" id="part_name_input" name="part_name" required value="{{ old('part_name', $part->part_name) }}" readonly
+                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm sm:text-sm dark:bg-gray-800 dark:text-gray-400 bg-gray-100 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300">
                     @error('part_name') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
 
@@ -171,6 +171,10 @@
         searchInput.addEventListener('input', function() {
             clearTimeout(debounceTimer);
             const query = this.value;
+            
+            // Clear existing selection to force re-selection
+            partNoInput.value = '';
+            partNameInput.value = '';
 
             if (query.length < 2) {
                 searchResults.classList.add('hidden');
@@ -199,6 +203,17 @@
                                 partNameInput.value = product.part_name;
                                 searchInput.value = product.part_no;
                                 searchResults.classList.add('hidden');
+
+                                // Otomatis pilih process routing jika tersedia dari master_routings
+                                if (product.process_name) {
+                                    const processSelect = document.getElementById('process');
+                                    if (processSelect) {
+                                        let optionExists = Array.from(processSelect.options).some(opt => opt.value === product.process_name);
+                                        if (optionExists) {
+                                            processSelect.value = product.process_name;
+                                        }
+                                    }
+                                }
                             });
                             searchResults.appendChild(div);
                         });

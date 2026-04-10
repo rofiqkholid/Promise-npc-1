@@ -27,11 +27,18 @@ class NpcPartController extends Controller
     {
         $request->validate([
             'po_no' => 'required|string|max:255',
-            'part_no' => 'required|string|max:255',
+            'part_no' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::exists('products', 'part_no')->where('model_id', $event->model_id)
+            ],
             'part_name' => 'required|string|max:255',
             'qty' => 'required|integer|min:1',
             'delivery_date' => 'required|date',
             'process' => 'required|string|max:255',
+        ], [
+            'part_no.exists' => 'Part Number yang Anda masukkan tidak valid atau bukan merupakan part dari Model event ini.'
         ]);
 
         $processRecord = \App\Models\NpcProcess::where('process_name', $request->process)->first();
@@ -52,7 +59,12 @@ class NpcPartController extends Controller
     {
         $request->validate([
             'po_no' => 'required|string|max:255',
-            'part_no' => 'required|string|max:255',
+            'part_no' => [
+                'required',
+                'string',
+                'max:255',
+                \Illuminate\Validation\Rule::exists('products', 'part_no')->where('model_id', $event->model_id)
+            ],
             'part_name' => 'required|string|max:255',
             'qty' => 'required|integer|min:1',
             'delivery_date' => 'required|date',
@@ -61,6 +73,8 @@ class NpcPartController extends Controller
             'process' => 'required|string|max:255',
             'status' => 'required|in:WAITING_DEPT_CONFIRM,WAITING_QE_CHECK,WAITING_MGM_CHECK,FINISHED,CLOSED,OPEN',
             'condition' => 'nullable|string',
+        ], [
+            'part_no.exists' => 'Part Number yang Anda masukkan tidak valid atau bukan merupakan part dari Model event ini.'
         ]);
 
         $part->update($request->all());
