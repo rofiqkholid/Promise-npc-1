@@ -47,8 +47,8 @@
                     <label for="customer_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Customer <span class="text-red-500">*</span>
                     </label>
-                    <select id="customer_id" name="customer_id" required
-                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
+                    <select id="customer_id" name="customer_id" required data-placeholder="Pilih Customer..."
+                        class="select2 w-full">
                         <option value="">Pilih Customer</option>
                         @foreach($customers as $customer)
                             <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
@@ -63,9 +63,36 @@
                     <label for="model_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Model <span class="text-red-500">*</span>
                     </label>
-                    <select id="model_id" name="model_id" required disabled
-                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:text-white">
+                    <select id="model_id" name="model_id" required disabled data-placeholder="Pilih Model..."
+                        class="select2 w-full">
                         <option value="">Pilih Customer Terlebih Dahulu</option>
+                    </select>
+                </div>
+                
+                <!-- Category Select -->
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Kategori Event <span class="text-red-500">*</span>
+                    </label>
+                    <select name="customer_category_id" id="category_select" required disabled data-placeholder="Pilih Kategori Event..."
+                        class="select2 w-full">
+                        <option value="">Pilih Kategori</option>
+                    </select>
+                </div>
+
+                <!-- Delivery Group Select -->
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Grup Pengiriman (GR) <span class="text-red-500">*</span>
+                    </label>
+                    <select name="delivery_group_id" id="delivery_group_id" required data-placeholder="Pilih Grup Pengiriman..."
+                        class="select2 w-full">
+                        <option value="">Pilih Grup</option>
+                        @foreach($delivery_groups as $group)
+                            <option value="{{ $group->id }}" {{ old('delivery_group_id') == $group->id ? 'selected' : '' }}>
+                                {{ $group->name }}
+                            </option>
+                        @endforeach
                     </select>
                 </div>
             </div>
@@ -83,8 +110,8 @@
                 <label for="delivery_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Tujuan Pengiriman (Delivery To)
                 </label>
-                <select id="delivery_to" name="delivery_to"
-                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
+                <select id="delivery_to" name="delivery_to" data-placeholder="Pilih Tujuan..."
+                    class="select2 w-full">
                     <option value="">Pilih Tujuan (Opsional)</option>
                     @foreach($delivery_targets as $target)
                         <option value="{{ $target->target_name }}" {{ old('delivery_to') == $target->target_name ? 'selected' : '' }}>
@@ -133,15 +160,20 @@
 
 @push('scripts')
 <script>
-    // Logic untuk Dropdown Model Dinamis
-    document.getElementById('customer_id').addEventListener('change', function() {
+    // Logic untuk Dropdown Model & Kategori Dinamis
+    $('#customer_id').on('change', function() {
         const customerId = this.value;
         const modelSelect = document.getElementById('model_id');
+        const categorySelect = document.getElementById('category_select');
         
         // Reset and show loading state
         modelSelect.innerHTML = '<option value="">Memuat data...</option>';
         modelSelect.disabled = true;
-        modelSelect.classList.add('bg-gray-50', 'dark:bg-gray-600');
+        $(modelSelect).trigger('change.select2');
+        
+        categorySelect.innerHTML = '<option value="">Memuat data...</option>';
+        categorySelect.disabled = true;
+        $(categorySelect).trigger('change.select2');
 
         if(customerId) {
             // Menggunakan proxy API Internal untuk menghindari CORS
@@ -161,17 +193,50 @@
                         modelSelect.innerHTML += `<option value="${model.id}">${model.text}</option>`;
                     });
                     modelSelect.disabled = false;
-                    modelSelect.classList.remove('bg-gray-50', 'dark:bg-gray-600');
                 } else {
                     modelSelect.innerHTML = '<option value="">Tidak ada model ditemukan</option>';
                 }
+                $(modelSelect).trigger('change.select2');
             })
             .catch(error => {
                 console.error('Error:', error);
                 modelSelect.innerHTML = '<option value="">Gagal memuat data</option>';
+                $(modelSelect).trigger('change.select2');
             });
+            
+            // Kategori AJAX
+            fetch("{{ route('api.data.customer-categories') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ customer_id: customerId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+                if(data.results && data.results.length > 0) {
+                    data.results.forEach(cat => {
+                        categorySelect.innerHTML += `<option value="${cat.id}">${cat.text}</option>`;
+                    });
+                    categorySelect.disabled = false;
+                } else {
+                    categorySelect.innerHTML = '<option value="">Kategori tidak ditemukan</option>';
+                }
+                $(categorySelect).trigger('change.select2');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                categorySelect.innerHTML = '<option value="">Gagal memuat data</option>';
+                $(categorySelect).trigger('change.select2');
+            });
+            
         } else {
             modelSelect.innerHTML = '<option value="">Pilih Customer Terlebih Dahulu</option>';
+            $(modelSelect).trigger('change.select2');
+            categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+            $(categorySelect).trigger('change.select2');
         }
     });
 

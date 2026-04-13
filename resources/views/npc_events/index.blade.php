@@ -34,6 +34,8 @@
                         <th scope="col" class="px-6 py-4 font-semibold">Event Name</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Customer</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Model</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Kategori</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">GR</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Delivery To</th>
                         <th scope="col" class="px-6 py-4 font-semibold text-right w-32">Aksi</th>
                     </tr>
@@ -49,6 +51,12 @@
                             </span>
                         </td>
                         <td class="px-6 py-4 text-gray-600 dark:text-gray-400 text-sm font-medium">{{ optional($event->vehicleModel)->name ?? '-' }}</td>
+                        <td class="px-6 py-4 text-gray-600 dark:text-gray-400 text-sm">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
+                                {{ optional($event->customerCategory)->name ?? '-' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-gray-600 dark:text-gray-400 text-sm font-medium">{{ optional($event->deliveryGroup)->name ?? '-' }}</td>
                         <td class="px-6 py-4 text-gray-600 dark:text-gray-400 text-sm font-medium">{{ $event->delivery_to ?? '-' }}</td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end gap-1 opacity-50 group-hover:opacity-100 transition">

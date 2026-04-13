@@ -8,6 +8,8 @@ use App\Models\NpcPart;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Carbon\Carbon;
 use Exception;
+use App\Models\NpcDeliveryGroup;
+use App\Models\NpcCustomerCategory;
 
 class NpcEventController extends Controller
 {
@@ -16,7 +18,7 @@ class NpcEventController extends Controller
      */
     public function index()
     {
-        $events = \App\Models\NpcEvent::with(['customer', 'vehicleModel'])->latest()->paginate(10);
+        $events = \App\Models\NpcEvent::with(['customer', 'vehicleModel', 'customerCategory', 'deliveryGroup'])->latest()->paginate(10);
         return view('npc_events.index', compact('events'));
     }
 
@@ -28,10 +30,13 @@ class NpcEventController extends Controller
         // Ambil data Master Delivery Target
         $delivery_targets = \App\Models\NpcDeliveryTarget::where('is_active', true)->orderBy('target_name')->get();
 
+        // Ambil data Grup Pengiriman
+        $delivery_groups = NpcDeliveryGroup::orderBy('name')->get();
+
         // Ambil data Master Checkpoint untuk Mapping MGM per Part
         $checkpoints = \App\Models\NpcMasterCheckpoint::where('is_active', true)->orderBy('point_number')->get();
 
-        return view('npc_events.create', compact('customers', 'delivery_targets', 'checkpoints'));
+        return view('npc_events.create', compact('customers', 'delivery_targets', 'delivery_groups', 'checkpoints'));
     }
 
     public function store(Request $request)
@@ -40,6 +45,8 @@ class NpcEventController extends Controller
             'event_name' => 'required|string|max:255',
             'customer_id' => 'required|exists:customers,id',
             'model_id' => 'required',
+            'customer_category_id' => 'required|exists:npc_customer_categories,id',
+            'delivery_group_id' => 'required|exists:npc_delivery_groups,id',
             'delivery_to' => 'nullable|string|max:255',
             'parts' => 'required|array|min:1',
             'parts.*.po_no' => 'required|string',
@@ -60,6 +67,8 @@ class NpcEventController extends Controller
             'event_name' => $request->event_name,
             'customer_id' => $request->customer_id,
             'model_id' => $request->model_id,
+            'customer_category_id' => $request->customer_category_id,
+            'delivery_group_id' => $request->delivery_group_id,
             'delivery_to' => $request->delivery_to,
         ]);
 
@@ -108,11 +117,14 @@ class NpcEventController extends Controller
         $customers = \App\Models\Customer::orderBy('name')->get();
         // Get models for the CURRENT customer to populate the initial dropdown state
         $models = \App\Models\VehicleModel::where('customer_id', $event->customer_id)->orderBy('name')->get();
+        
+        $customer_categories = NpcCustomerCategory::where('customer_id', $event->customer_id)->orderBy('name')->get();
+        $delivery_groups = NpcDeliveryGroup::orderBy('name')->get();
 
         // Ambil data Master Delivery Target
         $delivery_targets = \App\Models\NpcDeliveryTarget::where('is_active', true)->orderBy('target_name')->get();
 
-        return view('npc_events.edit', compact('event', 'customers', 'models', 'delivery_targets'));
+        return view('npc_events.edit', compact('event', 'customers', 'models', 'customer_categories', 'delivery_groups', 'delivery_targets'));
     }
 
     public function update(Request $request, \App\Models\NpcEvent $event)
@@ -121,6 +133,8 @@ class NpcEventController extends Controller
             'event_name' => 'required|string|max:255',
             'customer_id' => 'required|exists:customers,id',
             'model_id' => 'required|exists:models,id',
+            'customer_category_id' => 'required|exists:npc_customer_categories,id',
+            'delivery_group_id' => 'required|exists:npc_delivery_groups,id',
             'delivery_to' => 'nullable|string|max:255',
         ]);
 
@@ -139,7 +153,8 @@ class NpcEventController extends Controller
     {
         $customers = \App\Models\Customer::orderBy('name')->get();
         $delivery_targets = \App\Models\NpcDeliveryTarget::where('is_active', true)->orderBy('target_name')->get();
-        return view('npc_events.import', compact('customers', 'delivery_targets'));
+        $delivery_groups = NpcDeliveryGroup::orderBy('name')->get();
+        return view('npc_events.import', compact('customers', 'delivery_targets', 'delivery_groups'));
     }
 
     public function importData(Request $request)
@@ -147,6 +162,8 @@ class NpcEventController extends Controller
         $request->validate([
             'customer_id' => 'required',
             'model_id' => 'required',
+            'customer_category_id' => 'required',
+            'delivery_group_id' => 'required',
             'event_name' => 'required|string|max:255',
             'delivery_to' => 'nullable|string|max:255',
             'file' => 'required|mimes:xlsx,xls,csv|max:10240',
@@ -156,6 +173,8 @@ class NpcEventController extends Controller
             $event = NpcEvent::create([
                 'customer_id' => $request->customer_id,
                 'model_id' => $request->model_id,
+                'customer_category_id' => $request->customer_category_id,
+                'delivery_group_id' => $request->delivery_group_id,
                 'event_name' => $request->event_name,
                 'delivery_to' => $request->delivery_to,
             ]);

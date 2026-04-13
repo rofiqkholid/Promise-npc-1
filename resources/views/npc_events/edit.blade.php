@@ -40,16 +40,11 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                             <i class="fa-solid fa-building text-xs"></i>
                         </div>
-                        <select name="customer_id" id="customer_select" required
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white" style="padding-left: 2.5rem;">
-                            <option value="">Pilih Customer</option>
-                            @foreach($customers as $customer)
-                                <option value="{{ $customer->id }}" {{ (old('customer_id', $event->customer_id) == $customer->id) ? 'selected' : '' }}>
-                                    {{ $customer->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Customer <span class="text-red-500">*</span>
+                    </label>
+                    <select name="customer_id" id="customer_select" required data-placeholder="Pilih Customer..."
+                        class="select2 w-full">
                     @error('customer_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
 
@@ -62,17 +57,47 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                             <i class="fa-solid fa-car text-xs"></i>
                         </div>
-                        <select name="model_id" id="model_select" required
-                            class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white" style="padding-left: 2.5rem;">
-                            <option value="">Pilih Model</option>
-                            @foreach($models as $model)
-                                <option value="{{ $model->id }}" {{ (old('model_id', $event->model_id) == $model->id) ? 'selected' : '' }}>
-                                    {{ $model->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Vehicle Model <span class="text-red-500">*</span>
+                    </label>
+                    <select name="model_id" id="model_select" required data-placeholder="Pilih Model..."
+                        class="select2 w-full">
+                    </select>
                     @error('model_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Category Select -->
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Kategori Event <span class="text-red-500">*</span>
+                    </label>
+                    <select name="customer_category_id" id="category_select" required data-placeholder="Pilih Kategori Event..."
+                        class="select2 w-full">
+                        <option value="">Pilih Kategori</option>
+                        @foreach($customer_categories as $cat)
+                            <option value="{{ $cat->id }}" {{ (old('customer_category_id', $event->customer_category_id) == $cat->id) ? 'selected' : '' }}>
+                                {{ $cat->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('customer_category_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Delivery Group Select -->
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Grup Pengiriman (GR) <span class="text-red-500">*</span>
+                    </label>
+                    <select name="delivery_group_id" id="delivery_group_id" required data-placeholder="Pilih Grup Pengiriman..."
+                        class="select2 w-full">
+                        <option value="">Pilih Grup</option>
+                        @foreach($delivery_groups as $group)
+                            <option value="{{ $group->id }}" {{ old('delivery_group_id', $event->delivery_group_id) == $group->id ? 'selected' : '' }}>
+                                {{ $group->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('delivery_group_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
             </div>
 
@@ -80,8 +105,8 @@
                 <label for="delivery_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Tujuan Pengiriman (Delivery To)
                 </label>
-                <select id="delivery_to" name="delivery_to"
-                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
+                <select id="delivery_to" name="delivery_to" data-placeholder="Pilih Tujuan..."
+                    class="select2 w-full">
                     <option value="">Pilih Tujuan (Opsional)</option>
                     @foreach($delivery_targets as $target)
                         <option value="{{ $target->target_name }}" {{ old('delivery_to', $event->delivery_to) == $target->target_name ? 'selected' : '' }}>
@@ -114,10 +139,12 @@
         function loadModels(customerId, selectedModelId = null) {
             modelSelect.innerHTML = '<option value="">Memuat...</option>';
             modelSelect.disabled = true;
+            $(modelSelect).trigger('change.select2');
             
             if (!customerId) {
                 modelSelect.innerHTML = '<option value="">Pilih Model</option>';
                 modelSelect.disabled = true;
+                $(modelSelect).trigger('change.select2');
                 return;
             }
 
@@ -141,21 +168,69 @@
                 } else {
                     modelSelect.innerHTML = '<option value="">Tidak ada model tersedia</option>';
                 }
+                $(modelSelect).trigger('change.select2');
             })
             .catch(error => {
                 console.error('Error fetching models:', error);
                 modelSelect.innerHTML = '<option value="">-- Gagal memuat data --</option>';
+                $(modelSelect).trigger('change.select2');
             });
         }
 
-        customerSelect.addEventListener('change', function() {
+        const categorySelect = document.getElementById('category_select');
+        const oldCategoryId = "{{ old('customer_category_id', $event->customer_category_id) }}";
+
+        function loadCategories(customerId, selectedCategoryId = null) {
+            categorySelect.innerHTML = '<option value="">Memuat...</option>';
+            categorySelect.disabled = true;
+            $(categorySelect).trigger('change.select2');
+            
+            if (!customerId) {
+                categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+                categorySelect.disabled = true;
+                $(categorySelect).trigger('change.select2');
+                return;
+            }
+
+            fetch("{{ route('api.data.customer-categories') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ customer_id: customerId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+                if(data.results && data.results.length > 0) {
+                    data.results.forEach(cat => {
+                        let isSelected = selectedCategoryId == cat.id ? 'selected' : '';
+                        categorySelect.innerHTML += `<option value="${cat.id}" ${isSelected}>${cat.text}</option>`;
+                    });
+                    categorySelect.disabled = false;
+                } else {
+                    categorySelect.innerHTML = '<option value="">Tidak ada kategori tersedia (Harap tambah di Master)</option>';
+                }
+                $(categorySelect).trigger('change.select2');
+            })
+            .catch(error => {
+                console.error('Error fetching categories:', error);
+                categorySelect.innerHTML = '<option value="">-- Gagal memuat data --</option>';
+                $(categorySelect).trigger('change.select2');
+            });
+        }
+
+        $('#customer_select').on('change', function() {
             loadModels(this.value);
+            loadCategories(this.value);
         });
 
-        // We already preload the models in PHP, so we don't strictly *need* to call loadModels on load
-        // UNLESS there's an old() validation failure that changed the customer but didn't refresh models.
+        // We already preload the models and categories in PHP, so we don't strictly *need* to call JS on load
+        // UNLESS there's an old() validation failure that changed the customer but didn't refresh them.
         if ("{{ old('customer_id') }}" && "{{ old('customer_id') }}" !== "{{ $event->customer_id }}") {
              loadModels("{{ old('customer_id') }}", oldModelId);
+             loadCategories("{{ old('customer_id') }}", oldCategoryId);
         }
     });
 </script>

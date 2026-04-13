@@ -27,6 +27,10 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('departments', \App\Http\Controllers\NpcMasterDepartmentController::class)->except(['show']);
         // Menambahkan Routings Route tapi dengan parameter part_id khusus
         Route::resource('routings', \App\Http\Controllers\NpcMasterRoutingController::class)->except(['show']);
+        
+        Route::resource('internal-categories', \App\Http\Controllers\NpcInternalCategoryController::class)->except(['show']);
+        Route::resource('customer-categories', \App\Http\Controllers\NpcCustomerCategoryController::class)->except(['show']);
+        Route::resource('delivery-groups', \App\Http\Controllers\NpcDeliveryGroupController::class)->except(['show']);
     });
 
     // Dummy API Routes for Dashboard Filters
@@ -72,6 +76,11 @@ Route::middleware(['auth'])->group(function () {
 
         Route::post('/data/customers', function () { return response()->json(['results' => []]); })->name('data.customers');
         Route::get('/data/statuses', function () { return response()->json(['results' => []]); })->name('data.statuses');
+        
+        Route::post('/data/customer-categories', function (\Illuminate\Http\Request $request) {
+            $categories = \App\Models\NpcCustomerCategory::where('customer_id', $request->customer_id)->get(['id', 'name as text']);
+            return response()->json(['results' => $categories]);
+        })->name('data.customer-categories');
     });
 
     // Part Routing Routes

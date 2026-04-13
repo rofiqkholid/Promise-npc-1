@@ -15,7 +15,9 @@ class NpcEvent extends Model
         'event_name',
         'customer_id',
         'model_id',
-        'delivery_to'
+        'delivery_to',
+        'customer_category_id',
+        'delivery_group_id'
     ];
 
     public function customer()
@@ -31,5 +33,15 @@ class NpcEvent extends Model
     public function parts()
     {
         return $this->hasMany(NpcPart::class, 'npc_event_id');
+    }
+
+    public function customerCategory()
+    {
+        return $this->belongsTo(NpcCustomerCategory::class, 'customer_category_id');
+    }
+
+    public function deliveryGroup()
+    {
+        return $this->belongsTo(NpcDeliveryGroup::class, 'delivery_group_id');
     }
 }
