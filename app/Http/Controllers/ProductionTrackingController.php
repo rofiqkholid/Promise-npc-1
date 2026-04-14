@@ -8,7 +8,7 @@ class ProductionTrackingController extends Controller
 {
     private function buildQuery($statusParam)
     {
-        $query = \App\Models\NpcPart::with(['purchaseOrder.event', 'processes.process.department', 'checkpoints', 'checksheet'])->latest();
+        $query = \App\Models\NpcPart::with(['purchaseOrder.event.customerCategory', 'purchaseOrder.event.deliveryGroup', 'processes.process.department', 'checkpoints', 'checksheet', 'product.vehicleModel.customer'])->latest();
 
         if ($statusParam !== 'all') {
             // "Kamar Task" logic: show current status + ALL previous statuses as "Upcoming"
@@ -34,10 +34,10 @@ class ProductionTrackingController extends Controller
         return $query;
     }
 
-    private function renderTrackingPage($statusParam, $pageTitle, $pageIcon, $pageDesc)
+    private function renderTrackingPage($statusParam, $pageTitle, $pageIcon, $pageDesc, $viewFile = 'tracking.index')
     {
         $parts = $this->buildQuery($statusParam)->paginate(15);
-        return view('tracking.index', compact('parts', 'statusParam', 'pageTitle', 'pageIcon', 'pageDesc'));
+        return view($viewFile, compact('parts', 'statusParam', 'pageTitle', 'pageIcon', 'pageDesc'));
     }
 
     public function index(\Illuminate\Http\Request $request)
@@ -67,7 +67,7 @@ class ProductionTrackingController extends Controller
 
     public function stock(\Illuminate\Http\Request $request)
     {
-        return $this->renderTrackingPage('FINISHED', 'Stok Barang Jadi (FG)', 'fa-boxes-stacked', 'Komponen yang siap untuk dikirim');
+        return $this->renderTrackingPage('FINISHED', 'Stok Barang Jadi (FG)', 'fa-boxes-stacked', 'Komponen yang siap untuk dikirim', 'tracking.stock');
     }
 
     public function history(\Illuminate\Http\Request $request)
