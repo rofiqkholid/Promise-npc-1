@@ -44,13 +44,13 @@
                     @forelse($events as $index => $event)
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group">
                         <td class="px-6 py-4 text-slate-800 dark:text-slate-200 text-sm">{{ $events->firstItem() + $index }}</td>
-                        <td class="px-6 py-4 text-blue-900 dark:text-blue-400 font-semibold text-sm">{{ $event->event_name }}</td>
+                        <td class="px-6 py-4 text-blue-900 dark:text-blue-400 font-semibold text-sm">{{ optional($event->masterEvent)->name ?? '-' }}</td>
                         <td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm">
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-medium">
-                                {{ optional($event->customer)->name ?? '-' }}
+                                {{ optional(optional($event->masterEvent)->customer)->name ?? '-' }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-gray-600 dark:text-gray-400 text-sm font-medium">{{ optional($event->vehicleModel)->name ?? '-' }}</td>
+                        <td class="px-6 py-4 text-gray-600 dark:text-gray-400 text-sm font-medium">{{ optional(optional($event->masterEvent)->vehicleModel)->name ?? '-' }}</td>
                         <td class="px-6 py-4 text-gray-600 dark:text-gray-400 text-sm">
                             <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                                 {{ optional($event->customerCategory)->name ?? '-' }}

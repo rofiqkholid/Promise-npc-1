@@ -15,26 +15,11 @@
         <form action="{{ route('events.store') }}" method="POST" class="p-6 space-y-6">
             @csrf
             
-            <div class="space-y-1">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Event Name / Keterangan Event <span class="text-red-500">*</span>
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                        <i class="fa-solid fa-tag text-xs"></i>
-                    </div>
-                    <input type="text" name="event_name" required value="{{ old('event_name') }}"
-                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white"
-                        style="padding-left: 2.5rem;"
-                        placeholder="Contoh: PCLC25-0810 Local Parts Order MMC 28MY...">
-                </div>
-                @error('event_name') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-            </div>
+
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Customer Select -->
                 <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Customer <span class="text-red-500">*</span>
                     </label>
@@ -53,7 +38,6 @@
                 <!-- Model Select -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Vehicle Model <span class="text-red-500">*</span>
                     </label>
                     <select name="model_id" id="model_select" required data-placeholder="Pilih Model..."
@@ -61,6 +45,18 @@
                             <option value="">Pilih Model</option>
                         </select>
                     @error('model_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Master Event Select -->
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Master Event (Nama Project) <span class="text-red-500">*</span>
+                    </label>
+                    <select name="master_event_id" id="event_select" required data-placeholder="Pilih Master Event..."
+                        class="select2 w-full">
+                        <option value="">Pilih Event</option>
+                    </select>
+                    @error('master_event_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Category Select -->
@@ -233,15 +229,68 @@
             });
         }
 
+        const eventSelect = document.getElementById('event_select');
+        const oldEventId = "{{ old('master_event_id') }}";
+
+        function loadEvents(customerId, modelId, selectedEventId = null) {
+            eventSelect.innerHTML = '<option value="">Memuat...</option>';
+            eventSelect.disabled = true;
+            $(eventSelect).trigger('change.select2');
+            
+            if (!customerId || !modelId) {
+                eventSelect.innerHTML = '<option value="">Pilih Event</option>';
+                eventSelect.disabled = true;
+                $(eventSelect).trigger('change.select2');
+                return;
+            }
+
+            fetch("{{ route('api.data.master-events') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ customer_id: customerId, model_id: modelId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                eventSelect.innerHTML = '<option value="">Pilih Event</option>';
+                if(data.results && data.results.length > 0) {
+                    data.results.forEach(ev => {
+                        let isSelected = selectedEventId == ev.id ? 'selected' : '';
+                        eventSelect.innerHTML += `<option value="${ev.id}" ${isSelected}>${ev.text}</option>`;
+                    });
+                    eventSelect.disabled = false;
+                } else {
+                    eventSelect.innerHTML = '<option value="">Belum ada Master Event (Tambah via Master Data)</option>';
+                }
+                $(eventSelect).trigger('change.select2');
+            })
+            .catch(error => {
+                console.error('Error fetching events:', error);
+                eventSelect.innerHTML = '<option value="">-- Gagal memuat data --</option>';
+                $(eventSelect).trigger('change.select2');
+            });
+        }
+
         $('#customer_select').on('change', function() {
             loadModels(this.value);
             loadCategories(this.value);
+            loadEvents(this.value, modelSelect.value);
+        });
+
+        $('#model_select').on('change', function() {
+            loadEvents(customerSelect.value, this.value);
         });
 
         // Load models & categories if customer was already selected (e.g. back validation error)
         if (customerSelect.value) {
             loadModels(customerSelect.value, oldModelId);
             loadCategories(customerSelect.value, oldCategoryId);
+        }
+        
+        if (customerSelect.value && oldModelId) {
+             loadEvents(customerSelect.value, oldModelId, oldEventId);
         }
 
         // --- Dynamic Parts Logic ---

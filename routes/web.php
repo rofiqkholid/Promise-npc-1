@@ -31,6 +31,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('internal-categories', \App\Http\Controllers\NpcInternalCategoryController::class)->except(['show']);
         Route::resource('customer-categories', \App\Http\Controllers\NpcCustomerCategoryController::class)->except(['show']);
         Route::resource('delivery-groups', \App\Http\Controllers\NpcDeliveryGroupController::class)->except(['show']);
+        Route::resource('events', \App\Http\Controllers\NpcMasterEventController::class)->except(['show']);
     });
 
     // Dummy API Routes for Dashboard Filters
@@ -39,6 +40,14 @@ Route::middleware(['auth'])->group(function () {
             $models = \App\Models\VehicleModel::where('customer_id', $request->customer_id)->get(['id', 'name as text']);
             return response()->json(['results' => $models]); 
         })->name('data.models');
+
+        Route::post('/data/master-events', function (\Illuminate\Http\Request $request) {
+            $events = \App\Models\NpcMasterEvent::where('customer_id', $request->customer_id)
+                ->where('model_id', $request->model_id)
+                ->orderBy('name')
+                ->get(['id', 'name as text']);
+            return response()->json(['results' => $events]);
+        })->name('data.master-events');
         
         Route::post('/data/products', function (\Illuminate\Http\Request $request) {
             $query = \App\Models\Product::with('vehicleModel.customer');

@@ -16,35 +16,22 @@
             @csrf
             @method('PUT')
             
-            <div class="space-y-1">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Event Name / Keterangan Event <span class="text-red-500">*</span>
-                </label>
-                <div class="relative">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                        <i class="fa-solid fa-tag text-xs"></i>
-                    </div>
-                    <input type="text" name="event_name" required value="{{ old('event_name', $event->event_name) }}"
-                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white" style="padding-left: 2.5rem;">
-                </div>
-                @error('event_name') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
-            </div>
+
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Customer Select -->
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Customer <span class="text-red-500">*</span>
-                    </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                            <i class="fa-solid fa-building text-xs"></i>
-                        </div>
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Customer <span class="text-red-500">*</span>
                     </label>
                     <select name="customer_id" id="customer_select" required data-placeholder="Pilih Customer..."
                         class="select2 w-full">
+                        <option value="">Pilih Customer</option>
+                        @foreach($customers as $customer)
+                            <option value="{{ $customer->id }}" {{ (old('customer_id', $masterCustomerId) == $customer->id) ? 'selected' : '' }}>
+                                {{ $customer->name }}
+                            </option>
+                        @endforeach
+                    </select>
                     @error('customer_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
 
@@ -53,17 +40,32 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Vehicle Model <span class="text-red-500">*</span>
                     </label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-                            <i class="fa-solid fa-car text-xs"></i>
-                        </div>
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Vehicle Model <span class="text-red-500">*</span>
-                    </label>
                     <select name="model_id" id="model_select" required data-placeholder="Pilih Model..."
                         class="select2 w-full">
+                        @foreach($models as $model)
+                            <option value="{{ $model->id }}" {{ (old('model_id', $masterModelId) == $model->id) ? 'selected' : '' }}>
+                                {{ $model->name }}
+                            </option>
+                        @endforeach
                     </select>
                     @error('model_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                </div>
+
+                <!-- Master Event Select -->
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Master Event (Nama Project) <span class="text-red-500">*</span>
+                    </label>
+                    <select name="master_event_id" id="event_select" required data-placeholder="Pilih Master Event..."
+                        class="select2 w-full">
+                        <option value="">Pilih Event</option>
+                        @foreach($master_events as $ev)
+                            <option value="{{ $ev->id }}" {{ (old('master_event_id', $event->master_event_id) == $ev->id) ? 'selected' : '' }}>
+                                {{ $ev->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('master_event_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
 
                 <!-- Category Select -->
@@ -220,17 +222,68 @@
                 $(categorySelect).trigger('change.select2');
             });
         }
+        
+        const eventSelect = document.getElementById('event_select');
+        const oldEventId = "{{ old('master_event_id', $event->master_event_id) }}";
+
+        function loadEvents(customerId, modelId, selectedEventId = null) {
+            eventSelect.innerHTML = '<option value="">Memuat...</option>';
+            eventSelect.disabled = true;
+            $(eventSelect).trigger('change.select2');
+            
+            if (!customerId || !modelId) {
+                eventSelect.innerHTML = '<option value="">Pilih Event</option>';
+                eventSelect.disabled = true;
+                $(eventSelect).trigger('change.select2');
+                return;
+            }
+
+            fetch("{{ route('api.data.master-events') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ customer_id: customerId, model_id: modelId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                eventSelect.innerHTML = '<option value="">Pilih Event</option>';
+                if(data.results && data.results.length > 0) {
+                    data.results.forEach(ev => {
+                        let isSelected = selectedEventId == ev.id ? 'selected' : '';
+                        eventSelect.innerHTML += `<option value="${ev.id}" ${isSelected}>${ev.text}</option>`;
+                    });
+                    eventSelect.disabled = false;
+                } else {
+                    eventSelect.innerHTML = '<option value="">Belum ada Master Event (Tambah via Master Data)</option>';
+                }
+                $(eventSelect).trigger('change.select2');
+            })
+            .catch(error => {
+                console.error('Error fetching events:', error);
+                eventSelect.innerHTML = '<option value="">-- Gagal memuat data --</option>';
+                $(eventSelect).trigger('change.select2');
+            });
+        }
 
         $('#customer_select').on('change', function() {
             loadModels(this.value);
             loadCategories(this.value);
+            loadEvents(this.value, modelSelect.value);
         });
 
-        // We already preload the models and categories in PHP, so we don't strictly *need* to call JS on load
-        // UNLESS there's an old() validation failure that changed the customer but didn't refresh them.
-        if ("{{ old('customer_id') }}" && "{{ old('customer_id') }}" !== "{{ $event->customer_id }}") {
+        $('#model_select').on('change', function() {
+            loadEvents(customerSelect.value, this.value);
+        });
+
+        if ("{{ old('customer_id') }}" && "{{ old('customer_id') }}" !== "{{ $masterCustomerId }}") {
              loadModels("{{ old('customer_id') }}", oldModelId);
              loadCategories("{{ old('customer_id') }}", oldCategoryId);
+        }
+        
+        if ( ("{{ old('customer_id') }}" && "{{ old('customer_id') }}" !== "{{ $masterCustomerId }}") || ("{{ old('model_id') }}" && "{{ old('model_id') }}" !== "{{ $masterModelId }}") ) {
+             loadEvents("{{ old('customer_id', $masterCustomerId) }}", "{{ old('model_id', $masterModelId) }}", oldEventId);
         }
     });
 </script>
