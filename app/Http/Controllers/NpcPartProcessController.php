@@ -15,7 +15,7 @@ class NpcPartProcessController extends Controller
      */
     public function edit(NpcPart $part)
     {
-        $part->load('processes', 'npcEvent');
+        $part->load('processes', 'npcEvent.masterEvent');
 
         // Jika belum ada proses, ambil dari NpcMasterRouting sebagai default
         if ($part->processes->isEmpty()) {
