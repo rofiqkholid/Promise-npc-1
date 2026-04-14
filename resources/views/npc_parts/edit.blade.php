@@ -43,7 +43,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         PO No <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" name="po_no" required value="{{ old('po_no', $part->po_no) }}"
+                    <input type="text" name="po_no" required value="{{ old('po_no', optional($part->purchaseOrder)->po_no) }}"
                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
                     @error('po_no') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
@@ -52,7 +52,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Part No <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" id="part_no_input" name="part_no" required value="{{ old('part_no', $part->part_no) }}" readonly
+                    <input type="text" id="part_no_input" name="part_no" required value="{{ old('part_no', optional($part->product)->part_no) }}" readonly
                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm sm:text-sm dark:bg-gray-800 dark:text-gray-400 bg-gray-100 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300">
                     @error('part_no') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
@@ -61,7 +61,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Part Name <span class="text-red-500">*</span>
                     </label>
-                    <input type="text" id="part_name_input" name="part_name" required value="{{ old('part_name', $part->part_name) }}" readonly
+                    <input type="text" id="part_name_input" name="part_name" required value="{{ old('part_name', optional($part->product)->part_name) }}" readonly
                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm sm:text-sm dark:bg-gray-800 dark:text-gray-400 bg-gray-100 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300">
                     @error('part_name') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>

@@ -98,6 +98,14 @@ Route::middleware(['auth'])->group(function () {
 
     // Production Tracking Route
     Route::get('/tracking', [\App\Http\Controllers\ProductionTrackingController::class, 'index'])->name('tracking.index');
+    Route::get('/tracking/setup', [\App\Http\Controllers\ProductionTrackingController::class, 'setup'])->name('tracking.setup');
+    Route::get('/tracking/production', [\App\Http\Controllers\ProductionTrackingController::class, 'production'])->name('tracking.production');
+    Route::get('/tracking/qc', [\App\Http\Controllers\ProductionTrackingController::class, 'qc'])->name('tracking.qc');
+    Route::get('/tracking/mgm', [\App\Http\Controllers\ProductionTrackingController::class, 'mgm'])->name('tracking.mgm');
+    Route::get('/tracking/stock', [\App\Http\Controllers\ProductionTrackingController::class, 'stock'])->name('tracking.stock');
+    Route::get('/tracking/history', [\App\Http\Controllers\ProductionTrackingController::class, 'history'])->name('tracking.history');
+    
+    // Status update and action routes
     Route::post('/tracking/{part}/status', [\App\Http\Controllers\ProductionTrackingController::class, 'updateStatus'])->name('tracking.status.update');
     Route::post('/tracking/{part}/deliver', [\App\Http\Controllers\ProductionTrackingController::class, 'deliver'])->name('tracking.deliver');
 

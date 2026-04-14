@@ -12,26 +12,33 @@ class NpcPart extends Model
     protected $table = 'npc_parts';
 
     protected $fillable = [
-        'npc_event_id',
-        'po_no',
-        'part_no',
-        'part_name',
+        'npc_purchase_order_id',
+        'product_id',
         'qty',
         'delivery_date',
         'actual_delivery',
         'actual_completion_date',
         'production_notes',
-        'department',
-        'process',
         'status',
         'qc_target_date',
         'mgm_target_date',
         'condition'
     ];
 
-    public function npcEvent()
+    public function purchaseOrder()
     {
-        return $this->belongsTo(NpcEvent::class, 'npc_event_id');
+        return $this->belongsTo(NpcPurchaseOrder::class, 'npc_purchase_order_id');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+
+    // Custom accessor / relationship-like method to get event if heavily relied upon
+    public function getEventAttribute()
+    {
+        return $this->purchaseOrder ? $this->purchaseOrder->event : null;
     }
 
     public function checksheet()

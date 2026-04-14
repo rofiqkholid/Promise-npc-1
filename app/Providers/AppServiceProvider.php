@@ -37,7 +37,13 @@ class AppServiceProvider extends ServiceProvider
                     'route' => '#',
                     'icon' => 'fa-solid fa-right-left',
                     'children' => collect([
-                        (object)['title' => 'Tracking Produksi', 'route' => 'tracking.index']
+                        (object)['title' => 'Global Tracking', 'route' => 'tracking.index'],
+                        (object)['title' => 'Setup Routing Produksi', 'route' => 'tracking.setup'],
+                        (object)['title' => 'Proses Produksi', 'route' => 'tracking.production'],
+                        (object)['title' => 'Pemeriksaan Kualitas (QC)', 'route' => 'tracking.qc'],
+                        (object)['title' => 'Persetujuan Management', 'route' => 'tracking.mgm'],
+                        (object)['title' => 'Stok Barang Jadi', 'route' => 'tracking.stock'],
+                        (object)['title' => 'Riwayat Kirim', 'route' => 'tracking.history'],
                     ])
                 ],
                 (object)[

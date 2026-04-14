@@ -59,14 +59,14 @@
                                     </div>
                                     <div class="space-y-2">
                                         @foreach($criticalItems as $item)
-                                        <a href="{{ route('inventory.stockMonitoring') }}?search={{ urlencode($item->part_no) }}" 
+                                        <a href="{{ route('inventory.stockMonitoring') }}?search={{ urlencode(optional($item->product)->part_no) }}" 
                                            class="block p-3 bg-white dark:bg-gray-800 rounded-xs border border-slate-200 dark:border-gray-700 hover:border-rose-300 dark:hover:border-rose-700 transition-colors group"
                                            title="Click to view in Stock Monitoring">
                                             <div class="flex items-start justify-between gap-4">
                                                 <div class="min-w-0 flex-1">
                                                     <div class="flex items-center gap-2 mb-1">
                                                         <span class="text-xs font-bold text-slate-900 dark:text-white tracking-tight truncate group-hover:text-rose-600 transition-colors">
-                                                            {{ $item->part_no }}{{ $item->revision ? ' - ' . $item->revision : '' }}
+                                                            {{ optional($item->product)->part_no }}{{ $item->revision ? ' - ' . $item->revision : '' }}
                                                         </span>
                                                     </div>
                                                     <div class="flex items-center gap-2 text-[10px] text-slate-500 dark:text-gray-400">
@@ -101,14 +101,14 @@
                                     </div>
                                     <div class="space-y-2">
                                         @foreach($warningItems as $item)
-                                        <a href="{{ route('inventory.stockMonitoring') }}?search={{ urlencode($item->part_no) }}"
+                                        <a href="{{ route('inventory.stockMonitoring') }}?search={{ urlencode(optional($item->product)->part_no) }}"
                                            class="block p-3 bg-white dark:bg-gray-800 rounded-xs border border-slate-200 dark:border-gray-700 hover:border-amber-300 dark:hover:border-amber-700 transition-colors group"
                                            title="Click to view in Stock Monitoring">
                                             <div class="flex items-start justify-between gap-4">
                                                 <div class="min-w-0 flex-1">
                                                     <div class="flex items-center gap-2 mb-1">
                                                         <span class="text-xs font-bold text-slate-900 dark:text-white tracking-tight truncate group-hover:text-amber-600 transition-colors">
-                                                            {{ $item->part_no }}{{ $item->revision ? ' - ' . $item->revision : '' }}
+                                                            {{ optional($item->product)->part_no }}{{ $item->revision ? ' - ' . $item->revision : '' }}
                                                         </span>
                                                     </div>
                                                     <div class="flex items-center gap-2 text-[10px] text-slate-500 dark:text-gray-400">

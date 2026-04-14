@@ -11,6 +11,11 @@ class NpcProcess extends Model
 
     protected $fillable = [
         'process_name',
-        'department'
+        'department_id'
     ];
+
+    public function department()
+    {
+        return $this->belongsTo(NpcDepartment::class, 'department_id');
+    }
 }

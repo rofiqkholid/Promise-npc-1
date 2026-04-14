@@ -43,11 +43,11 @@
                 <label for="department" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Department PIC <span class="text-red-500">*</span>
                 </label>
-                <select id="department" name="department" required
+                <select id="department_id" name="department_id" required
                     class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
                     <option value="">Pilih Department</option>
                     @foreach($departments as $dept)
-                        <option value="{{ $dept->name }}" {{ old('department') == $dept->name ? 'selected' : '' }}>
+                        <option value="{{ $dept->id }}" {{ old('department_id') == $dept->id ? 'selected' : '' }}>
                             {{ $dept->full_name ?? $dept->name }}
                         </option>
                     @endforeach

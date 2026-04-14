@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Input Quality Checksheet')
-@section('page_title', 'Checksheet Produksi / ' . ($part->po_no ?? 'Part Telah Dihapus'))
+@section('page_title', 'Checksheet Produksi / ' . (optional($part->purchaseOrder)->po_no ?? 'Part Telah Dihapus'))
 
 @section('content')
 @php
@@ -17,7 +17,7 @@
                 <i class="fa-solid fa-clipboard-check text-blue-500 mr-2"></i> PART EVENT DELIVERY CHECKSHEET
             </h2>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                <strong>Part No:</strong> {{ $part->part_no ?? 'N/A' }} | <strong>Customer:</strong> {{ optional(optional($part)->npcEvent)->customer->customer_name ?? 'N/A' }}
+                <strong>Part No:</strong> {{ optional($part->product)->part_no ?? 'N/A' }} | <strong>Customer:</strong> {{ optional(optional($part)->event)->customer->customer_name ?? 'N/A' }}
             </p>
         </div>
         <div>
@@ -31,7 +31,7 @@
     <div class="px-6 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div>
             <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Event/Project</span>
-            <span class="text-sm font-medium text-gray-700 dark:text-white">{{ optional($part->npcEvent)->event_name }}</span>
+            <span class="text-sm font-medium text-gray-700 dark:text-white">{{ optional($part->event)->event_name }}</span>
         </div>
         <div>
             <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Qty Output</span>

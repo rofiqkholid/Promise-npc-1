@@ -15,7 +15,7 @@ class NpcPartProcessController extends Controller
      */
     public function edit(NpcPart $part)
     {
-        $part->load('processes', 'npcEvent.masterEvent');
+        $part->load('processes.process.department', 'purchaseOrder.event.masterEvent');
 
         // Jika belum ada proses, ambil dari NpcMasterRouting sebagai default
         if ($part->processes->isEmpty()) {
@@ -43,6 +43,13 @@ class NpcPartProcessController extends Controller
                     $part->setRelation('processes', $defaultProcesses);
                 }
             }
+        } else {
+            // Map the loaded processes to include process_name and department for the Javascript frontend
+            $part->processes->transform(function ($process) {
+                $process->process_name = optional($process->process)->process_name;
+                $process->department = optional(optional($process->process)->department)->name;
+                return $process;
+            });
         }
 
         $masterProcesses = tap(NpcProcess::orderBy('process_name')->get(), function ($q) {
@@ -81,10 +88,10 @@ class NpcPartProcessController extends Controller
 
         if ($request->has('routing') && !empty($request->routing)) {
             foreach ($request->routing as $routeData) {
+                $process = \App\Models\NpcProcess::where('process_name', $routeData['process_name'])->first();
                 NpcPartProcess::create([
                     'npc_part_id' => $part->id,
-                    'process_name' => $routeData['process_name'],
-                    'department' => $routeData['department'],
+                    'process_id' => $process ? $process->id : null,
                     'target_completion_date' => $routeData['target_completion_date'],
                     'sequence_order' => $routeData['sequence_order'],
                     'status' => 'WAITING'

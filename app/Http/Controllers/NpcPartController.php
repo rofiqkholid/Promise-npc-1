@@ -41,10 +41,30 @@ class NpcPartController extends Controller
             'part_no.exists' => 'Part Number yang Anda masukkan tidak valid atau bukan merupakan part dari Model event ini.'
         ]);
 
-        $processRecord = \App\Models\NpcProcess::where('process_name', $request->process)->first();
-        $department = $processRecord ? $processRecord->department : 'PUD';
+        $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
+            'npc_event_id' => $event->id,
+            'po_no' => $request->po_no
+        ]);
 
-        $event->parts()->create(array_merge($request->all(), ['department' => $department]));
+        $product = \App\Models\Product::where('part_no', $request->part_no)->first();
+
+        $part = \App\Models\NpcPart::create([
+            'npc_purchase_order_id' => $po->id,
+            'product_id' => $product ? $product->id : null,
+            'qty' => $request->qty,
+            'delivery_date' => $request->delivery_date,
+            'status' => 'PO_REGISTERED'
+        ]);
+
+        $processRecord = \App\Models\NpcProcess::where('process_name', $request->process)->first();
+        if ($processRecord) {
+            \App\Models\NpcPartProcess::create([
+                'npc_part_id' => $part->id,
+                'process_id' => $processRecord->id,
+                'sequence_order' => 1,
+                'status' => 'WAITING'
+            ]);
+        }
 
         return redirect()->route('events.parts.index', $event->id)->with('success', 'Part / Item added to event successfully.');
     }
@@ -77,7 +97,22 @@ class NpcPartController extends Controller
             'part_no.exists' => 'Part Number yang Anda masukkan tidak valid atau bukan merupakan part dari Model event ini.'
         ]);
 
-        $part->update($request->all());
+        $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
+            'npc_event_id' => $event->id,
+            'po_no' => $request->po_no
+        ]);
+
+        $product = \App\Models\Product::where('part_no', $request->part_no)->first();
+
+        $part->update([
+            'npc_purchase_order_id' => $po->id,
+            'product_id' => $product ? $product->id : null,
+            'qty' => $request->qty,
+            'delivery_date' => $request->delivery_date,
+            'actual_delivery' => $request->actual_delivery,
+            'status' => $request->status,
+            'condition' => $request->condition
+        ]);
 
         return redirect()->route('events.parts.index', $event->id)->with('success', 'Part updated successfully.');
     }

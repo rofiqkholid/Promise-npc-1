@@ -6,11 +6,9 @@ use Illuminate\Http\Request;
 
 class ProductionTrackingController extends Controller
 {
-    public function index(\Illuminate\Http\Request $request)
+    private function buildQuery($statusParam)
     {
-        $statusParam = $request->query('status', 'all');
-
-        $query = \App\Models\NpcPart::with(['npcEvent', 'processes', 'checkpoints', 'checksheet'])->latest();
+        $query = \App\Models\NpcPart::with(['purchaseOrder.event', 'processes.process.department', 'checkpoints', 'checksheet'])->latest();
 
         if ($statusParam !== 'all') {
             // "Kamar Task" logic: show current status + ALL previous statuses as "Upcoming"
@@ -32,10 +30,49 @@ class ProductionTrackingController extends Controller
                     break;
             }
         }
+        
+        return $query;
+    }
 
-        $parts = $query->paginate(15);
+    private function renderTrackingPage($statusParam, $pageTitle, $pageIcon, $pageDesc)
+    {
+        $parts = $this->buildQuery($statusParam)->paginate(15);
+        return view('tracking.index', compact('parts', 'statusParam', 'pageTitle', 'pageIcon', 'pageDesc'));
+    }
 
-        return view('tracking.index', compact('parts', 'statusParam'));
+    public function index(\Illuminate\Http\Request $request)
+    {
+        return $this->renderTrackingPage('all', 'Global Tracking', 'fa-globe', 'Pantau seluruh progres PO dan Part');
+    }
+
+    public function setup(\Illuminate\Http\Request $request)
+    {
+        return $this->renderTrackingPage('PO_REGISTERED', 'Setup Routing Produksi', 'fa-route', 'Menyiapkan rute dan jadwal untuk PO Baru');
+    }
+
+    public function production(\Illuminate\Http\Request $request)
+    {
+        return $this->renderTrackingPage('WAITING_DEPT_CONFIRM', 'Proses Produksi', 'fa-industry', 'Pantau komponen yang sedang dalam tahap produksi');
+    }
+
+    public function qc(\Illuminate\Http\Request $request)
+    {
+        return $this->renderTrackingPage('WAITING_QE_CHECK', 'Pemeriksaan Kualitas (QC)', 'fa-microscope', 'Input dan validasi pengecekan kualitas');
+    }
+
+    public function mgm(\Illuminate\Http\Request $request)
+    {
+        return $this->renderTrackingPage('WAITING_MGM_CHECK', 'Persetujuan Management', 'fa-user-tie', 'Validasi dan konfirmasi final oleh manajemen');
+    }
+
+    public function stock(\Illuminate\Http\Request $request)
+    {
+        return $this->renderTrackingPage('FINISHED', 'Stok Barang Jadi (FG)', 'fa-boxes-stacked', 'Komponen yang siap untuk dikirim');
+    }
+
+    public function history(\Illuminate\Http\Request $request)
+    {
+        return $this->renderTrackingPage('CLOSED', 'Riwayat Pengiriman', 'fa-truck-fast', 'Komponen yang telah terkirim ke customer');
     }
 
     public function updateStatus(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)

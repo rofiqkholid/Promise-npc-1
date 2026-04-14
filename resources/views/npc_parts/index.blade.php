@@ -72,9 +72,9 @@
                     @forelse($parts as $index => $part)
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group">
                         <td class="px-6 py-4 text-slate-800 dark:text-slate-200 text-sm">{{ $parts->firstItem() + $index }}</td>
-                        <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-medium text-sm">{{ $part->po_no }}</td>
-                        <td class="px-6 py-4 text-blue-600 dark:text-blue-400 text-sm font-semibold">{{ $part->part_no }}</td>
-                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm">{{ $part->part_name }}</td>
+                        <td class="px-6 py-4 text-slate-800 dark:text-slate-200 font-medium text-sm">{{ optional($part->purchaseOrder)->po_no }}</td>
+                        <td class="px-6 py-4 text-blue-600 dark:text-blue-400 text-sm font-semibold">{{ optional($part->product)->part_no }}</td>
+                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm">{{ optional($part->product)->part_name }}</td>
                         <td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm font-medium">{{ $part->qty }}</td>
                         <td class="px-6 py-4 text-slate-600 dark:text-slate-400 text-sm font-medium">{{ \Carbon\Carbon::parse($part->delivery_date)->format('d M Y') }}</td>
                         <td class="px-6 py-4 text-slate-700 dark:text-slate-300 text-sm">

@@ -1,39 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Tracking Produksi')
-@section('page_title', 'Transaksi / Tracking Produksi')
+@section('title', $pageTitle ?? 'Tracking Produksi')
+@section('page_title', 'Transaksi / ' . ($pageTitle ?? 'Tracking Produksi'))
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
-        <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-list-check text-blue-500"></i> Tracking Produksi (Routing)
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+            <i class="fa-solid {{ $pageIcon ?? 'fa-list-check' }} text-blue-500"></i> {{ $pageTitle ?? 'Tracking Produksi (Routing)' }}
         </h2>
-    </div>
-
-    <!-- Tabs -->
-    <div class="px-6 border-b border-gray-200 dark:border-gray-700">
-        <nav class="-mb-px flex space-x-6 overflow-x-auto" aria-label="Tabs">
-            @php
-                $tabs = [
-                    'all' => 'Semua',
-                    'PO_REGISTERED' => 'Baru (Draft PO)',
-                    'WAITING_DEPT_CONFIRM' => 'Proses Produksi',
-                    'WAITING_QE_CHECK' => 'Waiting QC',
-                    'WAITING_MGM_CHECK' => 'Waiting MGM',
-                    'FINISHED' => 'FG Stock',
-                    'CLOSED' => 'Terkirim (Closed)'
-                ];
-            @endphp
-            
-            @foreach($tabs as $key => $label)
-                <a href="{{ route('tracking.index', ['status' => $key]) }}"
-                   class="{{ $statusParam === $key ? 'border-blue-500 text-blue-600 dark:text-blue-400' : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-gray-300 dark:text-slate-400 dark:hover:text-slate-300' }}
-                          whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition transition-colors">
-                    {{ $label }}
-                </a>
-            @endforeach
-        </nav>
+        @if(isset($pageDesc))
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 ml-7">{{ $pageDesc }}</p>
+        @endif
     </div>
 
     @if(session('success'))
@@ -60,12 +38,12 @@
                     @forelse($parts as $part)
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group text-sm {{ $statusParam !== 'all' && $part->status !== $statusParam ? 'opacity-60 grayscale-[0.3]' : '' }}">
                         <td class="px-6 py-4">
-                            <div class="text-blue-600 dark:text-blue-400 font-semibold text-sm">{{ $part->po_no }}</div>
-                            <div class="text-xs text-gray-500 dark:text-gray-400">{{ optional($part->npcEvent)->event_name }}</div>
+                            <div class="text-blue-600 dark:text-blue-400 font-semibold text-sm">{{ optional($part->purchaseOrder)->po_no }}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400">{{ optional($part->event)->event_name }}</div>
                         </td>
                         <td class="px-6 py-4">
-                            <div class="text-gray-800 dark:text-gray-200 font-medium text-sm">{{ $part->part_no }}</div>
-                            <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ $part->part_name }}</div>
+                            <div class="text-gray-800 dark:text-gray-200 font-medium text-sm">{{ optional($part->product)->part_no }}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ optional($part->product)->part_name }}</div>
                         </td>
                         <td class="px-6 py-4">
                             <div class="text-gray-800 dark:text-gray-300 font-bold text-sm">{{ $part->qty }} PCS</div>
@@ -76,9 +54,9 @@
                                 {{-- Routing chips: horizontal, wrap --}}
                                 <div class="flex flex-wrap gap-1 mb-1.5">
                                     @foreach($part->processes as $process)
-                                        <span class="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-semibold px-1.5 py-0.5 rounded" title="{{ $process->department }}">
+                                        <span class="inline-flex items-center gap-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-[10px] font-semibold px-1.5 py-0.5 rounded" title="{{ optional(optional($process->process)->department)->name }}">
                                             <span class="text-gray-400 font-bold">{{ $process->sequence_order }}.</span>
-                                            {{ $process->process_name }}
+                                            {{ optional($process->process)->process_name ?? 'Unknown Process' }}
                                         </span>
                                     @endforeach
                                 </div>

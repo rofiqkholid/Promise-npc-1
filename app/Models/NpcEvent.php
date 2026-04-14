@@ -23,9 +23,14 @@ class NpcEvent extends Model
         return $this->belongsTo(NpcMasterEvent::class, 'master_event_id');
     }
 
+    public function purchaseOrders()
+    {
+        return $this->hasMany(NpcPurchaseOrder::class, 'npc_event_id');
+    }
+
     public function parts()
     {
-        return $this->hasMany(NpcPart::class, 'npc_event_id');
+        return $this->hasManyThrough(NpcPart::class, NpcPurchaseOrder::class, 'npc_event_id', 'npc_purchase_order_id');
     }
 
     public function customerCategory()

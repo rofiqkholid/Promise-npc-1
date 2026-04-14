@@ -89,17 +89,30 @@ class NpcEventController extends Controller
                 }
             }
 
-            $part = \App\Models\NpcPart::create([
+            // 1. Build PO
+            $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
                 'npc_event_id' => $event->id,
-                'po_no' => $partData['po_no'],
-                'part_no' => $partData['part_no'],
-                'part_name' => $partData['part_name'] ?? '-', 
+                'po_no' => $partData['po_no']
+            ]);
+
+            // 2. Build Part Details
+            $part = \App\Models\NpcPart::create([
+                'npc_purchase_order_id' => $po->id,
+                'product_id' => $product ? $product->id : null,
                 'qty' => $partData['qty'],
                 'delivery_date' => $partData['delivery_date'],
-                'process' => $processName,
-                'department' => $departmentName,
                 'status' => 'PO_REGISTERED',
             ]);
+
+            // 3. Build Initial Part Process
+            if (isset($routing) && $routing && $routing->process) {
+                \App\Models\NpcPartProcess::create([
+                    'npc_part_id' => $part->id,
+                    'process_id' => $routing->process_id,
+                    'sequence_order' => $routing->sequence_order,
+                    'status' => 'WAITING'
+                ]);
+            }
 
             // Sync Mapping MGM Checkpoints
             if (!empty($partData['checkpoints'])) {
@@ -217,17 +230,29 @@ class NpcEventController extends Controller
                     if($product) $partName = $product->part_name;
                 }
 
-                NpcPart::create([
+                $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
                     'npc_event_id' => $event->id,
-                    'po_no' => $row[0] ?? optional($event->masterEvent)->name,
-                    'part_no' => $row[1],
-                    'part_name' => $partName,
+                    'po_no' => $row[0] ?? optional($event->masterEvent)->name
+                ]);
+                
+                $product = \App\Models\Product::where('part_no', $row[1])->first();
+
+                $part = NpcPart::create([
+                    'npc_purchase_order_id' => $po->id,
+                    'product_id' => $product ? $product->id : null,
                     'qty' => (int) ($row[3] ?? 1),
                     'delivery_date' => $deliveryDate,
-                    'department' => $department,
-                    'process' => $processString,
                     'status' => 'WAITING_DEPT_CONFIRM',
                 ]);
+                
+                if ($processObj) {
+                    \App\Models\NpcPartProcess::create([
+                        'npc_part_id' => $part->id,
+                        'process_id' => $processObj->id,
+                        'sequence_order' => 1,
+                        'status' => 'WAITING'
+                    ]);
+                }
                 $importedCount++;
             }
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Routing Part: ' . $part->part_no)
+@section('title', 'Routing Part: ' . optional($part->product)->part_no)
 @section('page_title', 'Production Tracking / Routing')
 
 @section('content')
@@ -20,15 +20,15 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 dark:bg-gray-800/50 p-4 rounded-lg border border-slate-200 dark:border-gray-700 mb-6">
                 <div>
                     <span class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Event/Project</span>
-                    <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ $part->npcEvent->masterEvent->name ?? '-' }}</span>
+                    <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ $part->event->masterEvent->name ?? '-' }}</span>
                 </div>
                 <div>
                     <span class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">PO No</span>
-                    <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ $part->po_no }}</span>
+                    <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ optional($part->purchaseOrder)->po_no }}</span>
                 </div>
                 <div>
                     <span class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Part No</span>
-                    <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ $part->part_no }}</span>
+                    <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ optional($part->product)->part_no }}</span>
                 </div>
                 <div>
                     <span class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Quantity</span>

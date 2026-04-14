@@ -24,7 +24,7 @@ class NpcProcessController extends Controller
     {
         $request->validate([
             'process_name' => 'required|string|max:255|unique:npc_processes',
-            'department'   => 'required|exists:npc_departments,name',
+            'department_id'   => 'required|exists:npc_departments,id',
         ]);
 
         NpcProcess::create($request->all());
@@ -42,7 +42,7 @@ class NpcProcessController extends Controller
     {
         $request->validate([
             'process_name' => 'required|string|max:255|unique:npc_processes,process_name,' . $process->id,
-            'department'   => 'required|exists:npc_departments,name',
+            'department_id'   => 'required|exists:npc_departments,id',
         ]);
 
         $process->update($request->all());

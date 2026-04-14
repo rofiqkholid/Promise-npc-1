@@ -19,7 +19,7 @@
             <div class="space-y-4">
                 <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
                     <p class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">Part Terpilih</p>
-                    <p class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ $part->part_no }} - {{ $part->part_name }}</p>
+                    <p class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ optional($part->product)->part_no }} - {{ optional($part->product)->part_name }}</p>
                     <p class="text-xs text-blue-500/80 dark:text-blue-300/80 mt-1 flex items-center gap-1 font-medium">
                         <i class="fa-solid fa-car"></i> {{ optional($part->vehicleModel)->name ?? 'Unknown Model' }}
                         <span class="mx-1">|</span>

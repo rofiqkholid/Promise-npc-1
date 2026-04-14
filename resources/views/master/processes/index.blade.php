@@ -45,8 +45,8 @@
                         <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">{{ $process->process_name }}</td>
                         <td class="px-6 py-4">
                             <span class="px-2.5 py-1 rounded border text-xs font-semibold
-                                {{ $process->department == 'ME' ? 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-800' : 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-800' }}">
-                                {{ $process->department }}
+                                {{ optional($process->department)->name == 'ME' ? 'bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-900/40 dark:text-orange-300 dark:border-orange-800' : 'bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/40 dark:text-purple-300 dark:border-purple-800' }}">
+                                {{ optional($process->department)->name ?? '-' }}
                             </span>
                         </td>
                         <td class="px-6 py-4 text-right">
