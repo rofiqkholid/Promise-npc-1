@@ -51,16 +51,16 @@ class AppServiceProvider extends ServiceProvider
                     'route' => '#',
                     'icon' => 'fa-solid fa-database',
                     'children' => collect([
-                        (object)['title' => 'Data Event (PO)', 'route' => 'events.index'],
-                        (object)['title' => 'Master Event Project', 'route' => 'master.events.index'],
-                        (object)['title' => 'Routing per Part ID', 'route' => 'master.routings.index'],
-                        (object)['title' => 'Master Proses', 'route' => 'master.processes.index'],
-                        (object)['title' => 'Master Department', 'route' => 'master.departments.index'],
-                        (object)['title' => 'Master Poin QA', 'route' => 'master.checkpoints.index'],
-                        (object)['title' => 'Master Tujuan Kirim', 'route' => 'master.delivery-targets.index'],
                         (object)['title' => 'Master Kategori Internal', 'route' => 'master.internal-categories.index'],
                         (object)['title' => 'Master Mapping Customer', 'route' => 'master.customer-categories.index'],
+                        (object)['title' => 'Master Department', 'route' => 'master.departments.index'],
+                        (object)['title' => 'Master Proses', 'route' => 'master.processes.index'],
+                        (object)['title' => 'Routing per Part ID', 'route' => 'master.routings.index'],
+                        (object)['title' => 'Master Poin QA', 'route' => 'master.checkpoints.index'],
                         (object)['title' => 'Master Grup Pengiriman', 'route' => 'master.delivery-groups.index'],
+                        (object)['title' => 'Master Tujuan Kirim', 'route' => 'master.delivery-targets.index'],
+                        (object)['title' => 'Master Event Project', 'route' => 'master.events.index'],
+                        (object)['title' => 'Data Event (PO)', 'route' => 'events.index'],
                     ])
                 ],
             ];

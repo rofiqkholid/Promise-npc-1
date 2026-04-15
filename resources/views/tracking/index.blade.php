@@ -20,13 +20,52 @@
     </div>
     @endif
 
+    @if(isset($metrics))
+    <!-- Dashboard Cards -->
+    <div class="px-6 pt-6 pb-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Card 1: Total Event -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] flex items-center gap-4 transition-transform hover:-translate-y-1 duration-300">
+            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg shadow-blue-500/30 flex items-center justify-center text-white text-xl">
+                <i class="fa-solid fa-calendar-check mt-1"></i>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">Total Event</p>
+                <h3 class="text-2xl font-black text-gray-800 dark:text-white leading-none">{{ number_format($metrics['total_events']) }}</h3>
+            </div>
+        </div>
+        
+        <!-- Card 2: Total PO -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] flex items-center gap-4 transition-transform hover:-translate-y-1 duration-300">
+            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/30 flex items-center justify-center text-white text-xl">
+                <i class="fa-solid fa-file-invoice mt-1"></i>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">Total PO</p>
+                <h3 class="text-2xl font-black text-gray-800 dark:text-white leading-none">{{ number_format($metrics['total_pos']) }}</h3>
+            </div>
+        </div>
+
+        <!-- Card 3: Total Part -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] flex items-center gap-4 transition-transform hover:-translate-y-1 duration-300">
+            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg shadow-amber-500/30 flex items-center justify-center text-white text-xl">
+                <i class="fa-solid fa-cubes mt-1"></i>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">Total Part</p>
+                <h3 class="text-2xl font-black text-gray-800 dark:text-white leading-none">{{ number_format($metrics['total_parts']) }}</h3>
+            </div>
+        </div>
+    </div>
+    @endif
+
     <!-- Table -->
     <div class="p-6">
         <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
-                        <th scope="col" class="px-6 py-4 font-semibold">Event / PO</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Event</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Nomor PO</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Part Info</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Qty & Target</th>
                         <th scope="col" class="px-6 py-4 font-semibold text-center" colspan="2">Progress Keseluruhan</th>
@@ -37,8 +76,10 @@
                     @forelse($parts as $part)
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group text-sm {{ $statusParam !== 'all' && $part->status !== $statusParam ? 'opacity-60 grayscale-[0.3]' : '' }}">
                         <td class="px-6 py-4">
-                            <div class="text-blue-600 dark:text-blue-400 font-semibold text-sm">{{ optional($part->purchaseOrder)->po_no }}</div>
-                            <div class="text-xs text-gray-500 dark:text-gray-400">{{ optional($part->event)->event_name }}</div>
+                            <div class="text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wide border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded inline-block">{{ optional(optional(optional($part->purchaseOrder)->event)->masterEvent)->name ?? 'Unknown Event' }}</div>
+                        </td>
+                        <td class="px-6 py-4 text-gray-700 dark:text-gray-300 font-semibold text-sm">
+                            {{ optional($part->purchaseOrder)->po_no }}
                         </td>
                         <td class="px-6 py-4">
                             <div class="text-gray-800 dark:text-gray-200 font-medium text-sm">{{ optional($part->product)->part_no }}</div>

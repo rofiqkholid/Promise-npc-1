@@ -8,7 +8,7 @@ class ProductionTrackingController extends Controller
 {
     private function buildQuery($statusParam)
     {
-        $query = \App\Models\NpcPart::with(['purchaseOrder.event.customerCategory', 'purchaseOrder.event.deliveryGroup', 'processes.process.department', 'checkpoints', 'checksheet', 'product.vehicleModel.customer'])->latest();
+        $query = \App\Models\NpcPart::with(['purchaseOrder.event.customerCategory', 'purchaseOrder.event.deliveryGroup', 'purchaseOrder.event.masterEvent', 'processes.process.department', 'checkpoints', 'checksheet', 'product.vehicleModel.customer'])->latest();
 
         if ($statusParam !== 'all') {
             // "Kamar Task" logic: show current status + ALL previous statuses as "Upcoming"
@@ -42,7 +42,14 @@ class ProductionTrackingController extends Controller
 
     public function index(\Illuminate\Http\Request $request)
     {
-        return $this->renderTrackingPage('all', 'Global Tracking', 'fa-globe', 'Pantau seluruh progres PO dan Part');
+        $metrics = [
+            'total_events' => \App\Models\NpcEvent::count(),
+            'total_pos' => \App\Models\NpcPurchaseOrder::count(),
+            'total_parts' => \App\Models\NpcPart::count(),
+        ];
+
+        return $this->renderTrackingPage('all', 'Global Tracking', 'fa-globe', 'Pantau seluruh progres PO dan Part')
+                    ->with('metrics', $metrics);
     }
 
     public function setup(\Illuminate\Http\Request $request)
