@@ -11,19 +11,6 @@
         </h2>
     </div>
 
-    @if(session('error'))
-    <div class="bg-red-50 border-l-4 border-red-500 p-4 m-6 rounded shadow-sm">
-        <div class="flex">
-            <div class="flex-shrink-0">
-                <i class="fa-solid fa-circle-exclamation text-red-500"></i>
-            </div>
-            <div class="ml-3">
-                <p class="text-sm text-red-700 font-medium">{{ session('error') }}</p>
-            </div>
-        </div>
-    </div>
-    @endif
-
     <form action="{{ route('events.import.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="p-6 space-y-6">
@@ -301,3 +288,4 @@
     });
 </script>
 @endpush
+

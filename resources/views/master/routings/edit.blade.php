@@ -46,7 +46,7 @@
                                     <option value="">Pilih Proses</option>
                                     @foreach($processes as $proc)
                                         <option value="{{ $proc->id }}" {{ $r->process_id == $proc->id ? 'selected' : '' }}>
-                                            {{ $proc->process_name }} ({{ $proc->department ?? 'N/A' }})
+                                            {{ $proc->process_name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -85,7 +85,7 @@
         const processOptions = `
             <option value="">Pilih Proses</option>
             @foreach($processes as $proc)
-                <option value="{{ $proc->id }}">{{ $proc->process_name }} ({{ $proc->department ?? 'N/A' }})</option>
+                <option value="{{ $proc->id }}">{{ $proc->process_name }}</option>
             @endforeach
         `;
 

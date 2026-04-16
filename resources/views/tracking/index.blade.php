@@ -14,12 +14,6 @@
         @endif
     </div>
 
-    @if(session('success'))
-    <div class="bg-green-50 border-l-4 border-green-500 p-4 mx-6 mt-4 rounded">
-        <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
-    </div>
-    @endif
-
     @if(isset($metrics))
     <!-- Dashboard Cards -->
     <div class="px-6 pt-6 pb-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -53,6 +47,17 @@
             <div>
                 <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">Total Part</p>
                 <h3 class="text-2xl font-black text-gray-800 dark:text-white leading-none">{{ number_format($metrics['total_parts']) }}</h3>
+            </div>
+        </div>
+
+        <!-- Card 4: PO Close -->
+        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] flex items-center gap-4 transition-transform hover:-translate-y-1 duration-300">
+            <div class="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 shadow-lg shadow-emerald-500/30 flex items-center justify-center text-white text-xl">
+                <i class="fa-solid fa-flag-checkered mt-1"></i>
+            </div>
+            <div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">PO Close</p>
+                <h3 class="text-2xl font-black text-gray-800 dark:text-white leading-none">{{ number_format($metrics['total_po_close']) }}</h3>
             </div>
         </div>
     </div>
@@ -97,24 +102,57 @@
                                     if($currentIndex === false) $currentIndex = -1;
                                     $steps = [
                                         ['icon' => 'fa-file-contract', 'title' => 'Draft'],
-                                        ['icon' => 'fa-industry', 'title' => 'Produksi'],
-                                        ['icon' => 'fa-microscope', 'title' => 'QC'],
+                                        ['icon' => 'fa-industry', 'title' => 'Part Making'],
+                                        ['icon' => 'fa-microscope', 'title' => 'QE'],
                                         ['icon' => 'fa-user-tie', 'title' => 'MGM'],
                                         ['icon' => 'fa-boxes-stacked', 'title' => 'Stok'],
                                     ];
                                     if($part->status === 'CLOSED') $currentIndex = 5; // To fill the entire bar
+                                    
+                                    // Check overdue based on delivery_date
+                                    $isOverdue = \Carbon\Carbon::parse($part->delivery_date)->endOfDay()->isPast() && !in_array($part->status, ['FINISHED', 'CLOSED']);
                                 @endphp
                                 
                                 <div class="flex w-full">
                                 @foreach($steps as $idx => $step)
+                                    @php
+                                        $isFinished = $currentIndex > $idx;
+                                        $isActive = ($currentIndex === $idx);
+                                        
+                                        // Default (Pending)
+                                        $circleClass = "text-gray-400 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800";
+                                        $lineClass = "bg-gray-200 dark:bg-gray-700";
+                                        $titleClass = "text-gray-400";
+
+                                        if ($isFinished) {
+                                            $circleClass = "text-white bg-emerald-500 border-emerald-500 shadow-sm";
+                                            $lineClass = "bg-emerald-500";
+                                            $titleClass = "text-emerald-700 dark:text-emerald-400";
+                                        } elseif ($isActive) {
+                                            if ($isOverdue) {
+                                                $circleClass = "text-red-600 border-red-500 bg-red-50 dark:bg-red-900/30 ring-4 ring-red-100 dark:ring-red-900/40";
+                                                $titleClass = "text-red-700 dark:text-red-400 font-extrabold";
+                                            } else {
+                                                $circleClass = "text-amber-600 border-amber-500 bg-amber-50 dark:bg-amber-900/30 ring-4 ring-amber-100 dark:ring-amber-900/40";
+                                                $titleClass = "text-amber-700 dark:text-amber-400 font-extrabold";
+                                            }
+                                        }
+                                    @endphp
                                     <div class="flex flex-col items-center flex-1 relative group">
                                         @if($idx < count($steps) - 1)
-                                            <div class="absolute w-[calc(100%-1.75rem)] top-3.5 left-[calc(50%+0.875rem)] h-[3px] rounded {{ $currentIndex > $idx ? 'bg-blue-500' : 'bg-gray-200 dark:bg-gray-700' }}"></div>
+                                            <div class="absolute w-[calc(100%-1.75rem)] top-3.5 left-[calc(50%+0.875rem)] h-[3px] rounded {{ $lineClass }}"></div>
                                         @endif
-                                        <div class="z-10 bg-white dark:bg-gray-800 {{ $currentIndex > $idx ? 'text-white bg-blue-500 border-blue-500' : ($currentIndex === $idx ? 'text-blue-600 border-blue-500 bg-blue-50 dark:bg-blue-900/30 ring-4 ring-blue-100 dark:ring-blue-900/40' : 'text-gray-400 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800') }} border-2 w-7 h-7 flex items-center justify-center rounded-full text-[10px] shadow-sm transition-all duration-300">
+                                        <div class="z-10 relative bg-white dark:bg-gray-800 {{ $circleClass }} border-2 w-7 h-7 flex items-center justify-center rounded-full text-[10px] transition-all duration-300">
                                             <i class="fa-solid {{ $step['icon'] }}"></i>
+                                            
+                                            @if($isFinished)
+                                                <!-- Centang Overlay -->
+                                                <div class="absolute -bottom-1 -right-1.5 bg-white dark:bg-gray-800 rounded-full w-3.5 h-3.5 flex items-center justify-center leading-none">
+                                                    <i class="fa-solid fa-circle-check text-emerald-600 text-[12px]"></i>
+                                                </div>
+                                            @endif
                                         </div>
-                                        <span class="text-[9px] mt-1.5 font-bold uppercase tracking-wider text-center {{ $currentIndex >= $idx ? 'text-blue-700 dark:text-blue-400' : 'text-gray-400' }}">{{ $step['title'] }}</span>
+                                        <span class="text-[9px] mt-1.5 font-bold uppercase tracking-wider text-center {{ $titleClass }}">{{ $step['title'] }}</span>
                                     </div>
                                 @endforeach
                                 </div>
@@ -213,3 +251,4 @@ document.getElementById('modal-complete').addEventListener('click', function(e) 
 });
 </script>
 @endpush
+

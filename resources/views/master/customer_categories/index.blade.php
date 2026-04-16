@@ -14,19 +14,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-    <div class="bg-green-50 border-l-4 border-green-500 p-4 m-6 rounded shadow-sm">
-        <div class="flex">
-            <div class="flex-shrink-0">
-                <i class="fa-solid fa-check-circle text-green-500"></i>
-            </div>
-            <div class="ml-3">
-                <p class="text-sm text-green-700 font-medium">{{ session('success') }}</p>
-            </div>
-        </div>
-    </div>
-    @endif
-
     <div class="p-6">
         <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
@@ -84,3 +71,4 @@
     </div>
 </div>
 @endsection
+

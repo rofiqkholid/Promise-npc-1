@@ -46,10 +46,22 @@ class ProductionTrackingController extends Controller
             'total_events' => \App\Models\NpcEvent::count(),
             'total_pos' => \App\Models\NpcPurchaseOrder::count(),
             'total_parts' => \App\Models\NpcPart::count(),
+            'total_po_close' => \App\Models\NpcPart::where('status', 'CLOSED')->count(),
         ];
 
-        return $this->renderTrackingPage('all', 'Global Tracking', 'fa-globe', 'Pantau seluruh progres PO dan Part')
-                    ->with('metrics', $metrics);
+        $pos = \App\Models\NpcPurchaseOrder::with(['event.masterEvent', 'parts.product'])
+                ->whereHas('parts')
+                ->latest()
+                ->paginate(10);
+
+        return view('tracking.global', [
+            'pos' => $pos,
+            'statusParam' => 'all',
+            'pageTitle' => 'Global Tracking',
+            'pageIcon' => 'fa-globe',
+            'pageDesc' => 'Pantau progres berdasarkan Purchase Order (PO)',
+            'metrics' => $metrics
+        ]);
     }
 
     public function setup(\Illuminate\Http\Request $request)

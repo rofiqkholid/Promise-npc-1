@@ -13,12 +13,6 @@
             <i class="fa-solid fa-plus"></i> Tambah Routing
         </a>
     </div>
-    
-    @if(session('success'))
-    <div class="bg-green-50 border-l-4 border-green-500 p-4 mx-6 mt-4 rounded">
-        <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
-    </div>
-    @endif
 
     <div class="p-6">
         <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
@@ -96,3 +90,4 @@
     @endif
 </div>
 @endsection
+

@@ -14,18 +14,6 @@
         </a>
     </div>
 
-    @if(session('success'))
-    <div class="bg-green-50 border-l-4 border-green-500 p-4 mx-6 mt-4 rounded shadow-sm">
-        <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
-    </div>
-    @endif
-    
-    @if(session('error'))
-    <div class="bg-red-50 border-l-4 border-red-500 p-4 mx-6 mt-4 rounded shadow-sm">
-        <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
-    </div>
-    @endif
-
     <div class="p-6">
         <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
@@ -88,3 +76,4 @@
     @endif
 </div>
 @endsection
+

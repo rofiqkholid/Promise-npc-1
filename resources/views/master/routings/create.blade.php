@@ -61,7 +61,7 @@
                                 <select name="process_ids[]" required class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
                                     <option value="">Pilih Proses</option>
                                     @foreach($processes as $proc)
-                                        <option value="{{ $proc->id }}">{{ $proc->process_name }} ({{ $proc->department ?? 'N/A' }})</option>
+                                        <option value="{{ $proc->id }}">{{ $proc->process_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -158,7 +158,7 @@
         const processOptions = `
             <option value="">Pilih Proses</option>
             @foreach($processes as $proc)
-                <option value="{{ $proc->id }}">{{ $proc->process_name }} ({{ $proc->department ?? 'N/A' }})</option>
+                <option value="{{ $proc->id }}">{{ $proc->process_name }}</option>
             @endforeach
         `;
 
