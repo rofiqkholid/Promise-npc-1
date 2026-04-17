@@ -21,7 +21,6 @@
                     <tr>
                         <th scope="col" class="px-6 py-4 font-semibold w-16 text-center">Urutan</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Item Pengecekan (Check Item)</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Standar</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Metode Uji</th>
                         <th scope="col" class="px-6 py-4 font-semibold w-24">Status</th>
                         <th scope="col" class="px-6 py-4 font-semibold text-right w-24">Aksi</th>
@@ -32,7 +31,6 @@
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group">
                         <td class="px-6 py-4 font-bold text-center text-lg text-indigo-600 dark:text-indigo-400">{{ $cp->point_number }}</td>
                         <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white whitespace-pre-wrap">{{ $cp->check_item }}</td>
-                        <td class="px-6 py-4 text-slate-600 dark:text-slate-400">{{ $cp->standard ?? '-' }}</td>
                         <td class="px-6 py-4 text-slate-600 dark:text-slate-400">{{ $cp->method ?? '-' }}</td>
                         <td class="px-6 py-4">
                             @if($cp->is_active)
@@ -62,7 +60,7 @@
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="6" class="p-12 text-center text-gray-500 dark:text-gray-400">
+                        <td colspan="5" class="p-12 text-center text-gray-500 dark:text-gray-400">
                             <div class="flex flex-col items-center justify-center gap-3">
                                 <i class="fa-regular fa-folder-open text-4xl text-gray-300 dark:text-gray-600"></i>
                                 <p>Belum ada poin checksheet terdaftar.</p>

@@ -57,6 +57,7 @@ class AppServiceProvider extends ServiceProvider
                         (object)['title' => 'Master Proses', 'route' => 'master.processes.index'],
                         (object)['title' => 'Routing per Part ID', 'route' => 'master.routings.index'],
                         (object)['title' => 'Master Poin QA', 'route' => 'master.checkpoints.index'],
+                        (object)['title' => 'Master Checksheet Part', 'route' => 'master.checksheets.index'],
                         (object)['title' => 'Master Grup Pengiriman', 'route' => 'master.delivery-groups.index'],
                         (object)['title' => 'Master Tujuan Kirim', 'route' => 'master.delivery-targets.index'],
                         (object)['title' => 'Master Event Project', 'route' => 'master.events.index'],

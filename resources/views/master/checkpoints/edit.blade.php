@@ -46,13 +46,7 @@
                 </div>
             </div>
 
-            <div class="space-y-1">
-                <label for="standard" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Standar / Tollerance (Opsional)
-                </label>
-                <input type="text" id="standard" name="standard" value="{{ old('standard', $checkpoint->standard) }}"
-                    class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white">
-            </div>
+
             
             <div class="space-y-1">
                 <label for="method" class="block text-sm font-medium text-gray-700 dark:text-gray-300">

@@ -16,7 +16,7 @@ class NpcChecksheetController extends Controller
      */
     public function create(NpcPart $part)
     {
-        $part->load('checkpoints');
+        $part->load('product.mappedCheckpoints.masterCheckpoint');
         $checksheet = $part->checksheet;
         if ($checksheet) {
             $checksheet->load('details');
@@ -28,34 +28,38 @@ class NpcChecksheetController extends Controller
                 'final_result' => 'Pending'
             ]);
 
-            // Use mapped checkpoints if available, otherwise fallback to ALL active master checkpoints
-            $checkpoints = $part->checkpoints->isNotEmpty()
-                ? $part->checkpoints
-                : \App\Models\NpcMasterCheckpoint::where('is_active', true)->orderBy('point_number')->get();
-
-            foreach ($checkpoints as $mappedPoint) {
-                NpcChecksheetDetail::create([
-                    'npc_checksheet_id' => $checksheet->id,
-                    'point_check'       => $mappedPoint->check_item,
-                    'standard'          => $mappedPoint->standard,
-                ]);
-            }
+            $this->generateChecksheetDetails($checksheet, $part);
         } elseif ($checksheet->details->isEmpty()) {
-            // Checksheet exists but has no details — retrofit from master
-            $checkpoints = $part->checkpoints->isNotEmpty()
-                ? $part->checkpoints
-                : \App\Models\NpcMasterCheckpoint::where('is_active', true)->orderBy('point_number')->get();
-
-            foreach ($checkpoints as $mappedPoint) {
-                NpcChecksheetDetail::create([
-                    'npc_checksheet_id' => $checksheet->id,
-                    'point_check'       => $mappedPoint->check_item,
-                    'standard'          => $mappedPoint->standard,
-                ]);
-            }
+            $this->generateChecksheetDetails($checksheet, $part);
         }
 
         return redirect()->route('checksheets.edit', $checksheet->id);
+    }
+
+    private function generateChecksheetDetails(NpcChecksheet $checksheet, NpcPart $part)
+    {
+        if ($part->product && $part->product->mappedCheckpoints->isNotEmpty()) {
+            $checkpoints = $part->product->mappedCheckpoints;
+            foreach ($checkpoints as $mapped) {
+                if ($mapped->masterCheckpoint) {
+                    NpcChecksheetDetail::create([
+                        'npc_checksheet_id' => $checksheet->id,
+                        'point_check'       => $mapped->masterCheckpoint->check_item,
+                        'standard'          => $mapped->custom_standard ?? $mapped->masterCheckpoint->standard,
+                    ]);
+                }
+            }
+        } else {
+            // Fallback to ALL active master checkpoints
+            $checkpoints = \App\Models\NpcMasterCheckpoint::where('is_active', true)->orderBy('point_number')->get();
+            foreach ($checkpoints as $mappedPoint) {
+                NpcChecksheetDetail::create([
+                    'npc_checksheet_id' => $checksheet->id,
+                    'point_check'       => $mappedPoint->check_item,
+                    'standard'          => null,
+                ]);
+            }
+        }
     }
 
     /**
@@ -132,6 +136,28 @@ class NpcChecksheetController extends Controller
                 'mgm_checked_by' => auth()->id() ?? 1, // Fallback if auth missing
                 'mgm_check_date' => Carbon::now()
             ]);
+
+            // Process new history problems
+            if ($request->has('new_history_problems') && is_array($request->new_history_problems)) {
+                $problems = array_filter($request->new_history_problems, function($val) {
+                    return !empty(trim($val));
+                });
+
+                if (!empty($problems) && $part->product) {
+                    $insertData = [];
+                    foreach ($problems as $probDesc) {
+                        $insertData[] = [
+                            'product_id' => $part->product->id,
+                            'problem_description' => trim($probDesc),
+                            'npc_part_id_finder' => $part->id,
+                            'created_by' => auth()->id() ?? 1,
+                            'created_at' => Carbon::now(),
+                            'updated_at' => Carbon::now(),
+                        ];
+                    }
+                    \App\Models\ProductHistoryProblem::insert($insertData);
+                }
+            }
 
             // Finish the part production
             if ($part->status === 'WAITING_MGM_CHECK') {

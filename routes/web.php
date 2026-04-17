@@ -28,6 +28,9 @@ Route::middleware(['auth'])->group(function () {
         // Menambahkan Routings Route tapi dengan parameter part_id khusus
         Route::resource('routings', \App\Http\Controllers\NpcMasterRoutingController::class)->except(['show']);
         
+        // Master Checksheet Mapping based on Product
+        Route::get('product-checksheets', [\App\Http\Controllers\ProductChecksheetSetupController::class, 'index'])->name('checksheets.index');
+
         Route::resource('internal-categories', \App\Http\Controllers\NpcInternalCategoryController::class)->except(['show']);
         Route::resource('customer-categories', \App\Http\Controllers\NpcCustomerCategoryController::class)->except(['show']);
         Route::resource('delivery-groups', \App\Http\Controllers\NpcDeliveryGroupController::class)->except(['show']);
@@ -111,6 +114,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tracking/{part}/deliver', [\App\Http\Controllers\ProductionTrackingController::class, 'deliver'])->name('tracking.deliver');
 
     // Quality Checksheet Routes
+    Route::get('/tracking/products/{product}/checksheet-setup', [\App\Http\Controllers\ProductChecksheetSetupController::class, 'edit'])->name('checksheets.setup.edit');
+    Route::post('/tracking/products/{product}/checksheet-setup', [\App\Http\Controllers\ProductChecksheetSetupController::class, 'update'])->name('checksheets.setup.update');
     Route::get('/tracking/{part}/checksheet/create', [\App\Http\Controllers\NpcChecksheetController::class, 'create'])->name('checksheets.create');
     Route::get('/checksheets/{checksheet}/edit', [\App\Http\Controllers\NpcChecksheetController::class, 'edit'])->name('checksheets.edit');
     Route::put('/checksheets/{checksheet}', [\App\Http\Controllers\NpcChecksheetController::class, 'update'])->name('checksheets.update');

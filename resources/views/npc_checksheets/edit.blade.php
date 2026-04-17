@@ -132,6 +132,42 @@
                 </div>
 
                 <div class="mb-4">
+                    <h3 class="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">History Problem</h3>
+                    <p class="text-xs text-gray-500 mt-1">Daftar masalah yang pernah ditemukan pada Product / Part Number ini di masa lampau.</p>
+                </div>
+
+                <div class="mb-6 p-4 rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/10 dark:border-red-800/50">
+                    <!-- Past History (Read-only) -->
+                    <ul class="list-disc pl-5 space-y-1 mb-4 text-sm text-gray-700 dark:text-gray-300">
+                        @forelse(optional($part->product)->historyProblems ?? [] as $history)
+                            <li class="font-medium text-red-700 dark:text-red-400">
+                                {{ $history->problem_description }}
+                                <span class="text-xs text-gray-500 dark:text-gray-500 ml-2 font-normal italic">
+                                    (Ditemukan pada {{ $history->created_at->format('d M Y') }})
+                                </span>
+                            </li>
+                        @empty
+                            <li class="text-gray-500 italic text-sm">Belum ada riwayat cacat (History Problem) untuk part ini.</li>
+                        @endforelse
+                    </ul>
+
+                    <!-- New History Input -->
+                    <div class="border-t border-red-200 dark:border-red-800/50 pt-4 mt-4">
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Tambah History Problem Baru <span class="text-gray-500 text-xs font-normal">(Isi jika ada temuan cacat di luar checklist)</span>
+                        </label>
+                        <div id="dynamic-history-wrapper" class="space-y-2">
+                            <div class="flex items-center gap-2 history-row">
+                                <input type="text" name="new_history_problems[]" placeholder="Deskripsi masalah baru..." class="flex-1 text-sm border-gray-300 dark:border-gray-600 rounded shadow-sm focus:border-red-500 focus:ring-red-500 dark:bg-gray-800 dark:text-white">
+                                <button type="button" class="px-3 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded transition add-history-btn">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-4 mt-8">
                     <h3 class="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Formulir Validasi Management (24 Point)</h3>
                     <p class="text-xs text-gray-500 mt-1">Hanya menampilkan poin-poin yang telah di-mapping ke part ini saat pendaftaran PO.</p>
                 </div>
@@ -220,6 +256,31 @@
                 } else {
                     fileNameDisplay.textContent = 'PDF, PNG, JPG up to 10MB';
                     fileNameDisplay.classList.remove('text-blue-600', 'font-medium');
+                }
+            });
+        }
+
+        // Dynamic History Problem Inputs
+        const historyWrapper = document.getElementById('dynamic-history-wrapper');
+        if (historyWrapper) {
+            historyWrapper.addEventListener('click', function(e) {
+                const addBtn = e.target.closest('.add-history-btn');
+                const removeBtn = e.target.closest('.remove-history-btn');
+                
+                if (addBtn) {
+                    const newRow = document.createElement('div');
+                    newRow.className = 'flex items-center gap-2 history-row mt-2';
+                    newRow.innerHTML = `
+                        <input type="text" name="new_history_problems[]" placeholder="Deskripsi masalah baru..." class="flex-1 text-sm border-gray-300 dark:border-gray-600 rounded shadow-sm focus:border-red-500 focus:ring-red-500 dark:bg-gray-800 dark:text-white">
+                        <button type="button" class="px-3 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/40 dark:hover:bg-red-800/60 text-red-700 dark:text-red-400 rounded transition remove-history-btn">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+                    `;
+                    historyWrapper.appendChild(newRow);
+                }
+                
+                if (removeBtn) {
+                    removeBtn.closest('.history-row').remove();
                 }
             });
         }

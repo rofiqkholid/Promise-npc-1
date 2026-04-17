@@ -11,8 +11,23 @@ class Product extends Model
 
     protected $table = 'products';
 
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id');
+    }
+
     public function vehicleModel()
     {
         return $this->belongsTo(VehicleModel::class, 'model_id');
+    }
+
+    public function mappedCheckpoints()
+    {
+        return $this->hasMany(ProductCheckpoint::class, 'product_id');
+    }
+
+    public function historyProblems()
+    {
+        return $this->hasMany(ProductHistoryProblem::class, 'product_id')->orderBy('created_at', 'desc');
     }
 }
