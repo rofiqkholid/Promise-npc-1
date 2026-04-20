@@ -3,6 +3,13 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\URL; // Tambahan penting
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Models\Menu;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,12 +26,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \Illuminate\Support\Facades\View::composer(['layouts.header', 'components.stock-alert-modal'], function ($view) {
+        if (config('app.url')) {
+            URL::forceRootUrl(config('app.url'));
+        }
+
+        if (str_contains(config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
+
+        View::composer(['layouts.header', 'components.stock-alert-modal'], function ($view) {
             $view->with('stockAlerts', collect([]))
-                 ->with('stockAlertAutoOpen', false);
+                ->with('stockAlertAutoOpen', false);
         });
 
-        \Illuminate\Support\Facades\View::composer('layouts.sidebar', function ($view) {
+        View::composer('layouts.sidebar', function ($view) {
             $sidebarMenus = [
                 (object)[
                     'title' => 'Dashboard',
@@ -67,7 +82,7 @@ class AppServiceProvider extends ServiceProvider
             ];
 
             $view->with('sidebarMenus', collect($sidebarMenus))
-                 ->with('userRoleCode', 'admin');
+                ->with('userRoleCode', 'admin');
         });
     }
 }

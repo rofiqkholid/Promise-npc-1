@@ -1,17 +1,35 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
-Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login_post');
-Route::get('/forget-password', [AuthController::class, 'forgetPassword'])->name('forget_password');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/check-session-status', function () {
+    return response()->json(['active' => Auth::check()]);
+})->name('session.check');
+// Route for redirecting to Central SSO Portal
+Route::get('/login', function () {
+    return redirect(env('PORTAL_LOGIN_URL', 'https://promise.summitadyawinsa.co.id/login'));
+})->name('login');
+
+Route::get('/', function () {
+    return redirect()->route('dashboard');
+});
+
+Route::post('/logout', function () {
+    Auth::logout();
+    session()->invalidate();
+    return redirect(env('PORTAL_LOGIN_URL', 'https://promise.summitadyawinsa.co.id/login'));
+})->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
-    
+
     // Dummy Profile Route
-    Route::get('/profile', function () { return 'Profile Page'; })->name('profile.index');
+    Route::get('/profile', function () {
+        return 'Profile Page';
+    })->name('profile.index');
 
     // NPC Events Master Route
     Route::get('/events/import', [\App\Http\Controllers\NpcEventController::class, 'importForm'])->name('events.import');
@@ -27,7 +45,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('departments', \App\Http\Controllers\NpcMasterDepartmentController::class)->except(['show']);
         // Menambahkan Routings Route tapi dengan parameter part_id khusus
         Route::resource('routings', \App\Http\Controllers\NpcMasterRoutingController::class)->except(['show']);
-        
+
         // Master Checksheet Mapping based on Product
         Route::get('product-checksheets', [\App\Http\Controllers\ProductChecksheetSetupController::class, 'index'])->name('checksheets.index');
 
@@ -39,9 +57,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Dummy API Routes for Dashboard Filters
     Route::prefix('api')->name('api.')->group(function () {
-        Route::post('/data/models', function (\Illuminate\Http\Request $request) { 
+        Route::post('/data/models', function (\Illuminate\Http\Request $request) {
             $models = \App\Models\VehicleModel::where('customer_id', $request->customer_id)->get(['id', 'name as text']);
-            return response()->json(['results' => $models]); 
+            return response()->json(['results' => $models]);
         })->name('data.models');
 
         Route::post('/data/master-events', function (\Illuminate\Http\Request $request) {
@@ -51,44 +69,48 @@ Route::middleware(['auth'])->group(function () {
                 ->get(['id', 'name as text']);
             return response()->json(['results' => $events]);
         })->name('data.master-events');
-        
+
         Route::post('/data/products', function (\Illuminate\Http\Request $request) {
             $query = \App\Models\Product::with('vehicleModel.customer');
-            
+
             // Filter by model_id if provided
             if ($request->filled('model_id')) {
                 $query->where('model_id', $request->model_id);
             }
 
             if ($request->filled('search')) {
-                $query->where(function($q) use ($request) {
-                    $q->where('part_no', 'like', '%'.$request->search.'%')
-                      ->orWhere('part_name', 'like', '%'.$request->search.'%');
+                $query->where(function ($q) use ($request) {
+                    $q->where('part_no', 'like', '%' . $request->search . '%')
+                        ->orWhere('part_name', 'like', '%' . $request->search . '%');
                 });
             }
             // Tambahkan order by untuk relevansi
             $query->orderBy('part_no', 'asc');
-            
+
             $products = $query->limit(30)->get();
-            
+
             // Include default process_name from NpcMasterRouting mapping
             foreach ($products as $prod) {
                 $routing = \App\Models\NpcMasterRouting::with('process')
-                            ->where('part_id', $prod->id)
-                            ->orderBy('sequence_order', 'asc')
-                            ->first();
-                            
+                    ->where('part_id', $prod->id)
+                    ->orderBy('sequence_order', 'asc')
+                    ->first();
+
                 $prod->process_name = ($routing && $routing->process) ? $routing->process->process_name : null;
                 $prod->model_name = $prod->vehicleModel ? $prod->vehicleModel->name : 'N/A';
                 $prod->customer_name = ($prod->vehicleModel && $prod->vehicleModel->customer) ? $prod->vehicleModel->customer->name : 'N/A';
             }
-            
+
             return response()->json(['results' => $products]);
         })->name('data.products');
 
-        Route::post('/data/customers', function () { return response()->json(['results' => []]); })->name('data.customers');
-        Route::get('/data/statuses', function () { return response()->json(['results' => []]); })->name('data.statuses');
-        
+        Route::post('/data/customers', function () {
+            return response()->json(['results' => []]);
+        })->name('data.customers');
+        Route::get('/data/statuses', function () {
+            return response()->json(['results' => []]);
+        })->name('data.statuses');
+
         Route::post('/data/customer-categories', function (\Illuminate\Http\Request $request) {
             $categories = \App\Models\NpcCustomerCategory::where('customer_id', $request->customer_id)->get(['id', 'name as text']);
             return response()->json(['results' => $categories]);
@@ -107,7 +129,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tracking/mgm', [\App\Http\Controllers\ProductionTrackingController::class, 'mgm'])->name('tracking.mgm');
     Route::get('/tracking/stock', [\App\Http\Controllers\ProductionTrackingController::class, 'stock'])->name('tracking.stock');
     Route::get('/tracking/history', [\App\Http\Controllers\ProductionTrackingController::class, 'history'])->name('tracking.history');
-    
+
     // Status update and action routes
     Route::post('/tracking/{part}/status', [\App\Http\Controllers\ProductionTrackingController::class, 'updateStatus'])->name('tracking.status.update');
     Route::post('/tracking/{part}/process-complete', [\App\Http\Controllers\ProductionTrackingController::class, 'completeProcess'])->name('tracking.process.complete');

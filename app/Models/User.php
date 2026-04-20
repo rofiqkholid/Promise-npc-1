@@ -47,6 +47,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function getAuthIdentifierName()
+    {
+        return 'nik';
+    }
+
     public function roles()
     {
         return $this->belongsToMany(\App\Models\InventoryModel\InvRole::class, 'inv_user_roles', 'user_id', 'role_id');
