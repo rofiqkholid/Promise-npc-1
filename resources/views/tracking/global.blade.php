@@ -108,9 +108,27 @@
                                         $pCount++;
                                     }
                                     
-                                    if (!in_array($p->status, ['FINISHED', 'CLOSED']) && \Carbon\Carbon::parse($p->delivery_date)->endOfDay()->isPast()) {
-                                        $isOverdueAny = true;
-                                    }
+                                    if (!in_array($p->status, ['FINISHED', 'CLOSED'])) {
+    $isDeliveryLate = \Carbon\Carbon::parse($p->delivery_date)->endOfDay()->isPast();
+    
+    // Cek apakah ada sub-proses yang terlambat di tabel npc_part_processes
+    $hasLateSubProc = false;
+    if ($p->processes) {
+        foreach($p->processes as $proc) {
+            if (empty($proc->actual_completion_date) && !empty($proc->target_completion_date)) {
+                if (\Carbon\Carbon::today()->greaterThan(\Carbon\Carbon::parse($proc->target_completion_date)->startOfDay())) {
+                    $hasLateSubProc = true; 
+                    break;
+                }
+            }
+        }
+    }
+    
+    // Overdue jika delivery date lewat ATAU ada target proses yang terlewat
+    if ($isDeliveryLate || $hasLateSubProc) {
+        $isOverdueAny = true;
+    }
+}
                                 }
                                 $reachedCounts[$idx] = $rCount;
                                 $passedCounts[$idx] = $pCount;
@@ -307,10 +325,29 @@
                                                                 ['icon' => 'fa-boxes-stacked', 'title' => 'Stok'],
                                                             ];
                                             
-                                                            $pIndex = array_search($part->status, $phases);
-                                                            if ($pIndex === false) $pIndex = -1;
-                                                            if ($part->status === 'CLOSED') $pIndex = 5;
-                                                            $pOverdue = \Carbon\Carbon::parse($part->delivery_date)->endOfDay()->isPast() && !in_array($part->status, ['FINISHED', 'CLOSED']);
+                                                           $pIndex = array_search($part->status, $phases);
+if ($pIndex === false) $pIndex = -1;
+if ($part->status === 'CLOSED') $pIndex = 5;
+
+// 1. Cek keterlambatan dari target pengiriman akhir
+$isDeliveryOverdue = \Carbon\Carbon::parse($part->delivery_date)->endOfDay()->isPast();
+
+// 2. Cek keterlambatan spesifik per sub-proses (Tabel npc_part_processes)
+$hasLateProcess = false;
+if ($part->processes) {
+    foreach($part->processes as $proc) {
+        if (empty($proc->actual_completion_date) && !empty($proc->target_completion_date)) {
+            $targetDate = \Carbon\Carbon::parse($proc->target_completion_date)->startOfDay();
+            if (\Carbon\Carbon::today()->greaterThan($targetDate)) {
+                $hasLateProcess = true;
+                break;
+            }
+        }
+    }
+}
+
+// 3. Gabungkan logika: Node merah jika target akhir lewat ATAU target proses lewat
+$pOverdue = ($isDeliveryOverdue || $hasLateProcess) && !in_array($part->status, ['FINISHED', 'CLOSED']);
                                                         @endphp
                                                         <div class="flex items-start w-full min-w-[200px] pt-1">
                                                             @foreach($stepsArr as $sIdx => $stepObj)
@@ -388,18 +425,52 @@
                                                                 <div class="flex flex-wrap items-center gap-x-1 gap-y-2 mt-1 relative z-10 w-full overflow-x-auto pb-1">
                                                                     @foreach($part->processes->sortBy('sequence_order')->values() as $pIdx => $pProc)
                                                                         @php
-                                                                            $spStatus = $pProc->status; 
-                                                                            $spIcon = "fa-cogs";
-                                                                            if ($spStatus === 'FINISHED' || $pProc->actual_completion_date) {
-                                                                                $spBg = "bg-emerald-100 text-emerald-700 border-emerald-300";
-                                                                                $spIcon = "fa-check";
-                                                                            } elseif ($pProc->id === $activeProcId) {
-                                                                                $spBg = "bg-amber-100/80 text-amber-700 border-amber-300 ring-1 ring-amber-300 shadow-sm";
-                                                                                $spIcon = "fa-spinner fa-spin";
-                                                                            } else {
-                                                                                $spBg = "bg-gray-100 text-gray-500 border-gray-200 opacity-70";
-                                                                                $spIcon = "fa-clock";
-                                                                            }
+                                                                           $spStatus = $pProc->status; 
+    $spIcon = "fa-cogs";
+
+    // Kalkulasi apakah node ini Overdue (baik saat masih in-progress maupun setelah selesai)
+    $isSpLate = false;
+    if (!empty($pProc->target_completion_date)) {
+        $targetDate = \Carbon\Carbon::parse($pProc->target_completion_date)->startOfDay();
+        
+        if (!empty($pProc->actual_completion_date)) {
+            // Case 1: SUDAH SELESAI. Cek apakah tanggal aktual melebihi target
+            $actualDate = \Carbon\Carbon::parse($pProc->actual_completion_date)->startOfDay();
+            if ($actualDate->greaterThan($targetDate)) {
+                $isSpLate = true;
+            }
+        } else {
+            // Case 2: BELUM SELESAI. Cek apakah hari ini melebihi target
+            if (\Carbon\Carbon::today()->greaterThan($targetDate)) {
+                $isSpLate = true;
+            }
+        }
+    }
+
+    // Penentuan Render Visual
+    if ($spStatus === 'FINISHED' || !empty($pProc->actual_completion_date)) {
+        if ($isSpLate) {
+            // Render jika Selesai TAPI TERLAMBAT (Sequence 2)
+            $spBg = "bg-red-100 text-red-700 border-red-300 ring-1 ring-red-200";
+            $spIcon = "fa-check"; // Tetap icon check karena sudah selesai
+        } else {
+            // Render jika Selesai TEPAT WAKTU (Sequence 1)
+            $spBg = "bg-emerald-100 text-emerald-700 border-emerald-300";
+            $spIcon = "fa-check";
+        }
+    } elseif ($pProc->id === $activeProcId) {
+        // Render MERAH jika proses aktif ini telat, AMBER jika masih aman
+        $spBg = $isSpLate 
+            ? "bg-red-100/80 text-red-700 border-red-300 ring-1 ring-red-300 shadow-sm" 
+            : "bg-amber-100/80 text-amber-700 border-amber-300 ring-1 ring-amber-300 shadow-sm";
+        $spIcon = "fa-spinner fa-spin";
+    } else {
+        // Render proses antrean yang belum mulai
+        $spBg = $isSpLate
+            ? "bg-red-50 text-red-500 border-red-200 opacity-80"
+            : "bg-gray-100 text-gray-500 border-gray-200 opacity-70";
+        $spIcon = "fa-clock";
+    }
                                                                         @endphp
                                                                         <div class="flex items-center shrink-0">
                                                                             <div class="flex items-center gap-1.5 px-2 py-1 rounded text-[9px] font-bold border {{ $spBg }} shadow-sm">
