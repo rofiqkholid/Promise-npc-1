@@ -11,23 +11,11 @@ class ProductionTrackingController extends Controller
         $query = \App\Models\NpcPart::with(['purchaseOrder.event.customerCategory', 'purchaseOrder.event.deliveryGroup', 'purchaseOrder.event.masterEvent', 'processes.process', 'processes.department', 'checkpoints', 'checksheet', 'product.vehicleModel.customer'])->latest();
 
         if ($statusParam !== 'all') {
-            // "Kamar Task" logic: show current status + ALL previous statuses as "Upcoming"
-            switch($statusParam) {
-                case 'WAITING_DEPT_CONFIRM':
-                    $query->whereIn('status', ['PO_REGISTERED', 'WAITING_DEPT_CONFIRM']);
-                    break;
-                case 'WAITING_QE_CHECK':
-                    $query->whereIn('status', ['PO_REGISTERED', 'WAITING_DEPT_CONFIRM', 'WAITING_QE_CHECK']);
-                    break;
-                case 'WAITING_MGM_CHECK':
-                    $query->whereIn('status', ['PO_REGISTERED', 'WAITING_DEPT_CONFIRM', 'WAITING_QE_CHECK', 'WAITING_MGM_CHECK']);
-                    break;
-                case 'FINISHED':
-                    $query->whereIn('status', ['PO_REGISTERED', 'WAITING_DEPT_CONFIRM', 'WAITING_QE_CHECK', 'WAITING_MGM_CHECK', 'FINISHED']);
-                    break;
-                default:
-                    $query->where('status', $statusParam);
-                    break;
+            if ($statusParam === 'CLOSED') {
+                // Halaman History khusus untuk yang sudah CLOSED
+                $query->where('status', 'CLOSED');
+            } else {
+                // Tampilkan SEMUA task (termasuk yang sudah CLOSED) agar riwayat tidak hilang dari Stock/tahap lain
             }
         }
         

@@ -9,7 +9,7 @@
         <div class="w-16 h-16 bg-primary-50 dark:bg-primary-900/20 rounded-full flex items-center justify-center text-primary-600 dark:text-primary-400 mx-auto mb-4 text-2xl">
             <i class="fa-solid fa-gauge-high"></i>
         </div>
-        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Welcome to Promise NPC</h2>
+        <h2 class="text-2xl font-bold text-slate-800 dark:text-white mb-2">Coming Soon</h2>
         <p class="text-slate-500 dark:text-gray-400">Dashboard content is under development.</p>
     </div>
 </div>

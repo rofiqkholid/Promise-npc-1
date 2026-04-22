@@ -88,7 +88,7 @@
                         
                         {{-- Approval Info --}}
                         <td class="px-6 py-4 align-top">
-                            @if($part->status === 'FINISHED')
+                            @if(in_array($part->status, ['FINISHED', 'CLOSED']))
                                 <div class="flex flex-col gap-1.5 mt-1">
                                     <span class="text-[11px] font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1.5 line-through decoration-slate-300 opacity-60">
                                         <i class="fa-solid fa-check text-green-500"></i> Produksi Selesai
@@ -114,7 +114,11 @@
                         {{-- Aksi --}}
                         <td class="px-6 py-4 text-right pointer-events-auto">
                             <div class="flex flex-col items-end gap-2 text-sm">
-                            @if($part->status !== 'FINISHED')
+                            @if($part->status === 'CLOSED')
+                                <div class="px-3 py-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded text-[10px] text-blue-600 dark:text-blue-400 italic flex items-center gap-1.5 cursor-not-allowed font-bold">
+                                    <i class="fa-solid fa-check-double text-[10px]"></i> Sudah Terkirim (Closed)
+                                </div>
+                            @elseif($part->status !== 'FINISHED')
                                 <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center gap-1.5 cursor-not-allowed">
                                     <i class="fa-solid fa-lock text-[8px]"></i> Menunggu Proses Selesai
                                 </div>

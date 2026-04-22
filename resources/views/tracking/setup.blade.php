@@ -29,7 +29,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($parts as $part)
-                    <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group text-sm">
+                    <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group text-sm {{ $part->status !== 'PO_REGISTERED' ? 'opacity-[0.65] grayscale-[0.3] pointer-events-none' : '' }}">
                         <td class="px-6 py-4">
                             <div class="text-blue-600 dark:text-blue-400 font-bold text-sm">{{ optional($part->purchaseOrder)->po_no }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">{{ optional(optional(optional($part->purchaseOrder)->event)->masterEvent)->name ?? optional(optional(optional($part->purchaseOrder)->event)->customerCategory)->name ?? 'Unknown Event' }}</div>
@@ -60,10 +60,16 @@
                                 </div>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-right align-middle">
-                            <a href="{{ route('parts.routing.edit', $part->id) }}" class="inline-flex px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded shadow-sm font-medium transition items-center gap-2 text-xs" style="background-color: #4f46e5;">
-                                <i class="fa-solid fa-route"></i> Set Routing Schedule
-                            </a>
+                        <td class="px-6 py-4 text-right align-middle pointer-events-auto">
+                            @if($part->status === 'PO_REGISTERED')
+                                <a href="{{ route('parts.routing.edit', $part->id) }}" class="inline-flex px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded shadow-sm font-medium transition items-center gap-2 text-xs" style="background-color: #4f46e5;">
+                                    <i class="fa-solid fa-route"></i> Set Routing Schedule
+                                </a>
+                            @else
+                                <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed">
+                                    <i class="fa-solid fa-check text-[8px]"></i> Sudah di Set
+                                </div>
+                            @endif
                         </td>
                     </tr>
                     @empty
