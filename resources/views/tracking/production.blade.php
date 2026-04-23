@@ -28,7 +28,7 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($parts as $part)
-                    <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition text-sm {{ $part->status !== 'WAITING_DEPT_CONFIRM' ? 'opacity-[0.65] grayscale-[0.3] pointer-events-none' : '' }}">
+                    <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition text-sm">
                         <td class="px-6 py-4">
                             <div class="text-gray-800 dark:text-gray-200 font-bold text-sm">{{ optional($part->product)->part_no }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 font-medium mb-2">{{ optional($part->product)->part_name }}</div>
@@ -99,19 +99,46 @@
                                 @if(isset($activeProcess))
                                     @php
                                         $isLast = $part->processes->where('status', 'WAITING')->count() === 1;
+                                        $hasFinishedProcess = $part->processes->where('status', 'FINISHED')->count() > 0;
                                     @endphp
                                     <button type="button"
                                         onclick="openCompleteModal({{ $part->id }}, {{ $activeProcess->id }}, '{{ optional($activeProcess->process)->process_name }}', '{{ optional($activeProcess->department)->name }}', '{{ route('tracking.process.complete', $part->id) }}')"
-                                        class="inline-flex px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded shadow-sm font-bold transition items-center gap-2 text-[11px] mb-2" style="background-color: #f59e0b;">
+                                        class="inline-flex px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded shadow-sm font-bold transition items-center gap-2 text-[11px] mb-2 w-full justify-center" style="background-color: #f59e0b;">
                                         Selesaikan {{ optional($activeProcess->process)->process_name }} <i class="fa-solid fa-forward-step"></i>
                                     </button>
-                                    <p class="text-[9px] text-gray-400 italic text-right max-w-[150px] mx-auto float-right text-balance">
+                                    @if($hasFinishedProcess)
+                                        <form action="{{ route('tracking.process.rollback', $part->id) }}" method="POST">
+                                            @csrf
+                                            <button type="submit" class="text-[10px] text-red-500 hover:text-red-700 flex items-center justify-end w-full gap-1 font-semibold transition mb-2" onclick="return confirm('Yakin ingin rollback proses sebelumnya?')">
+                                                <i class="fa-solid fa-rotate-left"></i> Rollback Proses Sebelumnya
+                                            </button>
+                                        </form>
+                                    @endif
+                                    <p class="text-[9px] text-gray-400 italic text-right max-w-[150px] mx-auto float-right text-balance mt-1">
                                         {{ $isLast ? 'Klik jika selesai untuk menyerahkan ke QC.' : 'Klik untuk pindah ke departemen selanjutnya.' }}
                                     </p>
                                 @endif
+                            @elseif($part->status === 'WAITING_QE_CHECK')
+                                @php
+                                    $checksheet = $part->checksheet;
+                                    $canRollback = !$checksheet || !$checksheet->qe_checked_by;
+                                @endphp
+                                <div class="flex flex-col items-end gap-2">
+                                    <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed w-full">
+                                        <i class="fa-solid fa-check-double text-[8px] text-green-500"></i> Diserahkan ke QC
+                                    </div>
+                                    @if($canRollback)
+                                    <form action="{{ route('tracking.process.rollback', $part->id) }}" method="POST">
+                                        @csrf
+                                        <button type="submit" class="text-[10px] text-red-500 hover:text-red-700 flex items-center gap-1 font-semibold transition mt-1" onclick="return confirm('Yakin ingin menarik kembali part ini dari QC ke tahap Produksi?')">
+                                            <i class="fa-solid fa-rotate-left"></i> Rollback Produksi
+                                        </button>
+                                    </form>
+                                    @endif
+                                </div>
                             @else
                                 <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed">
-                                    <i class="fa-solid fa-lock text-[8px]"></i> Sudah Selesai
+                                    <i class="fa-solid fa-check-double text-[8px] text-green-500"></i> Sudah Selesai
                                 </div>
                             @endif
                         </td>

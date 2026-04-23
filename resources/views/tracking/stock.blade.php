@@ -51,7 +51,7 @@
                         $categoryName = optional(optional(optional($part->purchaseOrder)->event)->customerCategory)->name ?? '-';
                         $grName = optional(optional(optional($part->purchaseOrder)->event)->deliveryGroup)->name ?? '-';
                     @endphp
-                    <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition text-sm {{ !in_array($part->status, ['FINISHED', 'OUTSTANDING']) ? 'opacity-[0.65] grayscale-[0.3] pointer-events-none' : '' }}">
+                    <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition text-sm">
                         
                         {{-- Tujuan Kirim --}}
                         <td class="px-6 py-4">

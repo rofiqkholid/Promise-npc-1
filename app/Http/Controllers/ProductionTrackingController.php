@@ -159,6 +159,91 @@ class ProductionTrackingController extends Controller
         return back()->with('success', 'Proses selesai! Berlajut ke departemen berikutnya.');
     }
 
+    public function rollbackSetup(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)
+    {
+        // Cek apakah part ada di WAITING_DEPT_CONFIRM
+        if ($part->status !== 'WAITING_DEPT_CONFIRM') {
+            return back()->with('error', 'Hanya bisa rollback part yang berstatus menunggu produksi.');
+        }
+
+        // Cek apakah ada proses yang sudah selesai
+        $hasFinishedProcess = \App\Models\NpcPartProcess::where('npc_part_id', $part->id)
+            ->where('status', 'FINISHED')
+            ->exists();
+            
+        if ($hasFinishedProcess) {
+            return back()->with('error', 'Tidak bisa rollback ke Setup karena sudah ada departemen yang menyelesaikan proses produksi.');
+        }
+
+        // Hapus semua proses yang masih WAITING karena akan di-setup ulang
+        $part->processes()->delete();
+
+        // Kembalikan ke PO_REGISTERED
+        $part->update([
+            'status' => 'PO_REGISTERED',
+            'qc_target_date' => null,
+            'mgm_target_date' => null
+        ]);
+
+        return back()->with('success', 'Berhasil membatalkan (rollback) setup routing. Part kembali ke antrean setup.');
+    }
+
+    public function rollbackProcess(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)
+    {
+        // Temukan proses terakhir yang sudah FINISHED
+        $lastFinishedProcess = \App\Models\NpcPartProcess::where('npc_part_id', $part->id)
+            ->where('status', 'FINISHED')
+            ->orderBy('sequence_order', 'desc')
+            ->first();
+
+        if (!$lastFinishedProcess) {
+            return back()->with('error', 'Tidak ada proses yang bisa di-rollback.');
+        }
+
+        // Cek apakah sudah diproses oleh departemen selanjutnya (misal QC sudah isi checksheet)
+        if (!in_array($part->status, ['WAITING_DEPT_CONFIRM', 'WAITING_QE_CHECK'])) {
+             return back()->with('error', 'Tidak bisa rollback karena sudah diproses oleh tahap selanjutnya (QC/MGM/Stock).');
+        }
+        
+        if ($part->status === 'WAITING_QE_CHECK') {
+            // Cek apakah QC sudah mulai mengisi checksheet
+            $checksheet = $part->checksheet;
+            if ($checksheet && $checksheet->qe_checked_by) {
+                return back()->with('error', 'Tidak bisa rollback karena QC sudah mulai memeriksa (Checksheet terisi).');
+            }
+        }
+
+        // Hapus bukti foto jika ada
+        if ($lastFinishedProcess->photo_proof) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($lastFinishedProcess->photo_proof);
+        }
+
+        // Kembalikan status proses
+        $lastFinishedProcess->update([
+            'status' => 'WAITING',
+            'actual_completion_date' => null,
+            'actual_qty' => null,
+            'photo_proof' => null
+        ]);
+
+        // Kembalikan status part jika sebelumnya sudah dilempar ke QC
+        if ($part->status === 'WAITING_QE_CHECK') {
+            $part->update([
+                'status' => 'WAITING_DEPT_CONFIRM',
+                'actual_completion_date' => null,
+                'production_notes' => null,
+            ]);
+            
+            // Hapus checksheet pending jika ada
+            if ($part->checksheet) {
+                $part->checksheet->details()->delete();
+                $part->checksheet->delete();
+            }
+        }
+
+        return back()->with('success', 'Berhasil rollback proses ' . optional($lastFinishedProcess->process)->process_name . '.');
+    }
+
     public function deliver(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)
     {
         $request->validate([
