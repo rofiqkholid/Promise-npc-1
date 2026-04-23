@@ -30,4 +30,9 @@ class Product extends Model
     {
         return $this->hasMany(ProductHistoryProblem::class, 'product_id')->orderBy('created_at', 'desc');
     }
+
+    public function docPackage()
+    {
+        return $this->hasOne(DocPackage::class, 'product_id')->where('is_active', true)->latest('id');
+    }
 }

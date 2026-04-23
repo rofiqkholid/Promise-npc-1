@@ -86,20 +86,7 @@
                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
                 </div>
 
-                <div class="space-y-1">
-                    <label for="process" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Process (Routing) <span class="text-red-500">*</span>
-                    </label>
-                    <select id="process" name="process" required
-                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
-                        <option value="">Pilih Alur Proses</option>
-                        @foreach($processes as $proc)
-                            <option value="{{ $proc->process_name }}" {{ old('process') == $proc->process_name ? 'selected' : '' }}>
-                                {{ $proc->process_name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+
 
             </div>
 
@@ -150,16 +137,7 @@
                             searchInput.value = product.part_no;
                             searchResults.classList.add('hidden');
 
-                            // Otomatis pilih process routing jika tersedia dari master_routings
-                            if (product.process_name) {
-                                const processSelect = document.getElementById('process');
-                                if (processSelect) {
-                                    let optionExists = Array.from(processSelect.options).some(opt => opt.value === product.process_name);
-                                    if (optionExists) {
-                                        processSelect.value = product.process_name;
-                                    }
-                                }
-                            }
+
                         });
                         searchResults.appendChild(div);
                     });

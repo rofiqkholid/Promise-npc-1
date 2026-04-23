@@ -19,6 +19,14 @@ class ProductionTrackingController extends Controller
             }
         }
         
+        if (request()->has('filter') && request('filter') === 'ecn_updated') {
+            $query->whereNotIn('status', ['FINISHED', 'CLOSED'])
+                  ->whereNotNull('part_revision_id')
+                  ->whereHas('product.docPackage', function ($q) {
+                      $q->whereColumn('doc_packages.current_revision_id', '!=', 'npc_parts.part_revision_id');
+                  });
+        }
+        
         return $query;
     }
 
@@ -37,10 +45,10 @@ class ProductionTrackingController extends Controller
             'total_po_close' => \App\Models\NpcPart::where('status', 'CLOSED')->count(),
         ];
 
-        $pos = \App\Models\NpcPurchaseOrder::with(['event', 'parts.product'])
-                ->whereHas('parts')
-                ->latest()
-                ->paginate(10);
+        $query = \App\Models\NpcPurchaseOrder::with(['event', 'parts.product'])
+                ->whereHas('parts');
+        
+        $pos = $query->latest()->paginate(10);
 
         return view('tracking.global', [
             'pos' => $pos,

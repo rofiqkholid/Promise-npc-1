@@ -92,6 +92,9 @@
 
         <!-- Global Stock Alert Modal -->
         @include('components.stock-alert-modal')
+
+        <!-- Global ECN Alert Modal -->
+        @include('components.ecn-alert-modal')
     </div>
 
     <div id="toast-container" class="fixed top-5 right-5 z-[100] flex flex-col gap-2"></div>

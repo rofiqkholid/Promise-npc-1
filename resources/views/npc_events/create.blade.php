@@ -239,29 +239,19 @@
         const emptyMsg = document.getElementById('empty_parts_msg');
         let partIndex = 0;
 
-        const masterCheckpoints = @json($checkpoints);
-
         addPartBtn.addEventListener('click', function() {
             if(emptyMsg) emptyMsg.style.display = 'none';
-            
-            // Generate HTML for Checkpoints
-            let checkpointsHtml = '';
-            masterCheckpoints.forEach(cp => {
-                checkpointsHtml += `
-                    <label class="inline-flex items-center bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 px-3 py-2 rounded cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-600 transition">
-                        <input type="checkbox" name="parts[${partIndex}][checkpoints][]" value="${cp.id}" class="rounded text-blue-600 focus:ring-blue-500 bg-white border-gray-300 dark:border-gray-500 dark:bg-gray-800 dark:checked:bg-blue-600 w-4 h-4" checked>
-                        <span class="ml-2 text-xs text-gray-700 dark:text-gray-300 font-medium truncate w-32" title="${cp.check_item}">${cp.check_item}</span>
-                    </label>
-                `;
-            });
 
             const template = `
-                <div class="part-item bg-slate-50 dark:bg-gray-800/80 p-4 rounded-lg border border-slate-200 dark:border-gray-700 relative">
-                    <button type="button" class="remove-part absolute top-3 right-3 text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30 p-1.5 rounded transition">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                <div class="part-item bg-slate-50 dark:bg-gray-800/80 p-4 rounded-lg border border-slate-200 dark:border-gray-700">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider"><i class="fa-solid fa-box-open mr-1"></i> Item Part</span>
+                        <button type="button" class="remove-part text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 dark:hover:bg-red-900/30 p-1.5 rounded transition flex items-center justify-center" title="Hapus Part">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div class="space-y-1">
                             <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Nomor PO</label>
                             <input type="text" name="parts[${partIndex}][po_no]" required class="w-full text-sm rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="No. PO">
@@ -280,13 +270,6 @@
                         <div class="space-y-1">
                             <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Qty</label>
                             <input type="number" name="parts[${partIndex}][qty]" min="1" value="1" required class="w-full text-sm rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
-                        </div>
-                    </div>
-                    
-                    <div class="pt-3 border-t border-slate-200 dark:border-gray-700">
-                        <p class="text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">Mapping Master Checkpoint MGM:</p>
-                        <div class="flex flex-wrap gap-2">
-                            ${checkpointsHtml}
                         </div>
                     </div>
                 </div>

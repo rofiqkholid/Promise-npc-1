@@ -33,10 +33,7 @@ class NpcEventController extends Controller
         // Ambil data Grup Pengiriman
         $delivery_groups = NpcDeliveryGroup::orderBy('name')->get();
 
-        // Ambil data Master Checkpoint untuk Mapping MGM per Part
-        $checkpoints = \App\Models\NpcMasterCheckpoint::where('is_active', true)->orderBy('point_number')->get();
-
-        return view('npc_events.create', compact('customers', 'delivery_targets', 'delivery_groups', 'checkpoints'));
+        return view('npc_events.create', compact('customers', 'delivery_targets', 'delivery_groups'));
     }
 
     public function store(Request $request)
@@ -57,8 +54,7 @@ class NpcEventController extends Controller
             ],
             'parts.*.part_name' => 'nullable|string',
             'parts.*.qty' => 'required|integer|min:1',
-            'parts.*.delivery_date' => 'required|date',
-            'parts.*.checkpoints' => 'nullable|array'
+            'parts.*.delivery_date' => 'required|date'
         ], [
             'parts.*.part_no.exists' => 'Salah satu Part Number yang Anda masukkan tidak valid atau bukan merupakan part dari Model tersebut.'
         ]);
@@ -71,7 +67,7 @@ class NpcEventController extends Controller
 
         foreach ($request->parts as $partData) {
             // Coba cari produk berdasarkan part_no
-            $product = \App\Models\Product::where('part_no', $partData['part_no'])->first();
+            $product = \App\Models\Product::with('docPackage')->where('part_no', $partData['part_no'])->first();
             $processName = null;
             $departmentName = 'PUD';
 
@@ -94,10 +90,17 @@ class NpcEventController extends Controller
                 'po_no' => $partData['po_no']
             ]);
 
+            // Tentukan drawing_revision_id saat ini
+            $currentRevisionId = null;
+            if ($product && $product->docPackage) {
+                $currentRevisionId = $product->docPackage->current_revision_id;
+            }
+
             // 2. Build Part Details
             $part = \App\Models\NpcPart::create([
                 'npc_purchase_order_id' => $po->id,
                 'product_id' => $product ? $product->id : null,
+                'part_revision_id' => $currentRevisionId,
                 'qty' => $partData['qty'],
                 'delivery_date' => $partData['delivery_date'],
                 'status' => 'PO_REGISTERED',
@@ -105,10 +108,7 @@ class NpcEventController extends Controller
 
             // Processes will be configured during the Setup Routing phase natively
 
-            // Sync Mapping MGM Checkpoints
-            if (!empty($partData['checkpoints'])) {
-                $part->checkpoints()->sync($partData['checkpoints']);
-            }
+
         }
 
         return redirect()->route('events.index')->with('success', 'Event, PO, dan Parts berhasil ditambahkan.');

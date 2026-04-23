@@ -112,6 +112,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/tracking/{part}/status', [\App\Http\Controllers\ProductionTrackingController::class, 'updateStatus'])->name('tracking.status.update');
     Route::post('/tracking/{part}/process-complete', [\App\Http\Controllers\ProductionTrackingController::class, 'completeProcess'])->name('tracking.process.complete');
     Route::post('/tracking/{part}/deliver', [\App\Http\Controllers\ProductionTrackingController::class, 'deliver'])->name('tracking.deliver');
+    Route::post('/parts/{part}/apply-ecn', [\App\Http\Controllers\NpcPartController::class, 'applyEcn'])->name('parts.apply-ecn');
 
     // Quality Checksheet Routes
     Route::get('/tracking/products/{product}/checksheet-setup', [\App\Http\Controllers\ProductChecksheetSetupController::class, 'edit'])->name('checksheets.setup.edit');

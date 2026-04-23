@@ -19,8 +19,7 @@ class NpcPartController extends Controller
 
     public function create(NpcEvent $event)
     {
-        $processes = \App\Models\NpcProcess::orderBy('process_name')->get();
-        return view('npc_parts.create', compact('event', 'processes'));
+        return view('npc_parts.create', compact('event'));
     }
 
     public function store(Request $request, \App\Models\NpcEvent $event)
@@ -36,7 +35,6 @@ class NpcPartController extends Controller
             'part_name' => 'required|string|max:255',
             'qty' => 'required|integer|min:1',
             'delivery_date' => 'required|date',
-            'process' => 'required|string|max:255',
         ], [
             'part_no.exists' => 'Part Number yang Anda masukkan tidak valid atau bukan merupakan part dari Model event ini.'
         ]);
@@ -46,11 +44,17 @@ class NpcPartController extends Controller
             'po_no' => $request->po_no
         ]);
 
-        $product = \App\Models\Product::where('part_no', $request->part_no)->first();
+        $product = \App\Models\Product::with('docPackage')->where('part_no', $request->part_no)->first();
+
+        $currentRevisionId = null;
+        if ($product && $product->docPackage) {
+            $currentRevisionId = $product->docPackage->current_revision_id;
+        }
 
         $part = \App\Models\NpcPart::create([
             'npc_purchase_order_id' => $po->id,
             'product_id' => $product ? $product->id : null,
+            'part_revision_id' => $currentRevisionId,
             'qty' => $request->qty,
             'delivery_date' => $request->delivery_date,
             'status' => 'PO_REGISTERED'
@@ -63,8 +67,7 @@ class NpcPartController extends Controller
 
     public function edit(NpcEvent $event, NpcPart $part)
     {
-        $processes = \App\Models\NpcProcess::orderBy('process_name')->get();
-        return view('npc_parts.edit', compact('event', 'part', 'processes'));
+        return view('npc_parts.edit', compact('event', 'part'));
     }
 
     public function update(Request $request, \App\Models\NpcEvent $event, \App\Models\NpcPart $part)
@@ -82,7 +85,6 @@ class NpcPartController extends Controller
             'delivery_date' => 'required|date',
             'actual_delivery' => 'nullable|date',
             'department' => 'required|exists:npc_departments,name',
-            'process' => 'required|string|max:255',
             'status' => 'required|in:WAITING_DEPT_CONFIRM,WAITING_QE_CHECK,WAITING_MGM_CHECK,FINISHED,CLOSED,OPEN',
             'condition' => 'nullable|string',
         ], [
@@ -112,6 +114,20 @@ class NpcPartController extends Controller
     public function destroy(\App\Models\NpcEvent $event, \App\Models\NpcPart $part)
     {
         $part->delete();
-        return redirect()->route('events.parts.index', $event->id)->with('success', 'Part deleted successfully.');
+        return redirect()->route('events.parts.index', $event->id)->with('success', 'Part / Item deleted successfully.');
+    }
+
+    public function applyEcn(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)
+    {
+        $product = \App\Models\Product::with('docPackage')->find($part->product_id);
+        
+        if ($product && $product->docPackage) {
+            $part->update([
+                'part_revision_id' => $product->docPackage->current_revision_id
+            ]);
+            return back()->with('success', 'Revisi ECN terbaru berhasil diterapkan untuk part ' . $product->part_no);
+        }
+
+        return back()->with('error', 'Gagal menerapkan revisi ECN. Data Master Drawing tidak ditemukan.');
     }
 }

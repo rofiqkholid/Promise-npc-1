@@ -17,6 +17,19 @@
         <!-- Right Side -->
         <div class="flex items-center gap-4">
 
+            <!-- ECN Notifications -->
+            @if(isset($ecnNotificationCount) && $ecnNotificationCount > 0)
+            <button @click="$dispatch('open-ecn-alert')"
+                class="relative w-10 h-10 flex items-center justify-center text-slate-400 dark:text-gray-400 hover:text-slate-600 dark:hover:text-gray-200 hover:bg-slate-100 dark:hover:bg-gray-700 rounded-xs transition-colors"
+                title="ECN Updated Alerts">
+                <i class="fa-solid fa-bell text-xl text-red-500"></i>
+                <span class="absolute top-2 right-1 flex h-4 w-4">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-4 w-4 bg-red-600 text-[10px] font-bold text-white items-center justify-center">{{ $ecnNotificationCount }}</span>
+                </span>
+            </button>
+            @endif
+
             <!-- Notifications -->
             <button 
                 @click="$dispatch('open-stock-alert')"
