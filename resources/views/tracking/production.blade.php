@@ -202,7 +202,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Unggah Bukti Foto <span class="text-red-500">*</span></label>
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Unggah Bukti Foto Part<span class="text-red-500">*</span></label>
                     <input type="file" name="photo" required accept="image/jpeg,image/png,image/gif"
                         class="block w-full text-sm text-gray-500 dark:text-gray-400
                         file:mr-4 file:py-2 file:px-4
@@ -210,7 +210,7 @@
                         file:text-xs file:font-semibold
                         file:bg-amber-50 file:text-amber-700 dark:file:bg-amber-900/30 dark:file:text-amber-400
                         hover:file:bg-amber-100 uppercase file:cursor-pointer border border-gray-300 dark:border-gray-600 rounded">
-                    <p class="text-[10px] text-gray-400 mt-1 italic">Maks 5 MB (JPG/PNG). Foto sekumpulan part di dalam keranjang.</p>
+                    <p class="text-[10px] text-gray-400 mt-1 italic">Maks 5 MB (JPG/PNG). Foto sekumpulan part.</p>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Catatan Produksi <span class="text-gray-400 text-[10px] font-normal">(opsional)</span></label>

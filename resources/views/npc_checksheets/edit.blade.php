@@ -94,7 +94,7 @@
 
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Attachment / Laporan Inspeksi (Max 10MB) <span class="text-gray-400 font-normal">(Opsional)</span>
+                        Uggah Bukti IR (Max 10MB) <span class="text-gray-400 font-normal">(Opsional)</span>
                     </label>
                     <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
                         <div class="space-y-1 text-center">
