@@ -22,8 +22,8 @@
                     <tr>
                         <th scope="col" class="px-6 py-4 font-semibold">Event / PO</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Part Info</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Jumlah & Delivery Target</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Tinjauan Rute (Prosess)</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Qty / Delivery Target</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Routing Info</th>
                         <th scope="col" class="px-6 py-4 font-semibold text-right w-48">Action Setup</th>
                     </tr>
                 </thead>
@@ -53,7 +53,7 @@
                                         </span>
                                     @endforeach
                                 </div>
-                                <span class="text-[10px] text-gray-400 italic">Rute belum disubmit ke produksi</span>
+                                <span class="text-[10px] text-gray-400 italic">Routing pending for production</span>
                             @else
                                 <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-orange-50 text-orange-700 border border-orange-200 text-[10px] font-medium">
                                     <i class="fa-solid fa-triangle-exclamation"></i> No Routing Yet
@@ -72,7 +72,7 @@
                                 @endphp
                                 <div class="flex flex-col items-end gap-2">
                                     <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed w-full">
-                                        <i class="fa-solid fa-check text-[8px]"></i> Sudah di Set
+                                        <i class="fa-solid fa-check text-[8px]"></i> Setup is ready to send to production
                                     </div>
                                     @if($canRollbackSetup)
                                     <form action="{{ route('tracking.setup.rollback', $part->id) }}" method="POST">
@@ -91,7 +91,7 @@
                         <td colspan="5" class="p-12 text-center text-gray-500 dark:text-gray-400">
                             <div class="flex flex-col items-center justify-center gap-3">
                                 <i class="fa-regular fa-folder-open text-4xl text-gray-300 dark:text-gray-600"></i>
-                                <p>No ada antrean part masuk yang membutuhkan setup rute.</p>
+                                <p>No data available.</p>
                             </div>
                         </td>
                     </tr>

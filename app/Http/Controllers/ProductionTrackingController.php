@@ -77,7 +77,7 @@ class ProductionTrackingController extends Controller
 
     public function mgm(\Illuminate\Http\Request $request)
     {
-        return $this->renderTrackingPage('WAITING_MGM_CHECK', 'Management Approval', 'fa-user-tie', 'Validation and final confirmation by management', 'tracking.mgm');
+        return $this->renderTrackingPage('WAITING_MGM_CHECK', 'Management Check', 'fa-user-tie', 'Validation and final confirmation by management', 'tracking.mgm');
     }
 
     public function stock(\Illuminate\Http\Request $request)
@@ -156,14 +156,14 @@ class ProductionTrackingController extends Controller
             return back()->with('success', 'Production sequence complete. Goods successfully submitted to QC!');
         }
 
-        return back()->with('success', 'Process selesai! Berlajut ke departemen berikutnya.');
+        return back()->with('success', 'Process finished! Continue to the next department.');
     }
 
     public function rollbackSetup(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)
     {
         // Cek apakah part ada di WAITING_DEPT_CONFIRM
         if ($part->status !== 'WAITING_DEPT_CONFIRM') {
-            return back()->with('error', 'Hanya bisa rollback part yang berstatus menunggu produksi.');
+            return back()->with('error', 'Only can rollback parts that are waiting for production.');
         }
 
         // Cek apakah ada proses yang sudah selesai
@@ -172,7 +172,7 @@ class ProductionTrackingController extends Controller
             ->exists();
             
         if ($hasFinishedProcess) {
-            return back()->with('error', 'No bisa rollback ke Setup karena sudah ada departemen yang menyelesaikan proses produksi.');
+            return back()->with('error', 'Cannot rollback to Setup because there is already a department that has completed the production process.');
         }
 
         // Delete semua proses yang masih WAITING karena akan di-setup ulang
@@ -185,7 +185,7 @@ class ProductionTrackingController extends Controller
             'mgm_target_date' => null
         ]);
 
-        return back()->with('success', 'Success membatalkan (rollback) setup routing. Part kembali ke antrean setup.');
+        return back()->with('success', 'Successfully canceled (rollback) setup routing. Part returns to the setup queue.');
     }
 
     public function rollbackProcess(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)
@@ -197,19 +197,19 @@ class ProductionTrackingController extends Controller
             ->first();
 
         if (!$lastFinishedProcess) {
-            return back()->with('error', 'No ada proses yang bisa di-rollback.');
+            return back()->with('error', 'No processes can be rolled back.');
         }
 
         // Cek apakah sudah diproses oleh departemen selanjutnya (misal QC sudah isi checksheet)
         if (!in_array($part->status, ['WAITING_DEPT_CONFIRM', 'WAITING_QE_CHECK'])) {
-             return back()->with('error', 'No bisa rollback karena sudah diproses oleh tahap selanjutnya (QC/MGM/Stock).');
+             return back()->with('error', 'No rollback because it has been processed by the next stage (QC/MGM/Stock).');
         }
         
         if ($part->status === 'WAITING_QE_CHECK') {
             // Cek apakah QC sudah mulai mengisi checksheet
             $checksheet = $part->checksheet;
             if ($checksheet && $checksheet->qe_checked_by) {
-                return back()->with('error', 'No bisa rollback karena QC sudah mulai memeriksa (Checksheet terisi).');
+                return back()->with('error', 'No rollback because QC has started checking (Checksheet filled).');
             }
         }
 
@@ -241,7 +241,7 @@ class ProductionTrackingController extends Controller
             }
         }
 
-        return back()->with('success', 'Success rollback proses ' . optional($lastFinishedProcess->process)->process_name . '.');
+        return back()->with('success', 'Success rollback process ' . optional($lastFinishedProcess->process)->process_name . '.');
     }
 
     public function deliver(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)
@@ -252,7 +252,7 @@ class ProductionTrackingController extends Controller
 
         $maxQty = $part->qty - $part->delivered_qty;
         if ($request->delivered_qty > $maxQty) {
-            return back()->with('error', 'Jumlah yang dikirim melebihi sisa barang (' . $maxQty . ' PCS).');
+            return back()->with('error', 'The quantity to be sent exceeds the remaining quantity (' . $maxQty . ' PCS).');
         }
 
         $newDeliveredQty = $part->delivered_qty + $request->delivered_qty;
@@ -266,7 +266,7 @@ class ProductionTrackingController extends Controller
 
         $msg = ($status === 'CLOSED') 
             ? 'Part successfully delivered in full to customer and closed.'
-            : 'Partial delivery successfully recorded (' . $request->delivered_qty . ' PCS). Sisa barang masih outstanding.';
+            : 'Partial delivery successfully recorded (' . $request->delivered_qty . ' PCS). The remaining quantity is still outstanding.';
 
         return back()->with('success', $msg);
     }

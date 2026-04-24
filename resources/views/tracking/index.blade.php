@@ -70,11 +70,11 @@
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
                         <th scope="col" class="px-6 py-4 font-semibold">Event</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Nomor PO</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">PO Number</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Part Info</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Qty & Target</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-center" colspan="2">Progress Keseluruhan</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right">Durasi Sistem</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-center" colspan="2">Overall Progress</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right">System Duration</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -119,7 +119,7 @@
                                         ['icon' => 'fa-industry', 'title' => 'Part Making'],
                                         ['icon' => 'fa-microscope', 'title' => 'QE'],
                                         ['icon' => 'fa-user-tie', 'title' => 'MGM'],
-                                        ['icon' => 'fa-boxes-stacked', 'title' => 'Stok'],
+                                        ['icon' => 'fa-boxes-stacked', 'title' => 'Stock'],
                                     ];
                                     if($part->status === 'CLOSED') $currentIndex = 5; // To fill the entire bar
                                     if($part->status === 'OUTSTANDING') $currentIndex = 4;
@@ -195,13 +195,13 @@
                                             
                                             if ($diffDays > 0) {
                                                 $statusClass = "bg-red-100 text-red-700 border-red-200";
-                                                $statusText = '<i class="fa-solid fa-circle-exclamation"></i> Telat ' . $diffDays . ' Hari';
+                                                $statusText = '<i class="fa-solid fa-circle-exclamation"></i> Late ' . $diffDays . ' Days';
                                             } elseif ($diffDays < 0) {
                                                 $statusClass = "bg-blue-100 text-blue-700 border-blue-200";
-                                                $statusText = '<i class="fa-solid fa-bolt"></i> Lebih Cpt ' . abs($diffDays) . ' Hari';
+                                                $statusText = '<i class="fa-solid fa-bolt"></i> Early ' . abs($diffDays) . ' Days';
                                             } else {
                                                 $statusClass = "bg-green-100 text-green-700 border-green-200";
-                                                $statusText = '<i class="fa-solid fa-check-double"></i> Tepat Time';
+                                                $statusText = '<i class="fa-solid fa-check-double"></i> On Time';
                                             }
                                         @endphp
                                         <span class="inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded text-[10px] font-black tracking-wider uppercase border {{ $statusClass }}">
@@ -219,7 +219,7 @@
                         <td colspan="7" class="p-12 text-center text-gray-500 dark:text-gray-400">
                             <div class="flex flex-col items-center justify-center gap-3">
                                 <i class="fa-regular fa-folder-open text-4xl text-gray-300 dark:text-gray-600"></i>
-                                <p>No data rute / tracking pada status ini.</p>
+                                <p>No routing / tracking data in this status.</p>
                             </div>
                         </td>
                     </tr>
@@ -241,7 +241,7 @@
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md mx-4 border border-gray-200 dark:border-gray-700">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-base font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-flag-checkered text-amber-500"></i> Konfirmasi Production Done
+                <i class="fa-solid fa-flag-checkered text-amber-500"></i> Confirm Production Done
             </h3>
             <button onclick="closeCompleteModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none">&times;</button>
         </div>
@@ -250,21 +250,21 @@
             <input type="hidden" name="status" value="WAITING_QE_CHECK">
             <div class="px-6 py-5 space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Date Done Aktual <span class="text-red-500">*</span></label>
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Actual Completion Date <span class="text-red-500">*</span></label>
                     <input type="date" name="actual_completion_date" required
                         class="w-full text-sm rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-amber-500 focus:ring-amber-500 dark:bg-gray-700 dark:text-white">
-                    <p class="text-[11px] text-gray-400 mt-1 italic">Date part benar-benar selesai diproduksi.</p>
+                    <p class="text-[11px] text-gray-400 mt-1 italic">Date the part actually finished production.</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Catatan Production <span class="text-gray-400 text-[10px] font-normal">(opsional)</span></label>
-                    <textarea name="production_notes" rows="3" placeholder="Misal: selesai lebih awal / ada kendala mesin..."
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Production Notes <span class="text-gray-400 text-[10px] font-normal">(optional)</span></label>
+                    <textarea name="production_notes" rows="3" placeholder="Example: finished early / machine issues..."
                         class="w-full text-sm rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-amber-500 focus:ring-amber-500 dark:bg-gray-700 dark:text-white"></textarea>
                 </div>
             </div>
             <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 rounded-b-xl">
                 <button type="button" onclick="closeCompleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">Cancel</button>
                 <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 rounded-lg shadow-sm transition flex items-center gap-1">
-                    <i class="fa-solid fa-check"></i> Konfirmasi Done
+                    <i class="fa-solid fa-check"></i> Confirm Done
                 </button>
             </div>
         </form>

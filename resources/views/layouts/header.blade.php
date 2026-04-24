@@ -30,20 +30,7 @@
             </button>
             @endif
 
-            <!-- Notifications -->
-            <button 
-                @click="$dispatch('open-stock-alert')"
-                class="relative w-10 h-10 flex items-center justify-center text-slate-400 dark:text-gray-400 hover:text-slate-600 dark:hover:text-gray-200 hover:bg-slate-100 dark:hover:bg-gray-700 rounded-xs transition-colors"
-                title="Stock Alerts">
-                <i class="fa-regular fa-bell text-xl"></i>
-                @if(isset($stockAlerts) && count($stockAlerts) > 0)
-                <span class="absolute top-2 right-2 flex h-4 w-4">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-4 w-4 bg-rose-500 text-[10px] font-bold text-white items-center justify-center">{{ count($stockAlerts) }}</span>
-                </span>
-                @endif
-            </button>
-            
+
             <!-- Theme Toggle -->
             <button x-data="{ 
                         darkMode: localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches),

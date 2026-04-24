@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $pageTitle ?? 'Process Production')
-@section('page_title', 'Transaksi / ' . ($pageTitle ?? 'Process Production'))
+@section('page_title', 'Transaction / ' . ($pageTitle ?? 'Process Production'))
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -42,7 +42,7 @@
                                     <i class="fa-solid fa-lock text-sm"></i> Planned
                                 </div>
                             @elseif($part->status === 'WAITING_DEPT_CONFIRM')
-                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-100 border border-yellow-200 text-yellow-800 text-[10px] font-bold tracking-wide"><i class="fa-solid fa-gears fa-spin"></i> AKTIF DIPROSES</span>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-yellow-100 border border-yellow-200 text-yellow-800 text-[10px] font-bold tracking-wide"><i class="fa-solid fa-gears fa-spin"></i> IN PROCESS</span>
                             @else
                                 <div class="text-[10px] text-gray-400 italic font-medium"><i class="fa-solid fa-check text-green-500"></i> Submitted to QC</div>
                             @endif
@@ -79,7 +79,7 @@
                                             </div>
                                             <div class="flex flex-col">
                                                 <span class="text-[11px] font-bold {{ $textColor }} transition-colors">{{ optional($process->process)->process_name ?? 'Unknown Process' }}</span>
-                                                <span class="text-[9px] text-gray-500 {{ $isFinished ? 'opacity-50' : '' }}"><i class="fa-solid fa-building-user text-[8px] mr-0.5"></i> {{ optional($process->department)->name ?? 'Department tidak diketahui' }}</span>
+                                                <span class="text-[9px] text-gray-500 {{ $isFinished ? 'opacity-50' : '' }}"><i class="fa-solid fa-building-user text-[8px] mr-0.5"></i> {{ optional($process->department)->name ?? 'Unknown Department' }}</span>
                                             </div>
                                         </div>
                                     @endforeach
@@ -93,7 +93,7 @@
                         <td class="px-6 py-4 text-right align-middle pointer-events-auto">
                             @if($part->status === 'PO_REGISTERED')
                                 <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed">
-                                    <i class="fa-solid fa-lock text-[8px]"></i> Belum Login Production
+                                    <i class="fa-solid fa-lock text-[8px]"></i> Not yet send to production
                                 </div>
                             @elseif($part->status === 'WAITING_DEPT_CONFIRM')
                                 @if(isset($activeProcess))
@@ -104,18 +104,18 @@
                                     <button type="button"
                                         onclick="openCompleteModal({{ $part->id }}, {{ $activeProcess->id }}, '{{ optional($activeProcess->process)->process_name }}', '{{ optional($activeProcess->department)->name }}', '{{ route('tracking.process.complete', $part->id) }}')"
                                         class="inline-flex px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded shadow-sm font-bold transition items-center gap-2 text-[11px] mb-2 w-full justify-center" style="background-color: #f59e0b;">
-                                        Selesaikan {{ optional($activeProcess->process)->process_name }} <i class="fa-solid fa-forward-step"></i>
+                                        Complete {{ optional($activeProcess->process)->process_name }} <i class="fa-solid fa-forward-step"></i>
                                     </button>
                                     @if($hasFinishedProcess)
                                         <form action="{{ route('tracking.process.rollback', $part->id) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="text-[10px] text-red-500 hover:text-red-700 flex items-center justify-end w-full gap-1 font-semibold transition mb-2" onclick="return confirm('Yakin ingin rollback proses sebelumnya?')">
-                                                <i class="fa-solid fa-rotate-left"></i> Rollback Process Previous
+                                            <button type="submit" class="text-[10px] text-red-500 hover:text-red-700 flex items-center justify-end w-full gap-1 font-semibold transition mb-2" onclick="return confirm('Are you sure you want to rollback the previous process?')">
+                                                <i class="fa-solid fa-rotate-left"></i> Rollback Previous Process
                                             </button>
                                         </form>
                                     @endif
                                     <p class="text-[9px] text-gray-400 italic text-right max-w-[150px] mx-auto float-right text-balance mt-1">
-                                        {{ $isLast ? 'Klik jika selesai untuk menyerahkan ke QC.' : 'Klik untuk pindah ke departemen selanjutnya.' }}
+                                        {{ $isLast ? 'Click if completed to submit to QC.' : 'Click to move to the next department.' }}
                                     </p>
                                 @endif
                             @elseif($part->status === 'WAITING_QE_CHECK')
@@ -130,7 +130,7 @@
                                     @if($canRollback)
                                     <form action="{{ route('tracking.process.rollback', $part->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="text-[10px] text-red-500 hover:text-red-700 flex items-center gap-1 font-semibold transition mt-1" onclick="return confirm('Yakin ingin menarik kembali part ini of QC ke tahap Production?')">
+                                        <button type="submit" class="text-[10px] text-red-500 hover:text-red-700 flex items-center gap-1 font-semibold transition mt-1" onclick="return confirm('Are you sure you want to rollback this part from QC to Production stage?')">
                                             <i class="fa-solid fa-rotate-left"></i> Rollback Production
                                         </button>
                                     </form>
@@ -138,7 +138,7 @@
                                 </div>
                             @else
                                 <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed">
-                                    <i class="fa-solid fa-check-double text-[8px] text-green-500"></i> Sudah Done
+                                    <i class="fa-solid fa-check-double text-[8px] text-green-500"></i> Completed
                                 </div>
                             @endif
                         </td>
@@ -148,7 +148,7 @@
                         <td colspan="4" class="p-12 text-center text-gray-500 dark:text-gray-400">
                             <div class="flex flex-col items-center justify-center gap-3">
                                 <i class="fa-solid fa-industry text-4xl text-gray-300 dark:text-gray-600"></i>
-                                <p>No ada operasi antrean produksi aktif saat ini.</p>
+                                <p>Not yet in production</p>
                             </div>
                         </td>
                     </tr>
@@ -170,7 +170,7 @@
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md mx-4 border border-gray-200 dark:border-gray-700">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-base font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-flag-checkered text-amber-500"></i> Konfirmasi Done <span id="modal-process-name-title"></span>
+                <i class="fa-solid fa-flag-checkered text-amber-500"></i> Completion Confirmation <span id="modal-process-name-title"></span>
             </h3>
             <button onclick="closeCompleteModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none">&times;</button>
         </div>
@@ -179,30 +179,30 @@
             <input type="hidden" name="process_id" id="modal-process-id" value="">
             <div class="px-6 py-5 space-y-4">
                 <div class="p-3 bg-amber-50 dark:bg-amber-900/30 rounded-lg border border-amber-100 dark:border-amber-800/50 flex flex-col gap-1">
-                    <p class="text-xs text-amber-800 dark:text-amber-200 font-medium">Anda akan menyelesaikan tahap proses berikut:</p>
+                    <p class="text-xs text-amber-800 dark:text-amber-200 font-medium">You are about to complete the following process stage:</p>
                     <div class="flex items-center gap-2 mt-1">
                         <span id="modal-process-name" class="font-black text-amber-600 dark:text-amber-400"></span>
-                        <span class="text-gray-400 dark:text-gray-500 text-[10px]">DI DEPARTEMEN</span>
+                        <span class="text-gray-400 dark:text-gray-500 text-[10px]">IN DEPARTMENT</span>
                         <span id="modal-department-name" class="font-bold text-gray-600 dark:text-gray-300 uppercase text-[10px]"></span>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Total Qty Terselesaikan <span class="text-red-500">*</span></label>
-                        <input type="number" name="actual_qty" required min="0" placeholder="Jml Pcs"
+                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Total Qty Completed <span class="text-red-500">*</span></label>
+                        <input type="number" name="actual_qty" required min="0" placeholder="Pcs Count"
                             class="w-full text-sm rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-amber-500 focus:ring-amber-500 dark:bg-gray-700 dark:text-white">
-                        <p class="text-[9px] text-gray-400 mt-1 italic">Total barang riil (Actual Qty).</p>
+                        <p class="text-[9px] text-gray-400 mt-1 italic">Total actual parts (Actual Qty).</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Tgl Aktual Done <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Actual Completion Date <span class="text-red-500">*</span></label>
                         <input type="date" name="actual_completion_date" required
                             class="w-full text-sm rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-amber-500 focus:ring-amber-500 dark:bg-gray-700 dark:text-white">
                     </div>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Upload Evidence Foto Part<span class="text-red-500">*</span></label>
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Upload Part Photo Evidence<span class="text-red-500">*</span></label>
                     <input type="file" name="photo" required accept="image/jpeg,image/png,image/gif"
                         class="block w-full text-sm text-gray-500 dark:text-gray-400
                         file:mr-4 file:py-2 file:px-4
@@ -210,18 +210,18 @@
                         file:text-xs file:font-semibold
                         file:bg-amber-50 file:text-amber-700 dark:file:bg-amber-900/30 dark:file:text-amber-400
                         hover:file:bg-amber-100 uppercase file:cursor-pointer border border-gray-300 dark:border-gray-600 rounded">
-                    <p class="text-[10px] text-gray-400 mt-1 italic">Maks 5 MB (JPG/PNG). Foto sekumpulan part.</p>
+                    <p class="text-[10px] text-gray-400 mt-1 italic">Max 5 MB (JPG/PNG). Photo of a batch of parts.</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Catatan Production <span class="text-gray-400 text-[10px] font-normal">(opsional)</span></label>
-                    <textarea name="production_notes" rows="3" placeholder="Misal: Done lebih awal of target jadwal..."
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Production Notes <span class="text-gray-400 text-[10px] font-normal">(optional)</span></label>
+                    <textarea name="production_notes" rows="3" placeholder="Example: Completed ahead of schedule..."
                         class="w-full text-sm rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-amber-500 focus:ring-amber-500 dark:bg-gray-700 dark:text-white"></textarea>
                 </div>
             </div>
             <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 rounded-b-xl">
                 <button type="button" onclick="closeCompleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">Cancel</button>
                 <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 rounded-lg shadow-sm transition flex items-center gap-1">
-                    <i class="fa-solid fa-check"></i> Process Done
+                    <i class="fa-solid fa-check"></i> Complete Process
                 </button>
             </div>
         </form>

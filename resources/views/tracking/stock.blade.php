@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', $pageTitle ?? 'Stock Jadi')
-@section('page_title', 'Transaksi / ' . ($pageTitle ?? 'Stock Jadi (FG)'))
+@section('title', $pageTitle ?? 'Finished Goods Stock')
+@section('page_title', 'Transaction / ' . ($pageTitle ?? 'Finished Goods Stock (FG)'))
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-between items-center">
         <div>
             <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                <i class="fa-solid {{ $pageIcon ?? 'fa-boxes-stacked' }} text-blue-500"></i> {{ $pageTitle ?? 'Stock Jadi (FG)' }}
+                <i class="fa-solid {{ $pageIcon ?? 'fa-boxes-stacked' }} text-blue-500"></i> {{ $pageTitle ?? 'Finished Goods Stock (FG)' }}
             </h2>
             @if(isset($pageDesc))
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 ml-7">{{ $pageDesc }}</p>
@@ -32,7 +32,7 @@
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($parts as $part)
                     @php
-                        // Hitung mundur sisa hari
+                        // Countdown remaining days
                         $now = \Carbon\Carbon::now()->startOfDay();
                         $target = \Carbon\Carbon::parse($part->delivery_date)->startOfDay();
                         $diffDays = $now->diffInDays($target, false);
@@ -41,7 +41,7 @@
                         $isUrgent = $diffDays >= 0 && $diffDays <= 3;
                         
                         $timeStatusClass = $isOverdue ? 'bg-red-100 text-red-700 border-red-200' : ($isUrgent ? 'bg-orange-100 text-orange-700 border-orange-200' : 'bg-green-100 text-green-700 border-green-200');
-                        $timeStatusText = $isOverdue ? 'Overdue ' . abs($diffDays) . ' Hari' : ($diffDays == 0 ? 'Kirim Today' : 'Remaining ' . $diffDays . ' Hari');
+                        $timeStatusText = $isOverdue ? 'Overdue ' . abs($diffDays) . ' Days' : ($diffDays == 0 ? 'Deliver Today' : 'Remaining ' . $diffDays . ' Days');
                         $timeStatusIcon = $isOverdue ? 'fa-triangle-exclamation' : 'fa-clock';
                         
                         // Retrieve customer info
@@ -105,13 +105,13 @@
                                     @endif
                                     @if($part->mgm_target_date)
                                     <span class="text-[11px] font-medium text-purple-700 dark:text-purple-400 flex items-center gap-1.5">
-                                        <i class="fa-solid fa-check-double text-purple-500"></i> MGM Appv: {{ \Carbon\Carbon::parse($part->mgm_target_date)->format('d M y') }}
+                                        <i class="fa-solid fa-check-double text-purple-500"></i> MGM Check: {{ \Carbon\Carbon::parse($part->mgm_target_date)->format('d M y') }}
                                     </span>
                                     @endif
                                 </div>
                             @else
                                 <div class="mt-2 text-slate-400 text-[10px] font-medium italic">
-                                    Belum selesai ({{ str_replace('_', ' ', $part->status) }})
+                                    Not yet finished ({{ str_replace('_', ' ', $part->status) }})
                                 </div>
                             @endif
                         </td>
@@ -125,11 +125,11 @@
                                 </div>
                             @elseif(!in_array($part->status, ['FINISHED', 'OUTSTANDING']))
                                 <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center gap-1.5 cursor-not-allowed">
-                                    <i class="fa-solid fa-lock text-[8px]"></i> Menunggu Process Done
+                                    <i class="fa-solid fa-lock text-[8px]"></i> Waiting for Process to Complete
                                 </div>
                             @else
                                 <button type="button" onclick="openDeliverModal('{{ $part->id }}', '{{ $part->qty - $part->delivered_qty }}', '{{ route('tracking.deliver', $part->id) }}', '{{ optional($part->product)->part_no }}')" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded shadow-sm font-medium transition text-xs flex items-center gap-2">
-                                    <i class="fa-solid fa-truck-fast"></i> Deliver Goods
+                                    <i class="fa-solid fa-truck-fast"></i> Deliver Parts
                                 </button>
                                 <p class="text-[9px] text-gray-400 mt-2 italic text-right">Remaining: {{ number_format($part->qty - $part->delivered_qty) }} PCS</p>
                             @endif
@@ -163,7 +163,7 @@
     <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden scale-95 opacity-0 transition-all duration-300" id="deliverModalContent">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex justify-between items-center">
             <h3 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-truck-ramp-box text-blue-500"></i> Form Pengiriman Barang
+                <i class="fa-solid fa-truck-ramp-box text-blue-500"></i> Parts Delivery Form
             </h3>
             <button type="button" onclick="closeDeliverModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition">
                 <i class="fa-solid fa-xmark text-lg"></i>
@@ -175,7 +175,7 @@
             <div class="p-6">
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
                     Part No: <strong id="modalPartNo" class="text-gray-800 dark:text-gray-200"></strong><br>
-                    Please enter the quantity of goods to be delivered to the customer.
+                    Please enter the quantity of parts to be delivered to the customer.
                 </p>
                 
                 <div class="mb-4">
@@ -190,12 +190,12 @@
                         </div>
                     </div>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                        Remaining goods to deliver: <strong id="modalMaxQtyText" class="text-blue-600 dark:text-blue-400"></strong> PCS
+                        Remaining parts to deliver: <strong id="modalMaxQtyText" class="text-blue-600 dark:text-blue-400"></strong> PCS
                     </p>
                 </div>
                 
                 <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/50 p-3 rounded text-xs text-yellow-800 dark:text-yellow-300 mb-2">
-                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Pastikan Anda telah mencetak Surat Jalan of sistem internal Anda sebelum proses ini.
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Make sure you have printed the Delivery Note from your internal system before this process.
                 </div>
             </div>
             
