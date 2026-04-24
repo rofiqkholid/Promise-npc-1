@@ -70,6 +70,6 @@ class ProductChecksheetSetupController extends Controller
             }
         }
 
-        return redirect()->route('master.checksheets.index')->with('success', 'Master Checksheet untuk Part ' . $product->part_no . ' berhasil disimpan!');
+        return redirect()->route('master.checksheets.index')->with('success', 'Master Checksheet for Part ' . $product->part_no . ' successfully saved!');
     }
 }

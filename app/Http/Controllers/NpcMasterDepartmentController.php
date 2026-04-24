@@ -37,7 +37,7 @@ class NpcMasterDepartmentController extends Controller
 
         NpcDepartment::create($validated);
 
-        return redirect()->route('master.departments.index')->with('success', 'Department berhasil ditambahkan.');
+        return redirect()->route('master.departments.index')->with('success', 'Department successfully added.');
     }
 
     /**
@@ -72,7 +72,7 @@ class NpcMasterDepartmentController extends Controller
 
         $department->update($validated);
 
-        return redirect()->route('master.departments.index')->with('success', 'Department berhasil diperbarui.');
+        return redirect()->route('master.departments.index')->with('success', 'Department successfully updated.');
     }
 
     /**
@@ -84,6 +84,6 @@ class NpcMasterDepartmentController extends Controller
         // For now just delete
         $department->delete();
 
-        return redirect()->route('master.departments.index')->with('success', 'Department berhasil dihapus.');
+        return redirect()->route('master.departments.index')->with('success', 'Department successfully deleted.');
     }
 }

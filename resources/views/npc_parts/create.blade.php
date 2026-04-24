@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Part')
-@section('page_title', 'Master Data / Event / Tambah Part')
+@section('title', 'Add Part')
+@section('page_title', 'Master Data / Event / Add Part')
 
 @section('content')
 <div class="max-w-4xl mx-auto">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-between items-center">
             <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-cube text-blue-500"></i> Form Tambah Part Output
+                <i class="fa-solid fa-cube text-blue-500"></i> Form Add Part Output
             </h2>
             <span class="text-sm font-medium bg-blue-100 text-blue-800 py-1 px-3 rounded-full">{{ optional($event->customerCategory)->name ?? 'Event' }}</span>
         </div>
@@ -20,7 +20,7 @@
                 <!-- Data Pencarian -->
                 <div class="col-span-1 md:col-span-2 space-y-1 relative">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Cari Part No / Name dari DB Drawing (Opsional)
+                        Search Part No / Name of DB Drawing (Optional)
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -36,7 +36,7 @@
                             <!-- Items go here -->
                         </div>
                     </div>
-                    <p class="text-xs text-gray-500 italic mt-1">*Jika part tidak ditemukan, ketik manual di field bawah ini.</p>
+                    <p class="text-xs text-gray-500 italic mt-1">*If part is not found, type manually in the field below.</p>
                 </div>
 
                 <div class="space-y-1">
@@ -55,7 +55,7 @@
                     </label>
                     <input type="text" id="part_no_input" name="part_no" required value="{{ old('part_no') }}" readonly
                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm sm:text-sm dark:bg-gray-800 dark:text-gray-400 bg-gray-100 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300"
-                        placeholder="Pilih dari pencarian di atas...">
+                        placeholder="Select of pencarian di atas...">
                     @error('part_no') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
 
@@ -65,7 +65,7 @@
                     </label>
                     <input type="text" id="part_name_input" name="part_name" required value="{{ old('part_name') }}" readonly
                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm sm:text-sm dark:bg-gray-800 dark:text-gray-400 bg-gray-100 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300"
-                        placeholder="Terisi otomatis dari pencarian...">
+                        placeholder="Terisi otomatis of pencarian...">
                     @error('part_name') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
 
@@ -92,10 +92,10 @@
 
             <div class="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
                 <a href="{{ route('events.parts.index', $event->id) }}" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                    Batal
+                    Cancel
                 </a>
                 <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition">
-                    <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Part
+                    <i class="fa-solid fa-floppy-disk mr-1"></i> Save Part
                 </button>
             </div>
         </form>
@@ -143,7 +143,7 @@
                     });
                     searchResults.classList.remove('hidden');
                 } else {
-                    searchResults.innerHTML = '<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 italic">Tidak ada part ditemukan...</div>';
+                    searchResults.innerHTML = '<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 italic">No part found...</div>';
                     searchResults.classList.remove('hidden');
                 }
             })

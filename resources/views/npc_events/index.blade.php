@@ -7,14 +7,14 @@
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
         <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-calendar-check text-blue-500"></i> Daftar Project Event
+            <i class="fa-solid fa-calendar-check text-blue-500"></i> Register Project Event
         </h2>
         <div class="flex items-center gap-3">
             <a href="{{ route('events.import') }}" class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition shadow-sm font-medium text-sm flex items-center gap-2">
                 <i class="fa-solid fa-file-excel text-green-600"></i> Import Excel
             </a>
             <a href="{{ route('events.create') }}" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-md shadow-blue-500/20 font-medium text-sm flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Tambah Event
+                <i class="fa-solid fa-plus"></i> Add Event
             </a>
         </div>
     </div>
@@ -28,10 +28,10 @@
                         <th scope="col" class="px-6 py-4 font-semibold">Event Name</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Customer</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Model</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Kategori</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Category</th>
                         <th scope="col" class="px-6 py-4 font-semibold">GR</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Delivery To</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right w-32">Aksi</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right w-32">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -60,10 +60,10 @@
                                 <a href="{{ route('events.edit', $event->id) }}" class="text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 p-2 rounded-md transition" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure ingin menghapus data ini?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Hapus">
+                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Delete">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>

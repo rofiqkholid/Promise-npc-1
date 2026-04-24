@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Detail Parts Event')
+@section('title', 'Part Detailss Event')
 @section('page_title', 'Master Data / Event / Parts')
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
         <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-circle-info text-blue-500"></i> Informasi Event
+            <i class="fa-solid fa-circle-info text-blue-500"></i> Information Event
         </h2>
     </div>
     <div class="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -33,14 +33,14 @@
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
         <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-cubes text-blue-500"></i> Daftar Part / Item
+            <i class="fa-solid fa-cubes text-blue-500"></i> Part List / Item
         </h2>
         <div class="flex gap-2">
             <a href="{{ route('events.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition font-medium text-sm flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
+                <i class="fa-solid fa-arrow-left"></i> Back
             </a>
             <a href="{{ route('events.parts.create', $event->id) }}" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-md shadow-blue-500/20 font-medium text-sm flex items-center gap-2">
-                <i class="fa-solid fa-plus"></i> Tambah Part
+                <i class="fa-solid fa-plus"></i> Add Part
             </a>
         </div>
     </div>
@@ -59,7 +59,7 @@
                         <th scope="col" class="px-6 py-4 font-semibold">Process</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Dept</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Status</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right w-32">Aksi</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right w-32">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -75,10 +75,10 @@
                             @php
                                 $processLabel = match($part->status) {
                                     'PO_REGISTERED'       => ['label' => 'Registrasi', 'color' => 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400'],
-                                    'WAITING_DEPT_CONFIRM'=> ['label' => 'Produksi', 'color' => 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300'],
+                                    'WAITING_DEPT_CONFIRM'=> ['label' => 'Production', 'color' => 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300'],
                                     'WAITING_QE_CHECK'    => ['label' => 'Quality Check', 'color' => 'bg-orange-100 dark:bg-orange-900/40 text-orange-700 dark:text-orange-300'],
                                     'WAITING_MGM_CHECK'   => ['label' => 'Mgm Review', 'color' => 'bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300'],
-                                    'FINISHED'            => ['label' => 'Selesai', 'color' => 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300'],
+                                    'FINISHED'            => ['label' => 'Done', 'color' => 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300'],
                                     default               => ['label' => $part->process ?: '-', 'color' => 'bg-slate-100 dark:bg-slate-700 text-slate-400'],
                                 };
                             @endphp
@@ -91,7 +91,7 @@
                                     'WAITING_DEPT_CONFIRM' => $part->department ?: 'Dept',
                                     'WAITING_QE_CHECK'     => 'QE / QC',
                                     'WAITING_MGM_CHECK'    => 'Management',
-                                    'FINISHED'             => 'Selesai',
+                                    'FINISHED'             => 'Done',
                                     default                => $part->department ?: '-',
                                 };
                             @endphp
@@ -119,10 +119,10 @@
                                 <a href="{{ route('events.parts.edit', [$event->id, $part->id]) }}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-md transition" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('events.parts.destroy', [$event->id, $part->id]) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data ini?');">
+                                <form action="{{ route('events.parts.destroy', [$event->id, $part->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure ingin menghapus data ini?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Hapus">
+                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Delete">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>

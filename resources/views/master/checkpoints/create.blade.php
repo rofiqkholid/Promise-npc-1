@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Master Checkpoint')
-@section('page_title', 'Master Data / Quality Checkpoints / Tambah Baru')
+@section('title', 'Add Master Checkpoint')
+@section('page_title', 'Master Data / Quality Checkpoints / Add New')
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 max-w-2xl mx-auto">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
-            <i class="fa-solid fa-plus-circle text-indigo-600 mr-2"></i> Formulir Master Checkpoint
+            <i class="fa-solid fa-plus-circle text-indigo-600 mr-2"></i> Form Master Checkpoint
         </h2>
     </div>
 
@@ -38,7 +38,7 @@
                 <!-- Check Item -->
                 <div class="space-y-1 sm:col-span-3">
                     <label for="check_item" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Item Pengecekan / Deskripsi Cek <span class="text-red-500">*</span>
+                        Item Pengecekan / Description Cek <span class="text-red-500">*</span>
                     </label>
                     <input type="text" id="check_item" name="check_item" required value="{{ old('check_item') }}" placeholder="Contoh: Scratch, Penyok, Kelengkapan Spot, ..." 
                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white">
@@ -49,7 +49,7 @@
             
             <div class="space-y-1">
                 <label for="method" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Metode Pengecekan (Opsional)
+                    Metode Pengecekan (Optional)
                 </label>
                 <input type="text" id="method" name="method" value="{{ old('method') }}" placeholder="Contoh: Visual, Raba, Vernier Caliper..."
                     class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white">
@@ -67,10 +67,10 @@
 
         <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3 rounded-b-lg">
             <a href="{{ route('master.checkpoints.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                Batal
+                Cancel
             </a>
             <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition flex items-center gap-2">
-                <i class="fa-solid fa-floppy-disk"></i> Simpan Checkpoint
+                <i class="fa-solid fa-floppy-disk"></i> Save Checkpoint
             </button>
         </div>
     </form>

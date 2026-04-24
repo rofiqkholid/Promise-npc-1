@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Event')
-@section('page_title', 'Master Data / Tambah Event')
+@section('title', 'Add Event')
+@section('page_title', 'Master Data / Add Event')
 
 @section('content')
 <div class="max-w-3xl mx-auto">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
             <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-clipboard-list text-blue-500"></i> Form Tambah Event Baru
+                <i class="fa-solid fa-clipboard-list text-blue-500"></i> Form Add New Event
             </h2>
         </div>
 
@@ -23,9 +23,9 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Customer <span class="text-red-500">*</span>
                     </label>
-                    <select name="customer_id" id="customer_select" required data-placeholder="Pilih Customer..."
+                    <select name="customer_id" id="customer_select" required data-placeholder="Select Customer..."
                         class="select2 w-full">
-                            <option value="">Pilih Customer</option>
+                            <option value="">Select Customer</option>
                             @foreach($customers as $customer)
                                 <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
                                     {{ $customer->code }}
@@ -40,9 +40,9 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Vehicle Model <span class="text-red-500">*</span>
                     </label>
-                    <select name="model_id" id="model_select" required data-placeholder="Pilih Model..."
+                    <select name="model_id" id="model_select" required data-placeholder="Select Model..."
                         class="select2 w-full">
-                            <option value="">Pilih Model</option>
+                            <option value="">Select Model</option>
                         </select>
                     @error('model_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
@@ -51,11 +51,11 @@
                 <!-- Category Select -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Kategori Event <span class="text-red-500">*</span>
+                        Category Event <span class="text-red-500">*</span>
                     </label>
-                    <select name="customer_category_id" id="category_select" required data-placeholder="Pilih Kategori Event..."
+                    <select name="customer_category_id" id="category_select" required data-placeholder="Select Category Event..."
                         class="select2 w-full">
-                        <option value="">Pilih Kategori</option>
+                        <option value="">Select Category</option>
                     </select>
                     @error('customer_category_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
@@ -63,11 +63,11 @@
                 <!-- Delivery Group Select -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Grup Pengiriman (GR) <span class="text-red-500">*</span>
+                        Delivery Group (GR) <span class="text-red-500">*</span>
                     </label>
-                    <select name="delivery_group_id" id="delivery_group_id" required data-placeholder="Pilih Grup Pengiriman..."
+                    <select name="delivery_group_id" id="delivery_group_id" required data-placeholder="Select Delivery Group..."
                         class="select2 w-full">
-                        <option value="">Pilih Grup</option>
+                        <option value="">Select Grup</option>
                         @foreach($delivery_groups as $group)
                             <option value="{{ $group->id }}" {{ old('delivery_group_id') == $group->id ? 'selected' : '' }}>
                                 {{ $group->name }}
@@ -82,9 +82,9 @@
                 <label for="delivery_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Tujuan Pengiriman (Delivery To)
                 </label>
-                <select id="delivery_to" name="delivery_to" data-placeholder="Pilih Tujuan..."
+                <select id="delivery_to" name="delivery_to" data-placeholder="Select Tujuan..."
                     class="select2 w-full">
-                    <option value="">Pilih Tujuan (Opsional)</option>
+                    <option value="">Select Tujuan (Optional)</option>
                     @foreach($delivery_targets as $target)
                         <option value="{{ $target->target_name }}" {{ old('delivery_to') == $target->target_name ? 'selected' : '' }}>
                             {{ $target->target_name }}
@@ -97,27 +97,27 @@
             <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-md font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                        <i class="fa-solid fa-cubes text-indigo-500"></i> Detail Parts & PO
+                        <i class="fa-solid fa-cubes text-indigo-500"></i> Part Detailss & PO
                     </h3>
                     <button type="button" id="add_part_btn" class="px-3 py-1.5 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition text-sm font-medium flex items-center gap-1">
-                        <i class="fa-solid fa-plus"></i> Tambah Part
+                        <i class="fa-solid fa-plus"></i> Add Part
                     </button>
                 </div>
                 
                 <div id="parts_container" class="space-y-4">
                     <!-- Parts will be dynamically added here -->
                     <div class="text-center py-6 text-gray-500 dark:text-gray-400 text-sm" id="empty_parts_msg">
-                        Belum ada part yang ditambahkan. Klik tombol "Tambah Part" di atas.
+                        No part has been added yet. Click the "Add Part" button above.
                     </div>
                 </div>
             </div>
 
             <div class="pt-6 mt-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
                 <a href="{{ route('events.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                    Batal
+                    Cancel
                 </a>
                 <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition">
-                    <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Event
+                    <i class="fa-solid fa-floppy-disk mr-1"></i> Save Event
                 </button>
             </div>
         </form>
@@ -139,7 +139,7 @@
             $(modelSelect).trigger('change.select2'); // update select2 visualization
             
             if (!customerId) {
-                modelSelect.innerHTML = '<option value="">Pilih Model</option>';
+                modelSelect.innerHTML = '<option value="">Select Model</option>';
                 modelSelect.disabled = true;
                 $(modelSelect).trigger('change.select2');
                 return;
@@ -155,7 +155,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                modelSelect.innerHTML = '<option value="">Pilih Model</option>';
+                modelSelect.innerHTML = '<option value="">Select Model</option>';
                 if(data.results && data.results.length > 0) {
                     data.results.forEach(model => {
                         let isSelected = selectedModelId == model.id ? 'selected' : '';
@@ -163,13 +163,13 @@
                     });
                     modelSelect.disabled = false;
                 } else {
-                    modelSelect.innerHTML = '<option value="">Tidak ada model tersedia</option>';
+                    modelSelect.innerHTML = '<option value="">No ada model tersedia</option>';
                 }
                 $(modelSelect).trigger('change.select2');
             })
             .catch(error => {
                 console.error('Error fetching models:', error);
-                modelSelect.innerHTML = '<option value="">-- Gagal memuat data --</option>';
+                modelSelect.innerHTML = '<option value="">-- Failed memuat data --</option>';
                 $(modelSelect).trigger('change.select2');
             });
         }
@@ -183,7 +183,7 @@
             $(categorySelect).trigger('change.select2');
             
             if (!customerId) {
-                categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
                 categorySelect.disabled = true;
                 $(categorySelect).trigger('change.select2');
                 return;
@@ -199,7 +199,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
                 if(data.results && data.results.length > 0) {
                     data.results.forEach(cat => {
                         let isSelected = selectedCategoryId == cat.id ? 'selected' : '';
@@ -207,13 +207,13 @@
                     });
                     categorySelect.disabled = false;
                 } else {
-                    categorySelect.innerHTML = '<option value="">Tidak ada kategori tersedia (Harap tambah di Master)</option>';
+                    categorySelect.innerHTML = '<option value="">No ada kategori tersedia (Harap tambah di Master)</option>';
                 }
                 $(categorySelect).trigger('change.select2');
             })
             .catch(error => {
                 console.error('Error fetching categories:', error);
-                categorySelect.innerHTML = '<option value="">-- Gagal memuat data --</option>';
+                categorySelect.innerHTML = '<option value="">-- Failed memuat data --</option>';
                 $(categorySelect).trigger('change.select2');
             });
         }
@@ -246,7 +246,7 @@
                 <div class="part-item bg-slate-50 dark:bg-gray-800/80 p-4 rounded-lg border border-slate-200 dark:border-gray-700">
                     <div class="flex justify-between items-center mb-3">
                         <span class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider"><i class="fa-solid fa-box-open mr-1"></i> Item Part</span>
-                        <button type="button" class="remove-part text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 dark:hover:bg-red-900/30 p-1.5 rounded transition flex items-center justify-center" title="Hapus Part">
+                        <button type="button" class="remove-part text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 dark:hover:bg-red-900/30 p-1.5 rounded transition flex items-center justify-center" title="Delete Part">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
@@ -262,7 +262,7 @@
                         </div>
                         <div class="space-y-1 relative">
                             <label class="block text-xs font-medium text-gray-700 dark:text-gray-300">Part Number</label>
-                            <input type="text" class="part-no-display w-full text-sm rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Cari Part No..." autocomplete="off">
+                            <input type="text" class="part-no-display w-full text-sm rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Search Part No..." autocomplete="off">
                             <input type="hidden" name="parts[${partIndex}][part_no]" class="part-no-input" required>
                             <input type="hidden" name="parts[${partIndex}][part_name]" class="part-name-input">
                             <div class="part-autocomplete hidden absolute z-50 left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg max-h-52 overflow-y-auto text-sm"></div>
@@ -321,7 +321,7 @@
                         });
                         dropdown.classList.remove('hidden');
                     } else {
-                        dropdown.innerHTML = '<div class="px-3 py-2 text-gray-400 text-xs italic">Tidak ada hasil</div>';
+                        dropdown.innerHTML = '<div class="px-3 py-2 text-gray-400 text-xs italic">No ada hasil</div>';
                         dropdown.classList.remove('hidden');
                     }
                 });
@@ -338,7 +338,7 @@
             displayInput.addEventListener('input', function() {
                 clearTimeout(acTimer);
                 
-                // Hapus nilai part yang sudah dipilih sebelumnya jika user mengetik ulang
+                // Delete previously selected part value if user retypes
                 partNoInput.value = '';
                 partNameInput.value = '';
                 

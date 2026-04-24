@@ -17,7 +17,7 @@ class NpcPartProcessController extends Controller
     {
         $part->load('processes.process.departments', 'processes.department', 'purchaseOrder.event.customerCategory');
 
-        // Jika belum ada proses, ambil dari NpcMasterRouting sebagai default
+        // Jika belum ada proses, ambil of NpcMasterRouting sebagai default
         if ($part->processes->isEmpty()) {
             $product = $part->product;
             if ($product) {
@@ -117,6 +117,6 @@ class NpcPartProcessController extends Controller
             }
         }
 
-        return redirect()->route('tracking.index')->with('success', "Routing process untuk part {$part->part_no} berhasil diperbarui.");
+        return redirect()->route('tracking.index')->with('success', "Routing process for part {$part->part_no} successfully updated.");
     }
 }

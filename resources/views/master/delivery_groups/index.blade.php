@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
-@section('title', 'Master Grup Pengiriman')
-@section('page_title', 'Master Data / Grup Pengiriman')
+@section('title', 'Master Delivery Group')
+@section('page_title', 'Master Data / Delivery Group')
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-layer-group text-blue-500"></i> Daftar Grup Pengiriman
+            <i class="fa-solid fa-layer-group text-blue-500"></i> Register Delivery Group
         </h2>
         <a href="{{ route('master.delivery-groups.create') }}" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-md shadow-blue-500/20 font-medium text-sm flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Tambah Grup
+            <i class="fa-solid fa-plus"></i> Add Grup
         </a>
     </div>
 
@@ -20,8 +20,8 @@
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
                         <th scope="col" class="px-6 py-4 font-semibold w-16">No</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Nama Grup Pengiriman (Misal: GR1, GR2)</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right w-24">Aksi</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Name Delivery Group (Misal: GR1, GR2)</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right w-24">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -34,10 +34,10 @@
                                 <a href="{{ route('master.delivery-groups.edit', $group->id) }}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-md transition" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('master.delivery-groups.destroy', $group->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus grup ini secara permanen?');">
+                                <form action="{{ route('master.delivery-groups.destroy', $group->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete grup ini secara permanen?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Hapus">
+                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Delete">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </form>

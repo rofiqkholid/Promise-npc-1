@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', $pageTitle ?? 'Setup Routing Produksi')
-@section('page_title', 'Transaksi / ' . ($pageTitle ?? 'Setup Routing Produksi'))
+@section('title', $pageTitle ?? 'Production Routing Setup')
+@section('page_title', 'Transaksi / ' . ($pageTitle ?? 'Production Routing Setup'))
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-            <i class="fa-solid {{ $pageIcon ?? 'fa-route' }} text-blue-500"></i> {{ $pageTitle ?? 'Setup Routing Produksi' }}
+            <i class="fa-solid {{ $pageIcon ?? 'fa-route' }} text-blue-500"></i> {{ $pageTitle ?? 'Production Routing Setup' }}
         </h2>
         @if(isset($pageDesc))
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 ml-7">{{ $pageDesc }}</p>
@@ -22,9 +22,9 @@
                     <tr>
                         <th scope="col" class="px-6 py-4 font-semibold">Event / PO</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Part Info</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Jumlah & Target Pengiriman</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Jumlah & Delivery Target</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Tinjauan Rute (Prosess)</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right w-48">Aksi Setup</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right w-48">Action Setup</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -33,7 +33,7 @@
                         <td class="px-6 py-4">
                             <div class="text-blue-600 dark:text-blue-400 font-bold text-sm">{{ optional($part->purchaseOrder)->po_no }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">{{ optional(optional(optional($part->purchaseOrder)->event)->customerCategory)->name ?? 'Unknown Event' }}</div>
-                            <div class="text-[10px] text-gray-400 mt-1"><i class="fa-regular fa-clock"></i> Masuk: {{ $part->created_at->format('d M Y') }}</div>
+                            <div class="text-[10px] text-gray-400 mt-1"><i class="fa-regular fa-clock"></i> Login: {{ $part->created_at->format('d M Y') }}</div>
                         </td>
                         <td class="px-6 py-4">
                             <div class="text-gray-800 dark:text-gray-200 font-bold text-sm">{{ optional($part->product)->part_no }}</div>
@@ -56,7 +56,7 @@
                                 <span class="text-[10px] text-gray-400 italic">Rute belum disubmit ke produksi</span>
                             @else
                                 <div class="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-orange-50 text-orange-700 border border-orange-200 text-[10px] font-medium">
-                                    <i class="fa-solid fa-triangle-exclamation"></i> Belum ada Routing
+                                    <i class="fa-solid fa-triangle-exclamation"></i> No Routing Yet
                                 </div>
                             @endif
                         </td>
@@ -77,7 +77,7 @@
                                     @if($canRollbackSetup)
                                     <form action="{{ route('tracking.setup.rollback', $part->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="text-[10px] text-red-500 hover:text-red-700 flex items-center gap-1 font-semibold transition mt-1" onclick="return confirm('Yakin ingin membatalkan setup routing dan mengembalikan part ke tahap awal (PO_REGISTERED)?')">
+                                        <button type="submit" class="text-[10px] text-red-500 hover:text-red-700 flex items-center gap-1 font-semibold transition mt-1" onclick="return confirm('Are you sure you want to cancel the routing setup and return the part to the initial stage (PO_REGISTERED)?')">
                                             <i class="fa-solid fa-rotate-left"></i> Rollback Setup
                                         </button>
                                     </form>
@@ -91,7 +91,7 @@
                         <td colspan="5" class="p-12 text-center text-gray-500 dark:text-gray-400">
                             <div class="flex flex-col items-center justify-center gap-3">
                                 <i class="fa-regular fa-folder-open text-4xl text-gray-300 dark:text-gray-600"></i>
-                                <p>Tidak ada antrean part masuk yang membutuhkan setup rute.</p>
+                                <p>No ada antrean part masuk yang membutuhkan setup rute.</p>
                             </div>
                         </td>
                     </tr>

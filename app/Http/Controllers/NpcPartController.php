@@ -36,7 +36,7 @@ class NpcPartController extends Controller
             'qty' => 'required|integer|min:1',
             'delivery_date' => 'required|date',
         ], [
-            'part_no.exists' => 'Part Number yang Anda masukkan tidak valid atau bukan merupakan part dari Model event ini.'
+            'part_no.exists' => 'The Part Number you entered is invalid or not part of this event's Model.'
         ]);
 
         $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
@@ -88,7 +88,7 @@ class NpcPartController extends Controller
             'status' => 'required|in:WAITING_DEPT_CONFIRM,WAITING_QE_CHECK,WAITING_MGM_CHECK,FINISHED,CLOSED,OPEN',
             'condition' => 'nullable|string',
         ], [
-            'part_no.exists' => 'Part Number yang Anda masukkan tidak valid atau bukan merupakan part dari Model event ini.'
+            'part_no.exists' => 'The Part Number you entered is invalid or not part of this event's Model.'
         ]);
 
         $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
@@ -125,9 +125,9 @@ class NpcPartController extends Controller
             $part->update([
                 'part_revision_id' => $product->docPackage->current_revision_id
             ]);
-            return back()->with('success', 'Revisi ECN terbaru berhasil diterapkan untuk part ' . $product->part_no);
+            return back()->with('success', 'Latest ECN revision successfully applied for part ' . $product->part_no);
         }
 
-        return back()->with('error', 'Gagal menerapkan revisi ECN. Data Master Drawing tidak ditemukan.');
+        return back()->with('error', 'Failed to apply ECN revision. Master Data Drawing not found.');
     }
 }

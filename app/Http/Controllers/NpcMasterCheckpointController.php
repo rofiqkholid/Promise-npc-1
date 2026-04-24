@@ -37,7 +37,7 @@ class NpcMasterCheckpointController extends Controller
             'is_active'    => $request->has('is_active') ? 1 : 0
         ]);
 
-        return redirect()->route('master.checkpoints.index')->with('success', 'Checkpoint QA berhasil ditambahkan.');
+        return redirect()->route('master.checkpoints.index')->with('success', 'QA Checkpoint successfully added.');
     }
 
     public function edit(NpcMasterCheckpoint $checkpoint)
@@ -60,12 +60,12 @@ class NpcMasterCheckpointController extends Controller
             'is_active'    => $request->has('is_active') ? 1 : 0
         ]);
 
-        return redirect()->route('master.checkpoints.index')->with('success', 'Checkpoint QA berhasil diperbarui.');
+        return redirect()->route('master.checkpoints.index')->with('success', 'QA Checkpoint successfully updated.');
     }
 
     public function destroy(NpcMasterCheckpoint $checkpoint)
     {
         $checkpoint->delete();
-        return redirect()->route('master.checkpoints.index')->with('success', 'Checkpoint QA berhasil dihapus.');
+        return redirect()->route('master.checkpoints.index')->with('success', 'QA Checkpoint successfully deleted.');
     }
 }

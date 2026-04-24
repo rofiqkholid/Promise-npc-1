@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Input Quality Checksheet')
-@section('page_title', 'Checksheet Produksi / ' . (optional($part->purchaseOrder)->po_no ?? 'Part Telah Dihapus'))
+@section('page_title', 'Checksheet Production / ' . (optional($part->purchaseOrder)->po_no ?? 'Part Telah Dihapus'))
 
 @section('content')
 @php
@@ -42,7 +42,7 @@
             <span class="text-sm font-medium text-gray-700 dark:text-white">{{ \Carbon\Carbon::parse($part->delivery_date)->format('d M Y') }}</span>
         </div>
         <div>
-            <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Selesai Produksi</span>
+            <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Production Done</span>
             <span class="text-sm font-medium text-gray-700 dark:text-white">
                 @if($part->processes->count() > 0)
                     {{ \Carbon\Carbon::parse($part->processes->last()->actual_completion_date ?? \Carbon\Carbon::now())->format('d M Y') }}
@@ -75,13 +75,13 @@
             ==============================-->
             <div class="space-y-6 max-w-2xl mx-auto">
                 <div class="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 p-4 rounded text-sm text-blue-700 dark:text-blue-300">
-                    <p class="font-semibold mb-1">Instruksi Quality Control:</p>
-                    <p>Silakan isi persentase hitungan akurasi dimensi part dan lampirkan file laporan inspeksi fisik (PDF/Image).</p>
+                    <p class="font-semibold mb-1">Instruction Quality Control:</p>
+                    <p>Please fill in the percentage hitungan akurasi dimensi part and attach the physical inspection report file (PDF/Image).</p>
                 </div>
 
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Hitungan Accuracy (%) <span class="text-red-500">*</span>
+                        Calculation Accuracy (%) <span class="text-red-500">*</span>
                     </label>
                     <div class="relative w-48">
                         <input type="number" step="0.01" min="0" max="100" name="accuracy_percentage" required value="{{ old('accuracy_percentage', $checksheet->accuracy_percentage) }}"
@@ -94,7 +94,7 @@
 
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Uggah Bukti IR (Max 10MB) <span class="text-gray-400 font-normal">(Opsional)</span>
+                        Upload IR Evidence (Max 10MB) <span class="text-gray-400 font-normal">(Optional)</span>
                     </label>
                     <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
                         <div class="space-y-1 text-center">
@@ -122,28 +122,28 @@
                    MGM CHECKLIST FORM 
             ==============================-->
             <div class="mb-6">
-                <!-- Data QC Sebelumnya (Read Only) -->
+                <!-- Data QC Previous (Read Only) -->
                 <div class="flex flex-col md:flex-row gap-6 mb-6 p-4 rounded-lg bg-slate-50 border border-slate-200 dark:bg-gray-900 dark:border-gray-700">
                     <div>
-                        <span class="block text-xs text-gray-500 uppercase font-semibold">Hasil Accuracy QC</span>
+                        <span class="block text-xs text-gray-500 uppercase font-semibold">Result Accuracy QC</span>
                         <span class="text-2xl font-black text-blue-600 dark:text-blue-400">{{ $checksheet->accuracy_percentage ?? 'N/A' }}%</span>
                     </div>
                     @if($checksheet->attachment_path)
                     <div class="flex items-center">
                         <a href="{{ Storage::url($checksheet->attachment_path) }}" target="_blank" class="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                            <i class="fa-solid fa-file-pdf text-red-500"></i> View Lampiran QC
+                            <i class="fa-solid fa-file-pdf text-red-500"></i> View Attachment QC
                         </a>
                     </div>
                     @else
                     <div class="flex items-center text-sm text-gray-500 italic">
-                        Tidak ada file lampiran QC.
+                        No attachment file QC.
                     </div>
                     @endif
                 </div>
 
                 <div class="mb-4">
                     <h3 class="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">History Problem</h3>
-                    <p class="text-xs text-gray-500 mt-1">Daftar masalah yang pernah ditemukan pada Product / Part Number ini di masa lampau.</p>
+                    <p class="text-xs text-gray-500 mt-1">List of problems previously found on this Product / Part Number ini di masa lampau.</p>
                 </div>
 
                 <div class="mb-6 p-4 rounded-lg border border-red-200 bg-red-50 dark:bg-red-900/10 dark:border-red-800/50">
@@ -157,18 +157,18 @@
                                 </span>
                             </li>
                         @empty
-                            <li class="text-gray-500 italic text-sm">Belum ada riwayat cacat (History Problem) untuk part ini.</li>
+                            <li class="text-gray-500 italic text-sm">No defect history yet (History Problem) untuk part ini.</li>
                         @endforelse
                     </ul>
 
                     <!-- New History Input -->
                     <div class="border-t border-red-200 dark:border-red-800/50 pt-4 mt-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Tambah History Problem Baru <span class="text-gray-500 text-xs font-normal">(Isi jika ada temuan cacat di luar checklist)</span>
+                            Add New History Problem <span class="text-gray-500 text-xs font-normal">(Fill in if there are defect findings outside the checklist)</span>
                         </label>
                         <div id="dynamic-history-wrapper" class="space-y-2">
                             <div class="flex items-center gap-2 history-row">
-                                <input type="text" name="new_history_problems[]" placeholder="Deskripsi masalah baru..." class="flex-1 text-sm border-gray-300 dark:border-gray-600 rounded shadow-sm focus:border-red-500 focus:ring-red-500 dark:bg-gray-800 dark:text-white">
+                                <input type="text" name="new_history_problems[]" placeholder="Description masalah baru..." class="flex-1 text-sm border-gray-300 dark:border-gray-600 rounded shadow-sm focus:border-red-500 focus:ring-red-500 dark:bg-gray-800 dark:text-white">
                                 <button type="button" class="px-3 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded transition add-history-btn">
                                     <i class="fa-solid fa-plus"></i>
                                 </button>
@@ -178,8 +178,8 @@
                 </div>
 
                 <div class="mb-4 mt-8">
-                    <h3 class="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Formulir Validasi Management (24 Point)</h3>
-                    <p class="text-xs text-gray-500 mt-1">Hanya menampilkan poin-poin yang telah di-mapping ke part ini saat pendaftaran PO.</p>
+                    <h3 class="text-sm font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">Form Validation Management (24 Point)</h3>
+                    <p class="text-xs text-gray-500 mt-1">Only shows points mapped to this part during PO registration.</p>
                 </div>
 
                 <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
@@ -187,7 +187,7 @@
                         <thead class="bg-gray-100 dark:bg-gray-700/80 text-gray-700 dark:text-gray-300 uppercase text-xs font-semibold">
                             <tr>
                                 <th class="px-4 py-3 border-r dark:border-gray-600 w-12 text-center">No</th>
-                                <th class="px-4 py-3 border-r dark:border-gray-600">Poin Pengecekan</th>
+                                <th class="px-4 py-3 border-r dark:border-gray-600">Check Point</th>
                                 <th class="px-4 py-3 border-r dark:border-gray-600 w-48">Standard Parameter</th>
                                 <th class="px-4 py-3 text-center w-32">Status OK/NG</th>
                             </tr>
@@ -207,7 +207,7 @@
                                             class="w-full text-xs py-1.5 px-2 font-bold border-gray-300 dark:border-gray-600 rounded shadow-sm focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:text-white
                                             @if($detail->row_result == 'OK') text-green-600 bg-green-50 dark:bg-green-900/20 
                                             @elseif($detail->row_result == 'NG') text-red-600 bg-red-50 dark:bg-red-900/20 @endif">
-                                        <option value="" class="text-gray-400">- Pilih -</option>
+                                        <option value="" class="text-gray-400">- Select -</option>
                                         <option value="OK" class="text-green-600 font-bold" {{ $detail->row_result === 'OK' ? 'selected' : '' }}>OK</option>
                                         <option value="NG" class="text-red-600 font-bold" {{ $detail->row_result === 'NG' ? 'selected' : '' }}>NG</option>
                                     </select>
@@ -216,7 +216,7 @@
                             @empty
                             <tr>
                                 <td colspan="4" class="px-4 py-6 text-center text-gray-500 italic">
-                                    Tidak ada point checking yang di-mapping ke part ini.
+                                    No check points mapped to this part.
                                 </td>
                             </tr>
                             @endforelse
@@ -226,10 +226,10 @@
 
                 <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-purple-50 dark:bg-purple-900/10 p-4 rounded-lg border border-purple-100 dark:border-purple-800/30">
                     <div class="flex items-center gap-4">
-                        <label class="font-bold text-gray-800 dark:text-white text-base">Keputusan Akhir (MGM Decision):</label>
+                        <label class="font-bold text-gray-800 dark:text-white text-base">Final Decision (MGM Decision):</label>
                         <select name="final_result" required
                                 class="rounded-lg border-purple-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-base py-2 pl-3 pr-10 font-bold text-gray-800 dark:bg-gray-800 dark:text-white dark:border-gray-600 min-w-[200px]">
-                            <option value="" {{ $checksheet->final_result == 'Pending' || empty($checksheet->final_result) ? 'selected' : '' }} disabled class="text-gray-400">-- PILIH KEPUTUSAN --</option>
+                            <option value="" {{ $checksheet->final_result == 'Pending' || empty($checksheet->final_result) ? 'selected' : '' }} disabled class="text-gray-400">-- SELECT DECISION --</option>
                             <option value="OK" class="text-green-600" {{ $checksheet->final_result == 'OK' ? 'selected' : '' }}>✅ APPROVED (OK)</option>
                             <option value="NG" class="text-red-600" {{ $checksheet->final_result == 'NG' ? 'selected' : '' }}>❌ REJECTED (NG)</option>
                             <option value="Need Improvement" class="text-yellow-600" {{ $checksheet->final_result == 'Need Improvement' ? 'selected' : '' }}>⚠️ NEED IMPROVEMENT</option>
@@ -242,10 +242,10 @@
 
         <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3 rounded-b-lg">
             <a href="{{ route('tracking.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition shadow-sm text-sm font-medium">
-                Batal
+                Cancel
             </a>
             <button type="submit" class="px-5 py-2 {{ $isMGM ? 'bg-purple-600 hover:bg-purple-700' : 'bg-orange-600 hover:bg-orange-700' }} text-white rounded-lg transition shadow-sm font-semibold flex items-center gap-2 text-sm">
-                <i class="fa-solid fa-floppy-disk"></i> {{ $isMGM ? 'Simpan & Approve (MGM)' : 'Submit Accuracy (QC)' }}
+                <i class="fa-solid fa-floppy-disk"></i> {{ $isMGM ? 'Save & Approve (MGM)' : 'Submit Accuracy (QC)' }}
             </button>
         </div>
     </form>
@@ -281,7 +281,7 @@
                     const newRow = document.createElement('div');
                     newRow.className = 'flex items-center gap-2 history-row mt-2';
                     newRow.innerHTML = `
-                        <input type="text" name="new_history_problems[]" placeholder="Deskripsi masalah baru..." class="flex-1 text-sm border-gray-300 dark:border-gray-600 rounded shadow-sm focus:border-red-500 focus:ring-red-500 dark:bg-gray-800 dark:text-white">
+                        <input type="text" name="new_history_problems[]" placeholder="Description masalah baru..." class="flex-1 text-sm border-gray-300 dark:border-gray-600 rounded shadow-sm focus:border-red-500 focus:ring-red-500 dark:bg-gray-800 dark:text-white">
                         <button type="button" class="px-3 py-2 bg-red-100 hover:bg-red-200 dark:bg-red-900/40 dark:hover:bg-red-800/60 text-red-700 dark:text-red-400 rounded transition remove-history-btn">
                             <i class="fa-solid fa-minus"></i>
                         </button>

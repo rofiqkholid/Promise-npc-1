@@ -18,10 +18,10 @@
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
         <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-route text-blue-500"></i> Daftar Master Routing
+            <i class="fa-solid fa-route text-blue-500"></i> Register Master Routing
         </h2>
         <a href="{{ route('master.routings.create') }}" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-md shadow-blue-500/20 font-medium text-sm flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Tambah Routing
+            <i class="fa-solid fa-plus"></i> Add Routing
         </a>
     </div>
 
@@ -33,8 +33,8 @@
                         <th scope="col" class="px-6 py-4 font-semibold w-16">#</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Part No</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Part Name</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Alur Proses (Routing)</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right w-32">Aksi</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Alur Process (Routing)</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right w-32">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -70,10 +70,10 @@
                                 <a href="{{ route('master.routings.edit', $routing->part_id) }}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-md transition" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('master.routings.destroy', $routing->part_id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus routing untuk part ini?');">
+                                <form action="{{ route('master.routings.destroy', $routing->part_id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure ingin menghapus routing untuk part ini?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Hapus">
+                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Delete">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
                                 </form>
@@ -85,7 +85,7 @@
                         <td colspan="5" class="p-12 text-center text-gray-500 dark:text-gray-400">
                             <div class="flex flex-col items-center justify-center gap-3">
                                 <i class="fa-solid fa-route text-4xl text-gray-300 dark:text-gray-600"></i>
-                                <p>Belum ada data master routing. Klik "Tambah Routing" untuk memulai.</p>
+                                <p>Belum ada data master routing. Klik "Add Routing" untuk memulai.</p>
                             </div>
                         </td>
                     </tr>
@@ -140,7 +140,7 @@
                             if(data.success) {
                                 // Show tiny success toast using the layout's Toast mechanism if available, or just ignore since it's saved.
                             } else {
-                                alert('Gagal menyimpan urutan baru.');
+                                alert('Failed menyimpan urutan baru.');
                             }
                         })
                         .catch(err => {

@@ -30,7 +30,7 @@ class NpcEventController extends Controller
         // Ambil data Master Delivery Target
         $delivery_targets = \App\Models\NpcDeliveryTarget::where('is_active', true)->orderBy('target_name')->get();
 
-        // Ambil data Grup Pengiriman
+        // Ambil data Delivery Group
         $delivery_groups = NpcDeliveryGroup::orderBy('name')->get();
 
         return view('npc_events.create', compact('customers', 'delivery_targets', 'delivery_groups'));
@@ -56,7 +56,7 @@ class NpcEventController extends Controller
             'parts.*.qty' => 'required|integer|min:1',
             'parts.*.delivery_date' => 'required|date'
         ], [
-            'parts.*.part_no.exists' => 'Salah satu Part Number yang Anda masukkan tidak valid atau bukan merupakan part dari Model tersebut.'
+            'parts.*.part_no.exists' => 'One of the Part Numbers entered is invalid or not part of the Model.'
         ]);
 
         $event = \App\Models\NpcEvent::create([
@@ -111,7 +111,7 @@ class NpcEventController extends Controller
 
         }
 
-        return redirect()->route('events.index')->with('success', 'Event, PO, dan Parts berhasil ditambahkan.');
+        return redirect()->route('events.index')->with('success', 'Event, PO, and Parts successfully added.');
     }
 
     public function edit(\App\Models\NpcEvent $event)
@@ -237,10 +237,10 @@ class NpcEventController extends Controller
                 $importedCount++;
             }
 
-            return redirect()->route('events.index')->with('success', "Event dibuat dan $importedCount Part(s) berhasil di-import!");
+            return redirect()->route('events.index')->with('success', "Event dibuat dan $importedCount Part(s) successfully imported!");
 
         } catch (Exception $e) {
-            return back()->with('error', 'Gagal memproses file Excel: ' . $e->getMessage());
+            return back()->with('error', 'Failed memproses file Excel: ' . $e->getMessage());
         }
     }
 }

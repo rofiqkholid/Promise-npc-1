@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Master Department')
-@section('page_title', 'Master Data / Department / Tambah Baru')
+@section('title', 'Add Master Department')
+@section('page_title', 'Master Data / Department / Add New')
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 max-w-2xl mx-auto">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/50">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
-            <i class="fa-solid fa-plus-circle text-blue-600 mr-2"></i> Formulir Tambah Department
+            <i class="fa-solid fa-plus-circle text-blue-600 mr-2"></i> Form Add Department
         </h2>
     </div>
 
@@ -27,7 +27,7 @@
             
             <div class="space-y-1">
                 <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Kode / Nama Pendek <span class="text-red-500">*</span>
+                    Kode / Name Pendek <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -41,7 +41,7 @@
 
             <div class="space-y-1">
                 <label for="full_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Nama Lengkap / Keterangan
+                    Name Lengkap / Remarks
                 </label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -65,10 +65,10 @@
 
         <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3 rounded-b-lg">
             <a href="{{ route('master.departments.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                Batal
+                Cancel
             </a>
             <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition flex items-center gap-2">
-                <i class="fa-solid fa-floppy-disk"></i> Simpan Department
+                <i class="fa-solid fa-floppy-disk"></i> Save Department
             </button>
         </div>
     </form>

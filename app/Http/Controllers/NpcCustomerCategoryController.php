@@ -30,7 +30,7 @@ class NpcCustomerCategoryController extends Controller
             'name' => 'required|string|max:255'
         ]);
         NpcCustomerCategory::create($request->all());
-        return redirect()->route('master.customer-categories.index')->with('success', 'Mapping Kategori Customer berhasil ditambahkan.');
+        return redirect()->route('master.customer-categories.index')->with('success', 'Customer Category Mapping successfully added.');
     }
 
     public function edit(NpcCustomerCategory $customerCategory)
@@ -48,12 +48,12 @@ class NpcCustomerCategoryController extends Controller
             'name' => 'required|string|max:255'
         ]);
         $customerCategory->update($request->all());
-        return redirect()->route('master.customer-categories.index')->with('success', 'Mapping Kategori Customer berhasil diperbarui.');
+        return redirect()->route('master.customer-categories.index')->with('success', 'Customer Category Mapping successfully updated.');
     }
 
     public function destroy(NpcCustomerCategory $customerCategory)
     {
         $customerCategory->delete();
-        return redirect()->route('master.customer-categories.index')->with('success', 'Mapping Kategori Customer berhasil dihapus.');
+        return redirect()->route('master.customer-categories.index')->with('success', 'Customer Category Mapping successfully deleted.');
     }
 }

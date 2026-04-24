@@ -21,7 +21,7 @@
                 <!-- Data Pencarian -->
                 <div class="col-span-1 md:col-span-2 space-y-1 relative">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Cari Part No / Name dari DB Drawing (Gunakan jika ingin mengganti Part)
+                        Search Part No / Name of DB Drawing (Gunakan jika ingin mengganti Part)
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -99,7 +99,7 @@
                     </label>
                     <select id="department" name="department" required
                         class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
-                        <option value="">Pilih Department</option>
+                        <option value="">Select Department</option>
                         @foreach(\App\Models\NpcDepartment::where('is_active', true)->orderBy('name')->get() as $dept)
                             <option value="{{ $dept->name }}" {{ old('department', $part->department) == $dept->name ? 'selected' : '' }}>
                                 {{ $dept->full_name ?? $dept->name }}
@@ -133,7 +133,7 @@
 
             <div class="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
                 <a href="{{ route('events.parts.index', $event->id) }}" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                    Batal
+                    Cancel
                 </a>
                 <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition">
                     <i class="fa-solid fa-floppy-disk mr-1"></i> Update Part
@@ -184,7 +184,7 @@
                     });
                     searchResults.classList.remove('hidden');
                 } else {
-                    searchResults.innerHTML = '<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 italic">Tidak ada part ditemukan...</div>';
+                    searchResults.innerHTML = '<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 italic">No part found...</div>';
                     searchResults.classList.remove('hidden');
                 }
             })

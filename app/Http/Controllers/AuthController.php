@@ -10,7 +10,7 @@ use App\Models\User;
 class AuthController extends Controller
 {
     /**
-     * Tampilkan form login
+     * Show form login
      */
     public function showLoginForm()
     {
@@ -22,17 +22,17 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        // Validasi input
+        // Validation input
         $validated = $request->validate([
             'nik' => 'required|string',
             'password' => 'required|string|min:6',
         ], [
-            'nik.required' => 'Employee ID (NIK) harus diisi',
-            'password.required' => 'Password harus diisi',
-            'password.min' => 'Password minimal 6 karakter',
+            'nik.required' => 'Employee ID (NIK) required',
+            'password.required' => 'Password required',
+            'password.min' => 'Password minimum 6 characters',
         ]);
 
-        // Cari user berdasarkan NIK
+        // Search user berdasarkan NIK
         $user = User::where('nik', $validated['nik'])->first();
 
         // Verifikasi password
@@ -40,7 +40,7 @@ class AuthController extends Controller
             return back()
                 ->withInput($request->only('nik'))
                 ->withErrors([
-                    'authentication' => 'NIK atau password salah.',
+                    'authentication' => 'NIK or password incorrect.',
                 ]);
         }
 
@@ -49,7 +49,7 @@ class AuthController extends Controller
 
         // Redirect ke halaman yang diminta atau dashboard
         return redirect()->intended(route('dashboard'))
-            ->with('success', 'Selamat datang ' . $user->name);
+            ->with('success', 'Welcome ' . $user->name);
     }
 
     /**
@@ -62,7 +62,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'Anda telah logout');
+        return redirect('/')->with('success', 'You have been logged out');
     }
 
     public function forgetPassword()

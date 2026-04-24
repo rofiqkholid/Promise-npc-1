@@ -11,12 +11,12 @@
                 <i class="fa-solid fa-list-check text-blue-500 mr-2"></i> Mapping Master Checksheet
             </h2>
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                <strong>Part No:</strong> <span class="text-blue-600 dark:text-blue-400 font-bold">{{ $product->part_no }}</span> | <strong>Nama:</strong> {{ $product->part_name }} | <strong>Customer:</strong> <span class="font-bold text-gray-800 dark:text-gray-200">{{ optional($product->customer)->code ?? '-' }}</span> | <strong>Model:</strong> <span class="font-medium text-gray-800 dark:text-gray-200">{{ optional($product->vehicleModel)->name ?? '-' }}</span>
+                <strong>Part No:</strong> <span class="text-blue-600 dark:text-blue-400 font-bold">{{ $product->part_no }}</span> | <strong>Name:</strong> {{ $product->part_name }} | <strong>Customer:</strong> <span class="font-bold text-gray-800 dark:text-gray-200">{{ optional($product->customer)->code ?? '-' }}</span> | <strong>Model:</strong> <span class="font-medium text-gray-800 dark:text-gray-200">{{ optional($product->vehicleModel)->name ?? '-' }}</span>
             </p>
         </div>
         <div>
             <a href="{{ route('master.checksheets.index') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded shadow-sm text-sm font-medium transition dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-gray-200 border border-gray-300 dark:border-gray-600">
-                <i class="fa-solid fa-arrow-left"></i> Kembali
+                <i class="fa-solid fa-arrow-left"></i> Back
             </a>
         </div>
     </div>
@@ -57,7 +57,7 @@
                             <td class="px-6 py-4 text-center font-bold text-gray-500">{{ $point->point_number }}</td>
                             <td class="px-6 py-4 font-semibold text-gray-800 dark:text-gray-200">{{ $point->check_item }}</td>
                             <td class="px-6 py-4">
-                                <input type="text" name="points[{{ $point->id }}][custom_standard]" value="{{ $stdText }}" placeholder="Kosongkan jika tidak ada standard" class="w-full text-sm border-gray-300 dark:border-gray-600 rounded shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-white form-input p-2 font-medium {{ $isChecked ? '' : 'opacity-50' }}" {{ $isChecked ? '' : 'readonly' }} onfocus="this.select()">
+                                <input type="text" name="points[{{ $point->id }}][custom_standard]" value="{{ $stdText }}" placeholder="Leave blank if there is no standard" class="w-full text-sm border-gray-300 dark:border-gray-600 rounded shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-white form-input p-2 font-medium {{ $isChecked ? '' : 'opacity-50' }}" {{ $isChecked ? '' : 'readonly' }} onfocus="this.select()">
                             </td>
                         </tr>
                     @endforeach
@@ -67,10 +67,10 @@
 
         <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3 rounded-b-lg">
             <a href="{{ route('master.checksheets.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600 transition shadow-sm text-sm font-medium">
-                Batal
+                Cancel
             </a>
             <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition shadow-sm font-bold flex items-center gap-2 text-sm shadow-md">
-                <i class="fa-solid fa-floppy-disk"></i> Simpan Mapping Poin
+                <i class="fa-solid fa-floppy-disk"></i> Save Mapping Poin
             </button>
         </div>
     </form>

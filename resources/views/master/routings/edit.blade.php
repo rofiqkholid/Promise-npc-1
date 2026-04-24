@@ -18,7 +18,7 @@
             
             <div class="space-y-4">
                 <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <p class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">Part Terpilih</p>
+                    <p class="text-xs font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">Selected Part</p>
                     <p class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ optional($part->product)->part_no }} - {{ optional($part->product)->part_name }}</p>
                     <p class="text-xs text-blue-500/80 dark:text-blue-300/80 mt-1 flex items-center gap-1 font-medium">
                         <i class="fa-solid fa-car"></i> {{ optional($part->vehicleModel)->name ?? 'Unknown Model' }}
@@ -30,10 +30,10 @@
                 <div class="pt-4 border-t border-gray-200 dark:border-gray-700">
                     <div class="flex justify-between items-center mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Alur Proses (Process Sequence) <span class="text-red-500">*</span>
+                            Alur Process (Process Sequence) <span class="text-red-500">*</span>
                         </label>
                         <button type="button" id="add_process_btn" class="px-3 py-1.5 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition text-xs font-medium flex items-center gap-1">
-                            <i class="fa-solid fa-plus"></i> Tambah Proses
+                            <i class="fa-solid fa-plus"></i> Add Process
                         </button>
                     </div>
 
@@ -46,7 +46,7 @@
                             </div>
                             <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <select name="process_ids[]" required class="process-select w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
-                                    <option value="">Pilih Proses</option>
+                                    <option value="">Select Process</option>
                                     @foreach($processes as $proc)
                                         <option value="{{ $proc->id }}" {{ $r->process_id == $proc->id ? 'selected' : '' }}>
                                             {{ $proc->process_name }}
@@ -54,7 +54,7 @@
                                     @endforeach
                                 </select>
                                 <select name="department_ids[]" required class="department-select w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
-                                    <option value="">Pilih Department</option>
+                                    <option value="">Select Department</option>
                                     @php
                                         $selectedProcess = $processes->where('id', $r->process_id)->first();
                                     @endphp
@@ -79,7 +79,7 @@
 
             <div class="pt-6 mt-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
                 <a href="{{ route('master.routings.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                    Batal
+                    Cancel
                 </a>
                 <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition">
                     <i class="fa-solid fa-floppy-disk mr-1"></i> Update Routing
@@ -102,7 +102,7 @@
         const masterProcesses = @json($processes);
 
         function getDepartmentOptions(processId) {
-            let options = '<option value="">Pilih Department</option>';
+            let options = '<option value="">Select Department</option>';
             if (!processId) return options;
             
             const process = masterProcesses.find(p => p.id == processId);
@@ -115,7 +115,7 @@
         }
 
         const processOptions = `
-            <option value="">Pilih Proses</option>
+            <option value="">Select Process</option>
             @foreach($processes as $proc)
                 <option value="{{ $proc->id }}">{{ $proc->process_name }}</option>
             @endforeach
@@ -141,7 +141,7 @@
                             ${processOptions}
                         </select>
                         <select name="department_ids[]" required class="department-select w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
-                            <option value="">Pilih Department</option>
+                            <option value="">Select Department</option>
                         </select>
                     </div>
                     <button type="button" class="remove-process w-10 text-center text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30 p-2 rounded transition mt-0.5">

@@ -34,7 +34,7 @@ class NpcProcessController extends Controller
         
         $process->departments()->sync($request->department_ids);
 
-        return redirect()->route('master.processes.index')->with('success', 'Master Process berhasl ditambahkan.');
+        return redirect()->route('master.processes.index')->with('success', 'Process Master successfully added.');
     }
 
     public function edit(NpcProcess $process)
@@ -57,12 +57,12 @@ class NpcProcessController extends Controller
         
         $process->departments()->sync($request->department_ids);
 
-        return redirect()->route('master.processes.index')->with('success', 'Master Process berhasil diperbarui.');
+        return redirect()->route('master.processes.index')->with('success', 'Process Master successfully updated.');
     }
 
     public function destroy(NpcProcess $process)
     {
         $process->delete();
-        return redirect()->route('master.processes.index')->with('success', 'Master Process berhasil dihapus.');
+        return redirect()->route('master.processes.index')->with('success', 'Process Master successfully deleted.');
     }
 }

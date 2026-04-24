@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('title', 'Edit Master Process')
-@section('page_title', 'Master Data / Proses Produksi / Edit')
+@section('page_title', 'Master Data / Process Production / Edit')
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 max-w-2xl mx-auto">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
-            <i class="fa-solid fa-pen-to-square text-blue-600 mr-2"></i> Edit Master Proses
+            <i class="fa-solid fa-pen-to-square text-blue-600 mr-2"></i> Edit Master Process
         </h2>
     </div>
 
@@ -28,7 +28,7 @@
             
             <div class="space-y-1">
                 <label for="process_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Nama Proses <span class="text-red-500">*</span>
+                    Name Process <span class="text-red-500">*</span>
                 </label>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -105,16 +105,16 @@
                         <div x-show="open && search !== '' && filteredDepartments.length === 0" 
                              style="display: none;"
                              class="absolute z-20 mt-1 w-full bg-white dark:bg-gray-800 rounded-md shadow-lg border border-gray-200 dark:border-gray-700 p-4 text-center">
-                            <span class="text-sm text-gray-500"><i class="fa-solid fa-magnifying-glass mr-1"></i> Tidak ditemukan department dengan kata kunci tersebut.</span>
+                            <span class="text-sm text-gray-500"><i class="fa-solid fa-magnifying-glass mr-1"></i> No department found with that keyword.</span>
                         </div>
                     </div>
 
-                    <!-- Selected tags container (Hasil) -->
+                    <!-- Selected tags container (Result) -->
                     <div class="p-3 bg-slate-50 dark:bg-gray-800/50 rounded-lg border border-dashed border-gray-300 dark:border-gray-700 min-h-[60px]">
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">PIC Terpilih:</p>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Selected PIC:</p>
                         <div class="flex flex-wrap gap-2">
                             <template x-if="selectedDepartments.length === 0">
-                                <span class="text-sm text-gray-400 italic flex items-center"><i class="fa-solid fa-inbox mr-2"></i> Belum ada yang dipilih.</span>
+                                <span class="text-sm text-gray-400 italic flex items-center"><i class="fa-solid fa-inbox mr-2"></i> None selected yet.</span>
                             </template>
                             
                             <template x-for="dept in selectedDepartments" :key="dept.id">
@@ -147,10 +147,10 @@
 
         <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3 rounded-b-lg">
             <a href="{{ route('master.processes.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                Batal
+                Cancel
             </a>
             <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition flex items-center gap-2">
-                <i class="fa-solid fa-floppy-disk"></i> Perbarui Proses
+                <i class="fa-solid fa-floppy-disk"></i> Perbarui Process
             </button>
         </div>
     </form>

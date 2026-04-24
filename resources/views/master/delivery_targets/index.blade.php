@@ -7,10 +7,10 @@
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-            <i class="fa-solid fa-truck-fast text-blue-500"></i> Daftar Tujuan Pengiriman
+            <i class="fa-solid fa-truck-fast text-blue-500"></i> Register Tujuan Pengiriman
         </h2>
         <a href="{{ route('master.delivery-targets.create') }}" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-md shadow-blue-500/20 font-medium text-sm flex items-center gap-2">
-            <i class="fa-solid fa-plus"></i> Tambah Tujuan
+            <i class="fa-solid fa-plus"></i> Add Tujuan
         </a>
     </div>
 
@@ -20,9 +20,9 @@
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
                         <th scope="col" class="px-6 py-4 font-semibold w-16">No</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Nama Tujuan (Target Delivery)</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Name Tujuan (Target Delivery)</th>
                         <th scope="col" class="px-6 py-4 font-semibold w-32">Status</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right w-24">Aksi</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right w-24">Action</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,7 +33,7 @@
                         <td class="px-6 py-4">
                             @if($target->is_active)
                                 <span class="px-2.5 py-1 rounded border text-xs font-semibold bg-green-100 text-green-800 border-green-200 dark:bg-green-900/40 dark:text-green-300 dark:border-green-800">
-                                    Aktif
+                                    Active
                                 </span>
                             @else
                                 <span class="px-2.5 py-1 rounded border text-xs font-semibold bg-gray-100 text-gray-800 border-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600">
@@ -46,10 +46,10 @@
                                 <a href="{{ route('master.delivery-targets.edit', $target->id) }}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-md transition" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('master.delivery-targets.destroy', $target->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus tujuan pengiriman ini secara permanen?');">
+                                <form action="{{ route('master.delivery-targets.destroy', $target->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete tujuan pengiriman ini secara permanen?');">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Hapus">
+                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Delete">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </form>

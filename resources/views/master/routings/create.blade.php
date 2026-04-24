@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Master Routing')
-@section('page_title', 'Master Data / Tambah Master Routing')
+@section('title', 'Add Master Routing')
+@section('page_title', 'Master Data / Add Master Routing')
 
 @section('content')
 <div class="max-w-4xl mx-auto">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
             <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-route text-blue-500"></i> Form Tambah Master Routing
+                <i class="fa-solid fa-route text-blue-500"></i> Form Add Master Routing
             </h2>
         </div>
 
@@ -19,7 +19,7 @@
                 <!-- Part Selection -->
                 <div class="space-y-1 relative">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Pilih Part (Drawing) <span class="text-red-500">*</span>
+                        Select Part (Drawing) <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -39,17 +39,17 @@
                     @error('part_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                     
                     <div id="selected_part_display" class="mt-2 text-sm font-medium text-blue-600 dark:text-blue-400 hidden">
-                        <i class="fa-solid fa-check-circle mr-1"></i> Part terpilih: <span id="part_label_text"></span>
+                        <i class="fa-solid fa-check-circle mr-1"></i> Selected part: <span id="part_label_text"></span>
                     </div>
                 </div>
 
                 <div class="pt-6 border-t border-gray-200 dark:border-gray-700">
                     <div class="flex justify-between items-center mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Alur Proses (Process Sequence) <span class="text-red-500">*</span>
+                            Alur Process (Process Sequence) <span class="text-red-500">*</span>
                         </label>
                         <button type="button" id="add_process_btn" class="px-3 py-1.5 bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition text-xs font-medium flex items-center gap-1">
-                            <i class="fa-solid fa-plus"></i> Tambah Proses
+                            <i class="fa-solid fa-plus"></i> Add Process
                         </button>
                     </div>
 
@@ -62,13 +62,13 @@
                             </div>
                             <div class="flex-1 grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <select name="process_ids[]" required class="process-select w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
-                                    <option value="">Pilih Proses</option>
+                                    <option value="">Select Process</option>
                                     @foreach($processes as $proc)
                                         <option value="{{ $proc->id }}">{{ $proc->process_name }}</option>
                                     @endforeach
                                 </select>
                                 <select name="department_ids[]" required class="department-select w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
-                                    <option value="">Pilih Department</option>
+                                    <option value="">Select Department</option>
                                 </select>
                             </div>
                             <button type="button" class="remove-process w-10 text-center text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30 p-2 rounded transition mt-0.5">
@@ -82,10 +82,10 @@
 
             <div class="pt-6 mt-6 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
                 <a href="{{ route('master.routings.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                    Batal
+                    Cancel
                 </a>
                 <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition">
-                    <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Routing
+                    <i class="fa-solid fa-floppy-disk mr-1"></i> Save Routing
                 </button>
             </div>
         </form>
@@ -142,7 +142,7 @@
                         });
                         searchResults.classList.remove('hidden');
                     } else {
-                        searchResults.innerHTML = '<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 italic">Tidak ada part ditemukan...</div>';
+                        searchResults.innerHTML = '<div class="px-4 py-3 text-sm text-slate-500 dark:text-slate-400 italic">No part found...</div>';
                         searchResults.classList.remove('hidden');
                     }
                 })
@@ -165,7 +165,7 @@
         const masterProcesses = @json($processes);
 
         function getDepartmentOptions(processId) {
-            let options = '<option value="">Pilih Department</option>';
+            let options = '<option value="">Select Department</option>';
             if (!processId) return options;
             
             const process = masterProcesses.find(p => p.id == processId);
@@ -178,7 +178,7 @@
         }
 
         const processOptions = `
-            <option value="">Pilih Proses</option>
+            <option value="">Select Process</option>
             @foreach($processes as $proc)
                 <option value="{{ $proc->id }}">{{ $proc->process_name }}</option>
             @endforeach
@@ -204,7 +204,7 @@
                             ${processOptions}
                         </select>
                         <select name="department_ids[]" required class="department-select w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
-                            <option value="">Pilih Department</option>
+                            <option value="">Select Department</option>
                         </select>
                     </div>
                     <button type="button" class="remove-process w-10 text-center text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/30 p-2 rounded transition mt-0.5">

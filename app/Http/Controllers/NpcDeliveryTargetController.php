@@ -30,7 +30,7 @@ class NpcDeliveryTargetController extends Controller
             'is_active'   => $request->has('is_active') ? 1 : 0
         ]);
 
-        return redirect()->route('master.delivery-targets.index')->with('success', 'Delivery Target berhasil ditambahkan.');
+        return redirect()->route('master.delivery-targets.index')->with('success', 'Delivery Target successfully added.');
     }
 
     public function edit(NpcDeliveryTarget $deliveryTarget)
@@ -50,12 +50,12 @@ class NpcDeliveryTargetController extends Controller
             'is_active'   => $request->has('is_active') ? 1 : 0
         ]);
 
-        return redirect()->route('master.delivery-targets.index')->with('success', 'Delivery Target berhasil diperbarui.');
+        return redirect()->route('master.delivery-targets.index')->with('success', 'Delivery Target successfully updated.');
     }
 
     public function destroy(NpcDeliveryTarget $deliveryTarget)
     {
         $deliveryTarget->delete();
-        return redirect()->route('master.delivery-targets.index')->with('success', 'Delivery Target berhasil dihapus.');
+        return redirect()->route('master.delivery-targets.index')->with('success', 'Delivery Target successfully deleted.');
     }
 }

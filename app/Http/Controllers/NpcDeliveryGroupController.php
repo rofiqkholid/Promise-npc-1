@@ -22,7 +22,7 @@ class NpcDeliveryGroupController extends Controller
     {
         $request->validate(['name' => 'required|string|max:255|unique:npc_delivery_groups']);
         NpcDeliveryGroup::create($request->all());
-        return redirect()->route('master.delivery-groups.index')->with('success', 'Grup Pengiriman berhasil ditambahkan.');
+        return redirect()->route('master.delivery-groups.index')->with('success', 'Delivery Group successfully added.');
     }
 
     public function edit(NpcDeliveryGroup $deliveryGroup)
@@ -34,12 +34,12 @@ class NpcDeliveryGroupController extends Controller
     {
         $request->validate(['name' => 'required|string|max:255|unique:npc_delivery_groups,name,' . $deliveryGroup->id]);
         $deliveryGroup->update($request->all());
-        return redirect()->route('master.delivery-groups.index')->with('success', 'Grup Pengiriman berhasil diperbarui.');
+        return redirect()->route('master.delivery-groups.index')->with('success', 'Delivery Group successfully updated.');
     }
 
     public function destroy(NpcDeliveryGroup $deliveryGroup)
     {
         $deliveryGroup->delete();
-        return redirect()->route('master.delivery-groups.index')->with('success', 'Grup Pengiriman berhasil dihapus.');
+        return redirect()->route('master.delivery-groups.index')->with('success', 'Delivery Group successfully deleted.');
     }
 }

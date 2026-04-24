@@ -113,7 +113,7 @@ class NpcChecksheetController extends Controller
                 $part->update(['status' => 'WAITING_MGM_CHECK']);
             }
 
-            return redirect()->route('tracking.index')->with('success', "Data QC (Accuracy: {$request->accuracy_percentage}%) berhasil disimpan.");
+            return redirect()->route('tracking.index')->with('success', "QC Data (Accuracy: {$request->accuracy_percentage}%) successfully saved.");
 
         } elseif ($request->role === 'MGM') {
             $request->validate([
@@ -164,7 +164,7 @@ class NpcChecksheetController extends Controller
                 $part->update(['status' => 'FINISHED']);
             }
 
-            return redirect()->route('tracking.index')->with('success', 'MGM Checksheet berhasil divalidasi dan disimpan.');
+            return redirect()->route('tracking.index')->with('success', 'MGM Checksheet successfully validated and saved.');
         }
 
         return redirect()->route('tracking.index');

@@ -8,7 +8,7 @@
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
         <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-between items-center">
             <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-route text-blue-500"></i> Setup Routing & Jadwal Proses
+                <i class="fa-solid fa-route text-blue-500"></i> Setup Routing & Jadwal Process
             </h2>
             <div class="text-sm">
                 <span class="text-gray-500 dark:text-gray-400">Target Delivery:</span>
@@ -40,7 +40,7 @@
                 @csrf
                 
                 <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-md font-semibold text-gray-700 dark:text-gray-200">Daftar Urutan Proses</h3>
+                    <h3 class="text-md font-semibold text-gray-700 dark:text-gray-200">Register Urutan Process</h3>
                 </div>
 
                 <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
@@ -48,7 +48,7 @@
                         <thead class="bg-gray-50 dark:bg-gray-700/50">
                             <tr>
                                 <th scope="col" class="px-4 py-3 text-left w-12 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">No</th>
-                                <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nama Proses</th>
+                                <th scope="col" class="px-4 py-3 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name Process</th>
                                 <th scope="col" class="px-4 py-3 text-left w-40 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Department</th>
                                 <th scope="col" class="px-4 py-3 text-left w-48 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">Completion Target</th>
                             </tr>
@@ -58,7 +58,7 @@
                         </tbody>
                     </table>
                     <div id="empty-state" class="text-center py-8 text-sm text-gray-500 dark:text-gray-400 hidden">
-                        Belum ada proses yang ditambahkan.
+                        No process has been added yet.
                     </div>
                 </div>
 
@@ -89,10 +89,10 @@
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <a href="{{ route('tracking.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                        Batal
+                        Cancel
                     </a>
                     <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition">
-                        <i class="fa-solid fa-floppy-disk mr-1"></i> Simpan Routing
+                        <i class="fa-solid fa-floppy-disk mr-1"></i> Save Routing
                     </button>
                 </div>
             </form>

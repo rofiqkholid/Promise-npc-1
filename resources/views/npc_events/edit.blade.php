@@ -23,9 +23,9 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Customer <span class="text-red-500">*</span>
                     </label>
-                    <select name="customer_id" id="customer_select" required data-placeholder="Pilih Customer..."
+                    <select name="customer_id" id="customer_select" required data-placeholder="Select Customer..."
                         class="select2 w-full">
-                        <option value="">Pilih Customer</option>
+                        <option value="">Select Customer</option>
                         @foreach($customers as $customer)
                             <option value="{{ $customer->id }}" {{ (old('customer_id', $masterCustomerId) == $customer->id) ? 'selected' : '' }}>
                                 {{ $customer->code }}
@@ -40,7 +40,7 @@
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Vehicle Model <span class="text-red-500">*</span>
                     </label>
-                    <select name="model_id" id="model_select" required data-placeholder="Pilih Model..."
+                    <select name="model_id" id="model_select" required data-placeholder="Select Model..."
                         class="select2 w-full">
                         @foreach($models as $model)
                             <option value="{{ $model->id }}" {{ (old('model_id', $masterModelId) == $model->id) ? 'selected' : '' }}>
@@ -56,11 +56,11 @@
                 <!-- Category Select -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Kategori Event <span class="text-red-500">*</span>
+                        Category Event <span class="text-red-500">*</span>
                     </label>
-                    <select name="customer_category_id" id="category_select" required data-placeholder="Pilih Kategori Event..."
+                    <select name="customer_category_id" id="category_select" required data-placeholder="Select Category Event..."
                         class="select2 w-full">
-                        <option value="">Pilih Kategori</option>
+                        <option value="">Select Category</option>
                         @foreach($customer_categories as $cat)
                             <option value="{{ $cat->id }}" {{ (old('customer_category_id', $event->customer_category_id) == $cat->id) ? 'selected' : '' }}>
                                 {{ $cat->name }}
@@ -73,11 +73,11 @@
                 <!-- Delivery Group Select -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Grup Pengiriman (GR) <span class="text-red-500">*</span>
+                        Delivery Group (GR) <span class="text-red-500">*</span>
                     </label>
-                    <select name="delivery_group_id" id="delivery_group_id" required data-placeholder="Pilih Grup Pengiriman..."
+                    <select name="delivery_group_id" id="delivery_group_id" required data-placeholder="Select Delivery Group..."
                         class="select2 w-full">
-                        <option value="">Pilih Grup</option>
+                        <option value="">Select Grup</option>
                         @foreach($delivery_groups as $group)
                             <option value="{{ $group->id }}" {{ old('delivery_group_id', $event->delivery_group_id) == $group->id ? 'selected' : '' }}>
                                 {{ $group->name }}
@@ -92,9 +92,9 @@
                 <label for="delivery_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Tujuan Pengiriman (Delivery To)
                 </label>
-                <select id="delivery_to" name="delivery_to" data-placeholder="Pilih Tujuan..."
+                <select id="delivery_to" name="delivery_to" data-placeholder="Select Tujuan..."
                     class="select2 w-full">
-                    <option value="">Pilih Tujuan (Opsional)</option>
+                    <option value="">Select Tujuan (Optional)</option>
                     @foreach($delivery_targets as $target)
                         <option value="{{ $target->target_name }}" {{ old('delivery_to', $event->delivery_to) == $target->target_name ? 'selected' : '' }}>
                             {{ $target->target_name }}
@@ -105,7 +105,7 @@
 
             <div class="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
                 <a href="{{ route('events.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 transition">
-                    Batal
+                    Cancel
                 </a>
                 <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition">
                     <i class="fa-solid fa-floppy-disk mr-1"></i> Update Event
@@ -129,7 +129,7 @@
             $(modelSelect).trigger('change.select2');
             
             if (!customerId) {
-                modelSelect.innerHTML = '<option value="">Pilih Model</option>';
+                modelSelect.innerHTML = '<option value="">Select Model</option>';
                 modelSelect.disabled = true;
                 $(modelSelect).trigger('change.select2');
                 return;
@@ -145,7 +145,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                modelSelect.innerHTML = '<option value="">Pilih Model</option>';
+                modelSelect.innerHTML = '<option value="">Select Model</option>';
                 if(data.results && data.results.length > 0) {
                     data.results.forEach(model => {
                         let isSelected = selectedModelId == model.id ? 'selected' : '';
@@ -153,13 +153,13 @@
                     });
                     modelSelect.disabled = false;
                 } else {
-                    modelSelect.innerHTML = '<option value="">Tidak ada model tersedia</option>';
+                    modelSelect.innerHTML = '<option value="">No ada model tersedia</option>';
                 }
                 $(modelSelect).trigger('change.select2');
             })
             .catch(error => {
                 console.error('Error fetching models:', error);
-                modelSelect.innerHTML = '<option value="">-- Gagal memuat data --</option>';
+                modelSelect.innerHTML = '<option value="">-- Failed memuat data --</option>';
                 $(modelSelect).trigger('change.select2');
             });
         }
@@ -173,7 +173,7 @@
             $(categorySelect).trigger('change.select2');
             
             if (!customerId) {
-                categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
                 categorySelect.disabled = true;
                 $(categorySelect).trigger('change.select2');
                 return;
@@ -189,7 +189,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                categorySelect.innerHTML = '<option value="">Pilih Kategori</option>';
+                categorySelect.innerHTML = '<option value="">Select Category</option>';
                 if(data.results && data.results.length > 0) {
                     data.results.forEach(cat => {
                         let isSelected = selectedCategoryId == cat.id ? 'selected' : '';
@@ -197,13 +197,13 @@
                     });
                     categorySelect.disabled = false;
                 } else {
-                    categorySelect.innerHTML = '<option value="">Tidak ada kategori tersedia (Harap tambah di Master)</option>';
+                    categorySelect.innerHTML = '<option value="">No ada kategori tersedia (Harap tambah di Master)</option>';
                 }
                 $(categorySelect).trigger('change.select2');
             })
             .catch(error => {
                 console.error('Error fetching categories:', error);
-                categorySelect.innerHTML = '<option value="">-- Gagal memuat data --</option>';
+                categorySelect.innerHTML = '<option value="">-- Failed memuat data --</option>';
                 $(categorySelect).trigger('change.select2');
             });
         }

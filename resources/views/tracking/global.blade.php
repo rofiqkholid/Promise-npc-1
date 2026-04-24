@@ -23,7 +23,7 @@
                 <i class="fa-solid fa-calendar-check mt-1"></i>
             </div>
             <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">Total Event</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">Total Events</p>
                 <h3 class="text-2xl font-black text-gray-800 dark:text-white leading-none">{{ number_format($metrics['total_events']) }}</h3>
             </div>
         </div>
@@ -45,7 +45,7 @@
                 <i class="fa-solid fa-cubes mt-1"></i>
             </div>
             <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">Total Part</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">Total Parts</p>
                 <h3 class="text-2xl font-black text-gray-800 dark:text-white leading-none">{{ number_format($metrics['total_parts']) }}</h3>
             </div>
         </div>
@@ -56,7 +56,7 @@
                 <i class="fa-solid fa-flag-checkered mt-1"></i>
             </div>
             <div>
-                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">PO Close</p>
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-1">Closed PO</p>
                 <h3 class="text-2xl font-black text-gray-800 dark:text-white leading-none">{{ number_format($metrics['total_po_close']) }}</h3>
             </div>
         </div>
@@ -69,11 +69,11 @@
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
-                        <th scope="col" class="px-6 py-4 font-semibold w-1/4">Event & Nomor PO</th>
+                        <th scope="col" class="px-6 py-4 font-semibold w-1/4">Event & PO Number</th>
                         <th scope="col" class="px-6 py-4 font-semibold w-1/12 text-center">Part Count</th>
-                        <th scope="col" class="px-6 py-4 font-semibold w-1/12">Terdekat</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-center w-5/12">Progres Keseluruhan</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right w-1/6">Durasi Sistem</th>
+                        <th scope="col" class="px-6 py-4 font-semibold w-1/12">Nearest</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-center w-5/12">Overall Progress</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right w-1/6">System Duration</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -207,7 +207,7 @@
                                                 </div>
                                             @endif
                                             
-                                            <div class="z-10 relative bg-white dark:bg-gray-800 border-2 {{ $circleBorder }} w-8 h-8 flex items-center justify-center rounded-full text-[12px] overflow-hidden shadow-sm transition-all duration-300" title="{{ $pCount }} dari {{ $totalParts }} Parts selesai ({{ $pPct }}%)">
+                                            <div class="z-10 relative bg-white dark:bg-gray-800 border-2 {{ $circleBorder }} w-8 h-8 flex items-center justify-center rounded-full text-[12px] overflow-hidden shadow-sm transition-all duration-300" title="{{ $pCount }} of {{ $totalParts }} Parts selesai ({{ $pPct }}%)">
                                                 <div class="absolute bottom-0 left-0 right-0 {{ $fillClass }} transition-all duration-700 ease-out opacity-90" style="height: {{ $pPct }}%; z-index:0;"></div>
                                                 <i class="fa-solid {{ $step['icon'] }} relative z-10 {{ $iconColor }}"></i>
                                                 
@@ -246,7 +246,7 @@
                             <td colspan="5" class="p-12 text-center text-gray-500 dark:text-gray-400">
                                 <div class="flex flex-col items-center justify-center gap-3">
                                     <i class="fa-regular fa-folder-open text-4xl text-gray-300 dark:text-gray-600"></i>
-                                    <p>Tidak ada data PO / rute aktif.</p>
+                                    <p>No data PO / rute aktif.</p>
                                 </div>
                             </td>
                         </tr>
@@ -336,7 +336,7 @@ if ($pIndex === false) $pIndex = -1;
 if ($part->status === 'CLOSED') $pIndex = 5;
 if ($part->status === 'OUTSTANDING') $pIndex = 4;
 
-// 1. Cek keterlambatan dari target pengiriman akhir
+// 1. Cek keterlambatan of target pengiriman akhir
 $isDeliveryOverdue = \Carbon\Carbon::parse($part->delivery_date)->endOfDay()->isPast();
 
 // 2. Cek keterlambatan spesifik per sub-proses (Tabel npc_part_processes)
@@ -457,11 +457,11 @@ $pOverdue = ($isDeliveryOverdue || $hasLateProcess) && !in_array($part->status, 
     // Penentuan Render Visual
     if ($spStatus === 'FINISHED' || !empty($pProc->actual_completion_date)) {
         if ($isSpLate) {
-            // Render jika Selesai TAPI TERLAMBAT (Sequence 2)
+            // Render jika Done TAPI TERLAMBAT (Sequence 2)
             $spBg = "bg-red-100 text-red-700 border-red-300 ring-1 ring-red-200";
             $spIcon = "fa-check"; // Tetap icon check karena sudah selesai
         } else {
-            // Render jika Selesai TEPAT WAKTU (Sequence 1)
+            // Render jika Done TEPAT WAKTU (Sequence 1)
             $spBg = "bg-emerald-100 text-emerald-700 border-emerald-300";
             $spIcon = "fa-check";
         }
@@ -482,7 +482,7 @@ $pOverdue = ($isDeliveryOverdue || $hasLateProcess) && !in_array($part->status, 
                                                                         <div class="flex items-center shrink-0">
                                                                             <div class="flex items-center gap-1.5 px-2 py-1 rounded text-[9px] font-bold border {{ $spBg }} shadow-sm">
                                                                                 <i class="fa-solid {{ $spIcon }}"></i>
-                                                                                {{ optional($pProc->process)->process_name ?? 'Proses ' . ($pIdx+1) }}
+                                                                                {{ optional($pProc->process)->process_name ?? 'Process ' . ($pIdx+1) }}
                                                                             </div>
                                                                             @if($pIdx < $part->processes->count() - 1)
                                                                                 <div class="w-3 h-px bg-gray-300 mx-1"></div>
@@ -491,7 +491,7 @@ $pOverdue = ($isDeliveryOverdue || $hasLateProcess) && !in_array($part->status, 
                                                                     @endforeach
                                                                 </div>
                                                             @else
-                                                                <div class="text-[10px] text-gray-400 italic bg-gray-100/50 p-2 rounded w-max">Belum ada pemetaan rute (Routing) untuk part ini.</div>
+                                                                <div class="text-[10px] text-gray-400 italic bg-gray-100/50 p-2 rounded w-max">No route mapping (Routing) yet for this part.</div>
                                                             @endif
                                                         </div>
                                                     </td>
@@ -504,7 +504,7 @@ $pOverdue = ($isDeliveryOverdue || $hasLateProcess) && !in_array($part->status, 
                             
                             <!-- Footer -->
                             <div class="bg-gray-50 dark:bg-gray-800 px-6 py-3 border-t border-gray-200 dark:border-gray-700 flex flex-row-reverse">
-                                <button type="button" @click="activeModal = null" class="inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto transition-colors">Tutup</button>
+                                <button type="button" @click="activeModal = null" class="inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto transition-colors">Close</button>
                             </div>
                         </div>
                     </div>
@@ -540,7 +540,7 @@ $pOverdue = ($isDeliveryOverdue || $hasLateProcess) && !in_array($part->status, 
                                 <!-- Header -->
                                 <div class="bg-gray-50/80 dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                                     <h3 class="text-base font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                                        <i class="fa-solid fa-camera text-blue-500"></i> Laporan Produksi: {{ optional($part->product)->part_no }}
+                                        <i class="fa-solid fa-camera text-blue-500"></i> Production Report: {{ optional($part->product)->part_no }}
                                     </h3>
                                     <button type="button" @click="activeGlobalPhotoModal = null" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
                                         <i class="fa-solid fa-xmark text-xl"></i>
@@ -569,7 +569,7 @@ $pOverdue = ($isDeliveryOverdue || $hasLateProcess) && !in_array($part->status, 
                                                     <!-- Status Floating Badge -->
                                                     <div class="absolute top-3 right-3 shadow-md">
                                                     @if($p->status === 'FINISHED')
-                                                        <span class="px-2.5 py-1 rounded bg-emerald-500 text-white text-[10px] font-black tracking-wider uppercase"><i class="fa-solid fa-check mr-1"></i> Selesai</span>
+                                                        <span class="px-2.5 py-1 rounded bg-emerald-500 text-white text-[10px] font-black tracking-wider uppercase"><i class="fa-solid fa-check mr-1"></i> Done</span>
                                                     @else
                                                         <span class="px-2.5 py-1 rounded bg-white/90 text-gray-700 text-[10px] font-bold tracking-wider shadow-sm uppercase">{{ $p->status }}</span>
                                                     @endif
@@ -580,12 +580,12 @@ $pOverdue = ($isDeliveryOverdue || $hasLateProcess) && !in_array($part->status, 
                                                 <div class="p-4 flex flex-col flex-1">
                                                     <h4 class="font-bold text-base text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-2">
                                                         <span class="flex-shrink-0 w-6 h-6 inline-flex items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-400 text-xs shadow-sm">{{ $p->sequence_order }}</span>
-                                                        {{ optional($p->process)->process_name ?? 'Proses ' . $p->sequence_order }}
+                                                        {{ optional($p->process)->process_name ?? 'Process ' . $p->sequence_order }}
                                                     </h4>
                                                     
                                                     <div class="mt-3 space-y-2">
                                                         <div class="flex items-center justify-between text-xs">
-                                                            <span class="text-gray-500 dark:text-gray-400 font-medium"><i class="fa-solid fa-building-user w-4"></i> Departemen:</span> 
+                                                            <span class="text-gray-500 dark:text-gray-400 font-medium"><i class="fa-solid fa-building-user w-4"></i> Department:</span> 
                                                             <span class="font-bold text-gray-700 dark:text-gray-200">{{ optional($p->department)->name ?? '-' }}</span>
                                                         </div>
                                                         <div class="flex items-center justify-between text-xs">
@@ -616,7 +616,7 @@ $pOverdue = ($isDeliveryOverdue || $hasLateProcess) && !in_array($part->status, 
                                 
                                 <!-- Footer -->
                                 <div class="bg-gray-50 dark:bg-gray-800 px-6 py-3 border-t border-gray-200 dark:border-gray-700 flex justify-end">
-                                    <button type="button" @click="activeGlobalPhotoModal = null" class="px-4 py-2 text-sm font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-50 transition">Tutup Laporan</button>
+                                    <button type="button" @click="activeGlobalPhotoModal = null" class="px-4 py-2 text-sm font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded hover:bg-gray-50 transition">Close Report</button>
                                 </div>
                             </div>
                         </div>

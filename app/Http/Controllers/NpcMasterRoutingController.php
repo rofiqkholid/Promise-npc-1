@@ -45,7 +45,7 @@ class NpcMasterRoutingController extends Controller
         ]);
 
         DB::transaction(function () use ($request) {
-            // Hapus yang lama jika sudah ada (opsional jika ini create)
+            // Delete yang lama jika sudah ada (opsional jika ini create)
             NpcMasterRouting::where('part_id', $request->part_id)->delete();
 
             foreach ($request->process_ids as $index => $processId) {
@@ -58,7 +58,7 @@ class NpcMasterRoutingController extends Controller
             }
         });
 
-        return redirect()->route('master.routings.index')->with('success', 'Master Routing berhasil disimpan.');
+        return redirect()->route('master.routings.index')->with('success', 'Routing Master successfully saved.');
     }
 
     public function edit($part_id)
@@ -92,13 +92,13 @@ class NpcMasterRoutingController extends Controller
             }
         });
 
-        return redirect()->route('master.routings.index')->with('success', 'Master Routing berhasil diperbarui.');
+        return redirect()->route('master.routings.index')->with('success', 'Routing Master successfully updated.');
     }
 
     public function destroy($part_id)
     {
         NpcMasterRouting::where('part_id', $part_id)->delete();
-        return redirect()->route('master.routings.index')->with('success', 'Master Routing berhasil dihapus.');
+        return redirect()->route('master.routings.index')->with('success', 'Routing Master successfully deleted.');
     }
 
     public function reorder(Request $request)
@@ -114,6 +114,6 @@ class NpcMasterRoutingController extends Controller
             }
         });
 
-        return response()->json(['success' => true, 'message' => 'Urutan routing berhasil diperbarui.']);
+        return response()->json(['success' => true, 'message' => 'Routing sequence successfully updated.']);
     }
 }

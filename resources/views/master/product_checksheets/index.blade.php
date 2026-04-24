@@ -21,7 +21,7 @@
                 <input type="text" name="search" value="{{ request('search') }}" 
                     class="w-full pr-4 py-2 bg-white text-sm border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400" 
                     style="padding-left: 2.5rem;"
-                    placeholder="Cari Part No / Nama...">
+                    placeholder="Search Part No / Name...">
             </div>
         </form>
     </div>
@@ -36,9 +36,9 @@
                         <th scope="col" class="px-6 py-4 font-semibold">Customer</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Model</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Part No</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Nama Part</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Name Part</th>
                         <th scope="col" class="px-6 py-4 font-semibold text-center">Status Mapping</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right">Aksi</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -83,7 +83,7 @@
                         <td colspan="7" class="p-12 text-center text-gray-500 dark:text-gray-400">
                             <div class="flex flex-col items-center justify-center gap-3">
                                 <i class="fa-regular fa-folder-open text-4xl text-gray-300 dark:text-gray-600"></i>
-                                <p>Tidak ada data part ditemukan.</p>
+                                <p>No part data found.</p>
                             </div>
                         </td>
                     </tr>

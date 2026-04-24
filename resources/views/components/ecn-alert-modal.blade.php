@@ -37,8 +37,8 @@
                     <i class="fa-solid fa-triangle-exclamation"></i>
                 </div>
                 <div>
-                    <h3 class="text-lg font-bold">Peringatan Update Revisi (ECN)</h3>
-                    <p class="text-sm text-red-500/80 dark:text-red-400/80">Beberapa part mengalami perubahan drawing. Silakan tinjau dan terapkan revisi baru.</p>
+                    <h3 class="text-lg font-bold">Warning Update Revisi (ECN)</h3>
+                    <p class="text-sm text-red-500/80 dark:text-red-400/80">Some parts have drawing changes. Please review and apply the new revisions.</p>
                 </div>
             </div>
             <button @click="close()" class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:bg-gray-700 transition-colors">
@@ -56,8 +56,8 @@
                             <tr>
                                 <th class="px-4 py-3">Part Info</th>
                                 <th class="px-4 py-3">PO Number</th>
-                                <th class="px-4 py-3">Waktu Dibuat</th>
-                                <th class="px-4 py-3 text-right">Aksi</th>
+                                <th class="px-4 py-3">Time Created</th>
+                                <th class="px-4 py-3 text-right">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-200 dark:divide-gray-700 text-slate-700 dark:text-gray-300">
@@ -96,14 +96,14 @@
                     <i class="fa-regular fa-face-smile text-3xl text-slate-400"></i>
                 </div>
                 <h4 class="text-lg font-semibold text-slate-800 dark:text-gray-200 mb-1">Aman!</h4>
-                <p class="text-sm text-slate-500 dark:text-gray-400">Tidak ada Part yang perlu penyesuaian ECN saat ini.</p>
+                <p class="text-sm text-slate-500 dark:text-gray-400">No ada Part yang perlu penyesuaian ECN saat ini.</p>
             </div>
             @endif
         </div>
         
         <!-- Footer -->
         <div class="px-6 py-4 border-t border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 shrink-0 text-right">
-            <button @click="close()" class="px-5 py-2 text-sm font-medium text-slate-600 dark:text-gray-300 border border-slate-300 dark:border-gray-600 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors">Tutup</button>
+            <button @click="close()" class="px-5 py-2 text-sm font-medium text-slate-600 dark:text-gray-300 border border-slate-300 dark:border-gray-600 rounded-lg hover:bg-slate-50 dark:hover:bg-gray-700 transition-colors">Close</button>
         </div>
     </div>
 </div>

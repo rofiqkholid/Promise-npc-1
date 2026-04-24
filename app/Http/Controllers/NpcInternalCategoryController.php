@@ -22,7 +22,7 @@ class NpcInternalCategoryController extends Controller
     {
         $request->validate(['name' => 'required|string|max:255|unique:npc_internal_categories']);
         NpcInternalCategory::create($request->all());
-        return redirect()->route('master.internal-categories.index')->with('success', 'Kategori Internal berhasil ditambahkan.');
+        return redirect()->route('master.internal-categories.index')->with('success', 'Internal Category successfully added.');
     }
 
     public function edit(NpcInternalCategory $internalCategory)
@@ -34,12 +34,12 @@ class NpcInternalCategoryController extends Controller
     {
         $request->validate(['name' => 'required|string|max:255|unique:npc_internal_categories,name,' . $internalCategory->id]);
         $internalCategory->update($request->all());
-        return redirect()->route('master.internal-categories.index')->with('success', 'Kategori Internal berhasil diperbarui.');
+        return redirect()->route('master.internal-categories.index')->with('success', 'Internal Category successfully updated.');
     }
 
     public function destroy(NpcInternalCategory $internalCategory)
     {
         $internalCategory->delete();
-        return redirect()->route('master.internal-categories.index')->with('success', 'Kategori Internal berhasil dihapus.');
+        return redirect()->route('master.internal-categories.index')->with('success', 'Internal Category successfully deleted.');
     }
 }

@@ -12,10 +12,10 @@ class ProductionTrackingController extends Controller
 
         if ($statusParam !== 'all') {
             if ($statusParam === 'CLOSED') {
-                // Halaman History khusus untuk yang sudah CLOSED atau OUTSTANDING (pengiriman parsial)
+                // Page History khusus untuk yang sudah CLOSED atau OUTSTANDING (pengiriman parsial)
                 $query->whereIn('status', ['CLOSED', 'OUTSTANDING']);
             } else {
-                // Tampilkan SEMUA task (termasuk yang sudah CLOSED) agar riwayat tidak hilang dari Stock/tahap lain
+                // Show SEMUA task (termasuk yang sudah CLOSED) agar riwayat tidak hilang of Stock/tahap lain
             }
         }
         
@@ -55,39 +55,39 @@ class ProductionTrackingController extends Controller
             'statusParam' => 'all',
             'pageTitle' => 'Global Tracking',
             'pageIcon' => 'fa-globe',
-            'pageDesc' => 'Pantau progres berdasarkan Purchase Order (PO)',
+            'pageDesc' => 'Track progress based on Purchase Order (PO)',
             'metrics' => $metrics
         ]);
     }
 
     public function setup(\Illuminate\Http\Request $request)
     {
-        return $this->renderTrackingPage('PO_REGISTERED', 'Setup Routing Produksi', 'fa-route', 'Menyiapkan rute dan jadwal untuk PO Baru', 'tracking.setup');
+        return $this->renderTrackingPage('PO_REGISTERED', 'Setup Routing Production', 'fa-route', 'Preparation of routing and production schedule for new PO', 'tracking.setup');
     }
 
     public function production(\Illuminate\Http\Request $request)
     {
-        return $this->renderTrackingPage('WAITING_DEPT_CONFIRM', 'Proses Produksi', 'fa-industry', 'Pantau komponen yang sedang dalam tahap produksi', 'tracking.production');
+        return $this->renderTrackingPage('WAITING_DEPT_CONFIRM', 'Process Production', 'fa-industry', 'Monitor the progress of components currently in the production stage', 'tracking.production');
     }
 
     public function qc(\Illuminate\Http\Request $request)
     {
-        return $this->renderTrackingPage('WAITING_QE_CHECK', 'Pemeriksaan Kualitas (QC)', 'fa-microscope', 'Input dan validasi pengecekan kualitas', 'tracking.qc');
+        return $this->renderTrackingPage('WAITING_QE_CHECK', 'Quality Inspection (QC)', 'fa-microscope', 'Input and validation of quality inspection', 'tracking.qc');
     }
 
     public function mgm(\Illuminate\Http\Request $request)
     {
-        return $this->renderTrackingPage('WAITING_MGM_CHECK', 'Persetujuan Management', 'fa-user-tie', 'Validasi dan konfirmasi final oleh manajemen', 'tracking.mgm');
+        return $this->renderTrackingPage('WAITING_MGM_CHECK', 'Management Approval', 'fa-user-tie', 'Validation and final confirmation by management', 'tracking.mgm');
     }
 
     public function stock(\Illuminate\Http\Request $request)
     {
-        return $this->renderTrackingPage('FINISHED', 'Stok Barang Jadi (FG)', 'fa-boxes-stacked', 'Komponen yang siap untuk dikirim', 'tracking.stock');
+        return $this->renderTrackingPage('FINISHED', 'Finished Stock', 'fa-boxes-stacked', 'Finished components ready to be shipped', 'tracking.stock');
     }
 
     public function history(\Illuminate\Http\Request $request)
     {
-        return $this->renderTrackingPage('CLOSED', 'Riwayat Pengiriman', 'fa-truck-fast', 'Komponen yang telah terkirim ke customer');
+        return $this->renderTrackingPage('CLOSED', 'Delivery History', 'fa-truck-fast', 'Components that have been delivered to the customer');
     }
 
     public function updateStatus(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)
@@ -111,7 +111,7 @@ class ProductionTrackingController extends Controller
 
         $part->update($updateData);
 
-        return back()->with('success', 'Status Part berhasil diperbarui.');
+        return back()->with('success', 'Part Status successfully updated.');
     }
 
     public function completeProcess(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)
@@ -153,10 +153,10 @@ class ProductionTrackingController extends Controller
                 'actual_completion_date' => $request->actual_completion_date,
                 'production_notes' => $request->production_notes,
             ]);
-            return back()->with('success', 'Rangkaian Produksi tamat. Barang berhasil diserahkan ke QC!');
+            return back()->with('success', 'Production sequence complete. Goods successfully submitted to QC!');
         }
 
-        return back()->with('success', 'Proses selesai! Berlajut ke departemen berikutnya.');
+        return back()->with('success', 'Process selesai! Berlajut ke departemen berikutnya.');
     }
 
     public function rollbackSetup(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)
@@ -172,10 +172,10 @@ class ProductionTrackingController extends Controller
             ->exists();
             
         if ($hasFinishedProcess) {
-            return back()->with('error', 'Tidak bisa rollback ke Setup karena sudah ada departemen yang menyelesaikan proses produksi.');
+            return back()->with('error', 'No bisa rollback ke Setup karena sudah ada departemen yang menyelesaikan proses produksi.');
         }
 
-        // Hapus semua proses yang masih WAITING karena akan di-setup ulang
+        // Delete semua proses yang masih WAITING karena akan di-setup ulang
         $part->processes()->delete();
 
         // Kembalikan ke PO_REGISTERED
@@ -185,7 +185,7 @@ class ProductionTrackingController extends Controller
             'mgm_target_date' => null
         ]);
 
-        return back()->with('success', 'Berhasil membatalkan (rollback) setup routing. Part kembali ke antrean setup.');
+        return back()->with('success', 'Success membatalkan (rollback) setup routing. Part kembali ke antrean setup.');
     }
 
     public function rollbackProcess(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)
@@ -197,23 +197,23 @@ class ProductionTrackingController extends Controller
             ->first();
 
         if (!$lastFinishedProcess) {
-            return back()->with('error', 'Tidak ada proses yang bisa di-rollback.');
+            return back()->with('error', 'No ada proses yang bisa di-rollback.');
         }
 
         // Cek apakah sudah diproses oleh departemen selanjutnya (misal QC sudah isi checksheet)
         if (!in_array($part->status, ['WAITING_DEPT_CONFIRM', 'WAITING_QE_CHECK'])) {
-             return back()->with('error', 'Tidak bisa rollback karena sudah diproses oleh tahap selanjutnya (QC/MGM/Stock).');
+             return back()->with('error', 'No bisa rollback karena sudah diproses oleh tahap selanjutnya (QC/MGM/Stock).');
         }
         
         if ($part->status === 'WAITING_QE_CHECK') {
             // Cek apakah QC sudah mulai mengisi checksheet
             $checksheet = $part->checksheet;
             if ($checksheet && $checksheet->qe_checked_by) {
-                return back()->with('error', 'Tidak bisa rollback karena QC sudah mulai memeriksa (Checksheet terisi).');
+                return back()->with('error', 'No bisa rollback karena QC sudah mulai memeriksa (Checksheet terisi).');
             }
         }
 
-        // Hapus bukti foto jika ada
+        // Delete bukti foto jika ada
         if ($lastFinishedProcess->photo_proof) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($lastFinishedProcess->photo_proof);
         }
@@ -234,14 +234,14 @@ class ProductionTrackingController extends Controller
                 'production_notes' => null,
             ]);
             
-            // Hapus checksheet pending jika ada
+            // Delete checksheet pending jika ada
             if ($part->checksheet) {
                 $part->checksheet->details()->delete();
                 $part->checksheet->delete();
             }
         }
 
-        return back()->with('success', 'Berhasil rollback proses ' . optional($lastFinishedProcess->process)->process_name . '.');
+        return back()->with('success', 'Success rollback proses ' . optional($lastFinishedProcess->process)->process_name . '.');
     }
 
     public function deliver(\Illuminate\Http\Request $request, \App\Models\NpcPart $part)
@@ -265,8 +265,8 @@ class ProductionTrackingController extends Controller
         ]);
 
         $msg = ($status === 'CLOSED') 
-            ? 'Part berhasil dikirim seluruhnya ke customer dan ditutup.'
-            : 'Pengiriman parsial berhasil dicatat (' . $request->delivered_qty . ' PCS). Sisa barang masih outstanding.';
+            ? 'Part successfully delivered in full to customer and closed.'
+            : 'Partial delivery successfully recorded (' . $request->delivered_qty . ' PCS). Sisa barang masih outstanding.';
 
         return back()->with('success', $msg);
     }

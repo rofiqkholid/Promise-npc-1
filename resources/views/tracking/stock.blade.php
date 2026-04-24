@@ -1,14 +1,14 @@
 @extends('layouts.app')
 
-@section('title', $pageTitle ?? 'Stok Barang Jadi')
-@section('page_title', 'Transaksi / ' . ($pageTitle ?? 'Stok Barang Jadi (FG)'))
+@section('title', $pageTitle ?? 'Stock Jadi')
+@section('page_title', 'Transaksi / ' . ($pageTitle ?? 'Stock Jadi (FG)'))
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-between items-center">
         <div>
             <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                <i class="fa-solid {{ $pageIcon ?? 'fa-boxes-stacked' }} text-blue-500"></i> {{ $pageTitle ?? 'Stok Barang Jadi (FG)' }}
+                <i class="fa-solid {{ $pageIcon ?? 'fa-boxes-stacked' }} text-blue-500"></i> {{ $pageTitle ?? 'Stock Jadi (FG)' }}
             </h2>
             @if(isset($pageDesc))
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 ml-7">{{ $pageDesc }}</p>
@@ -22,11 +22,11 @@
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
-                        <th scope="col" class="px-6 py-4 font-semibold">Tujuan Kirim & Waktu</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Delivery Target & Time</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Part Info</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Qty</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Status Proses</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right">Aksi</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Status Process</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -41,7 +41,7 @@
                         $isUrgent = $diffDays >= 0 && $diffDays <= 3;
                         
                         $timeStatusClass = $isOverdue ? 'bg-red-100 text-red-700 border-red-200' : ($isUrgent ? 'bg-orange-100 text-orange-700 border-orange-200' : 'bg-green-100 text-green-700 border-green-200');
-                        $timeStatusText = $isOverdue ? 'Terlambat ' . abs($diffDays) . ' Hari' : ($diffDays == 0 ? 'Kirim Hari Ini' : 'Sisa ' . $diffDays . ' Hari');
+                        $timeStatusText = $isOverdue ? 'Overdue ' . abs($diffDays) . ' Hari' : ($diffDays == 0 ? 'Kirim Today' : 'Remaining ' . $diffDays . ' Hari');
                         $timeStatusIcon = $isOverdue ? 'fa-triangle-exclamation' : 'fa-clock';
                         
                         // Retrieve customer info
@@ -53,7 +53,7 @@
                     @endphp
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition text-sm">
                         
-                        {{-- Tujuan Kirim --}}
+                        {{-- Delivery Target --}}
                         <td class="px-6 py-4">
                             <div class="font-bold text-gray-800 dark:text-gray-100 mb-1 flex items-center gap-1.5">
                                 <i class="fa-solid fa-building text-gray-400"></i> {{ $customerName }}
@@ -61,7 +61,7 @@
                             <div class="text-xs text-gray-500 font-medium mb-2 pl-4">
                                 <div class="mb-1">Model: <span class="text-blue-600 dark:text-blue-400">{{ $modelName }}</span></div>
                                 <div class="flex items-center gap-1.5">
-                                    <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800 rounded text-[9px] font-bold tracking-wider" title="Kategori Customer">{{ $categoryName }}</span>
+                                    <span class="px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800 rounded text-[9px] font-bold tracking-wider" title="Category Customer">{{ $categoryName }}</span>
                                     <span class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 rounded text-[9px] font-bold tracking-wider" title="Delivery Group (GR)">{{ $grName }}</span>
                                 </div>
                             </div>
@@ -83,7 +83,7 @@
                             <div class="text-gray-800 dark:text-gray-300 font-black text-lg mb-0.5">{{ number_format($part->qty) }} <span class="text-xs font-semibold text-gray-500">PCS</span></div>
                             @if($part->delivered_qty > 0)
                             <div class="text-[11px] font-bold text-blue-600 dark:text-blue-400 mb-1">
-                                <i class="fa-solid fa-truck-ramp-box"></i> Terkirim: {{ number_format($part->delivered_qty) }} / {{ number_format($part->qty) }}
+                                <i class="fa-solid fa-truck-ramp-box"></i> Delivered: {{ number_format($part->delivered_qty) }} / {{ number_format($part->qty) }}
                             </div>
                             @endif
                             <div class="text-[11px] font-medium text-gray-500">
@@ -96,7 +96,7 @@
                             @if(in_array($part->status, ['FINISHED', 'OUTSTANDING', 'CLOSED']))
                                 <div class="flex flex-col gap-1.5 mt-1">
                                     <span class="text-[11px] font-medium text-slate-600 dark:text-slate-400 flex items-center gap-1.5 line-through decoration-slate-300 opacity-60">
-                                        <i class="fa-solid fa-check text-green-500"></i> Produksi Selesai
+                                        <i class="fa-solid fa-check text-green-500"></i> Production Done
                                     </span>
                                     @if($part->qc_target_date)
                                     <span class="text-[11px] font-medium text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
@@ -116,22 +116,22 @@
                             @endif
                         </td>
                         
-                        {{-- Aksi --}}
+                        {{-- Action --}}
                         <td class="px-6 py-4 text-right pointer-events-auto">
                             <div class="flex flex-col items-end gap-2 text-sm">
                             @if($part->status === 'CLOSED')
                                 <div class="px-3 py-2 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded text-[10px] text-blue-600 dark:text-blue-400 italic flex items-center gap-1.5 cursor-not-allowed font-bold">
-                                    <i class="fa-solid fa-check-double text-[10px]"></i> Sudah Terkirim (Closed)
+                                    <i class="fa-solid fa-check-double text-[10px]"></i> Already Delivered (Closed)
                                 </div>
                             @elseif(!in_array($part->status, ['FINISHED', 'OUTSTANDING']))
                                 <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center gap-1.5 cursor-not-allowed">
-                                    <i class="fa-solid fa-lock text-[8px]"></i> Menunggu Proses Selesai
+                                    <i class="fa-solid fa-lock text-[8px]"></i> Menunggu Process Done
                                 </div>
                             @else
                                 <button type="button" onclick="openDeliverModal('{{ $part->id }}', '{{ $part->qty - $part->delivered_qty }}', '{{ route('tracking.deliver', $part->id) }}', '{{ optional($part->product)->part_no }}')" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white rounded shadow-sm font-medium transition text-xs flex items-center gap-2">
-                                    <i class="fa-solid fa-truck-fast"></i> Kirim Barang
+                                    <i class="fa-solid fa-truck-fast"></i> Deliver Goods
                                 </button>
-                                <p class="text-[9px] text-gray-400 mt-2 italic text-right">Sisa: {{ number_format($part->qty - $part->delivered_qty) }} PCS</p>
+                                <p class="text-[9px] text-gray-400 mt-2 italic text-right">Remaining: {{ number_format($part->qty - $part->delivered_qty) }} PCS</p>
                             @endif
                             </div>
                         </td>
@@ -141,7 +141,7 @@
                         <td colspan="5" class="p-12 text-center text-gray-500 dark:text-gray-400">
                             <div class="flex flex-col items-center justify-center gap-3">
                                 <i class="fa-solid fa-box-open text-4xl text-gray-300 dark:text-gray-600"></i>
-                                <p>Gudang kosong / Tidak ada part yang siap dikirim saat ini.</p>
+                                <p>Warehouse empty / No parts ready to deliver.</p>
                             </div>
                         </td>
                     </tr>
@@ -175,12 +175,12 @@
             <div class="p-6">
                 <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">
                     Part No: <strong id="modalPartNo" class="text-gray-800 dark:text-gray-200"></strong><br>
-                    Silakan masukkan jumlah barang yang akan dikirim ke customer.
+                    Please enter the quantity of goods to be delivered to the customer.
                 </p>
                 
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
-                        Jumlah (Qty) Kirim <span class="text-red-500">*</span>
+                        Delivery Qty <span class="text-red-500">*</span>
                     </label>
                     <div class="relative">
                         <input type="number" id="modalDeliveredQty" name="delivered_qty" min="1" required
@@ -190,21 +190,21 @@
                         </div>
                     </div>
                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                        Sisa barang yang bisa dikirim: <strong id="modalMaxQtyText" class="text-blue-600 dark:text-blue-400"></strong> PCS
+                        Remaining goods to deliver: <strong id="modalMaxQtyText" class="text-blue-600 dark:text-blue-400"></strong> PCS
                     </p>
                 </div>
                 
                 <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/50 p-3 rounded text-xs text-yellow-800 dark:text-yellow-300 mb-2">
-                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Pastikan Anda telah mencetak Surat Jalan dari sistem internal Anda sebelum proses ini.
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> Pastikan Anda telah mencetak Surat Jalan of sistem internal Anda sebelum proses ini.
                 </div>
             </div>
             
             <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
                 <button type="button" onclick="closeDeliverModal()" class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600 transition text-sm">
-                    Batal
+                    Cancel
                 </button>
                 <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow-sm font-bold transition flex items-center gap-2 text-sm">
-                    <i class="fa-solid fa-paper-plane"></i> Proses Kirim
+                    <i class="fa-solid fa-paper-plane"></i> Delivery Process
                 </button>
             </div>
         </form>

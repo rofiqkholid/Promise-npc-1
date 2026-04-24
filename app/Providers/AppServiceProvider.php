@@ -46,17 +46,17 @@ class AppServiceProvider extends ServiceProvider
                     'children' => collect([])
                 ],
                 (object)[
-                    'title' => 'Transaksi',
+                    'title' => 'Transaction',
                     'route' => '#',
                     'icon' => 'fa-solid fa-right-left',
                     'children' => collect([
                         (object)['title' => 'Global Tracking', 'route' => 'tracking.index'],
-                        (object)['title' => 'Setup Routing Produksi', 'route' => 'tracking.setup'],
-                        (object)['title' => 'Proses Produksi', 'route' => 'tracking.production'],
-                        (object)['title' => 'Pemeriksaan Kualitas (QC)', 'route' => 'tracking.qc'],
+                        (object)['title' => 'Production Routing Setup', 'route' => 'tracking.setup'],
+                        (object)['title' => 'Production Process', 'route' => 'tracking.production'],
+                        (object)['title' => 'Quality Check (QC)', 'route' => 'tracking.qc'],
                         (object)['title' => 'Management Check', 'route' => 'tracking.mgm'],
-                        (object)['title' => 'Stok Barang Jadi', 'route' => 'tracking.stock'],
-                        (object)['title' => 'Riwayat Kirim', 'route' => 'tracking.history'],
+                        (object)['title' => 'Finished Goods Stock', 'route' => 'tracking.stock'],
+                        (object)['title' => 'Delivery History', 'route' => 'tracking.history'],
                     ])
                 ],
                 (object)[
@@ -64,16 +64,16 @@ class AppServiceProvider extends ServiceProvider
                     'route' => '#',
                     'icon' => 'fa-solid fa-database',
                     'children' => collect([
-                        (object)['title' => 'Master Kategori Internal', 'route' => 'master.internal-categories.index'],
-                        (object)['title' => 'Master Mapping Customer', 'route' => 'master.customer-categories.index'],
-                        (object)['title' => 'Master Department', 'route' => 'master.departments.index'],
-                        (object)['title' => 'Master Proses', 'route' => 'master.processes.index'],
+                        (object)['title' => 'Internal Category Master', 'route' => 'master.internal-categories.index'],
+                        (object)['title' => 'Customer Mapping Master', 'route' => 'master.customer-categories.index'],
+                        (object)['title' => 'Department Master', 'route' => 'master.departments.index'],
+                        (object)['title' => 'Process Master', 'route' => 'master.processes.index'],
                         (object)['title' => 'Routing per Part ID', 'route' => 'master.routings.index'],
-                        (object)['title' => 'Master Poin QE', 'route' => 'master.checkpoints.index'],
-                        (object)['title' => 'Master Checksheet Part', 'route' => 'master.checksheets.index'],
-                        (object)['title' => 'Master Grup Pengiriman', 'route' => 'master.delivery-groups.index'],
-                        (object)['title' => 'Master Tujuan Kirim', 'route' => 'master.delivery-targets.index'],
-                        (object)['title' => 'Data Event (PO)', 'route' => 'events.index'],
+                        (object)['title' => 'QE Point Master', 'route' => 'master.checkpoints.index'],
+                        (object)['title' => 'Part Checksheet Master', 'route' => 'master.checksheets.index'],
+                        (object)['title' => 'Delivery Group Master', 'route' => 'master.delivery-groups.index'],
+                        (object)['title' => 'Delivery Target Master', 'route' => 'master.delivery-targets.index'],
+                        (object)['title' => 'Event Data (PO)', 'route' => 'events.index'],
                     ])
                 ],
             ];

@@ -21,8 +21,8 @@
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
                         <th scope="col" class="px-6 py-4 font-semibold w-72">Identitas Produk</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-center">Status Validasi Kualitas (QC)</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right w-48">Validasi Akhir (MGM)</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-center">Status Validation Kualitas (QC)</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right w-48">Validation Final (MGM)</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -42,14 +42,14 @@
                             @else
                                 <div class="flex flex-col items-center gap-1">
                                     <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-green-50 border border-green-200 text-green-700 text-[10px] font-bold shadow-sm"><i class="fa-solid fa-check-double"></i> LOLOS SERTIFIKASI QC</span>
-                                    <span class="text-[11px] text-gray-500 font-medium mt-1">Tanggal Input: {{ $part->qc_target_date ? \Carbon\Carbon::parse($part->qc_target_date)->format('d M Y') : '-' }}</span>
+                                    <span class="text-[11px] text-gray-500 font-medium mt-1">Date Input: {{ $part->qc_target_date ? \Carbon\Carbon::parse($part->qc_target_date)->format('d M Y') : '-' }}</span>
                                 </div>
                             @endif
                         </td>
                         <td class="px-6 py-4 text-right align-middle pointer-events-auto">
                             @if(in_array($part->status, ['PO_REGISTERED', 'WAITING_DEPT_CONFIRM', 'WAITING_QE_CHECK']))
                                 <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed">
-                                    <i class="fa-solid fa-lock text-[8px]"></i> Belum Masuk MGM
+                                    <i class="fa-solid fa-lock text-[8px]"></i> Belum Login MGM
                                 </div>
                             @elseif($part->status === 'WAITING_MGM_CHECK')
                                 <a href="{{ route('checksheets.create', $part->id) }}" class="inline-flex px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded shadow-sm font-bold transition items-center gap-2 text-[11px]" style="background-color: #a855f7;">
@@ -58,7 +58,7 @@
                                 <p class="text-[9px] text-gray-400 mt-2 italic text-right max-w-[150px] mx-auto float-right text-balance">Review cek formulir dan tandatangani pengesahan barang FG</p>
                             @else
                                 <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed">
-                                    <i class="fa-solid fa-lock text-[8px]"></i> Sudah Selesai
+                                    <i class="fa-solid fa-lock text-[8px]"></i> Sudah Done
                                 </div>
                             @endif
                         </td>
@@ -68,7 +68,7 @@
                         <td colspan="3" class="p-12 text-center text-gray-500 dark:text-gray-400">
                             <div class="flex flex-col items-center justify-center gap-3">
                                 <i class="fa-solid fa-user-tie text-4xl text-gray-300 dark:text-gray-600"></i>
-                                <p>Tidak ada pengajuan persetujuan manajemen (MGM) saat ini.</p>
+                                <p>No ada pengajuan persetujuan manajemen (MGM) saat ini.</p>
                             </div>
                         </td>
                     </tr>

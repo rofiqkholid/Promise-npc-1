@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', $pageTitle ?? 'Tracking Produksi')
-@section('page_title', 'Transaksi / ' . ($pageTitle ?? 'Tracking Produksi'))
+@section('title', $pageTitle ?? 'Production Tracking')
+@section('page_title', 'Transaksi / ' . ($pageTitle ?? 'Production Tracking'))
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
     <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-            <i class="fa-solid {{ $pageIcon ?? 'fa-list-check' }} text-blue-500"></i> {{ $pageTitle ?? 'Tracking Produksi (Routing)' }}
+            <i class="fa-solid {{ $pageIcon ?? 'fa-list-check' }} text-blue-500"></i> {{ $pageTitle ?? 'Production Tracking (Routing)' }}
         </h2>
         @if(isset($pageDesc))
         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 ml-7">{{ $pageDesc }}</p>
@@ -103,7 +103,7 @@
                             <div class="text-gray-800 dark:text-gray-300 font-bold text-sm">{{ number_format($part->qty) }} PCS</div>
                             @if($part->delivered_qty > 0)
                             <div class="text-[11px] font-bold text-blue-600 dark:text-blue-400 mt-1">
-                                <i class="fa-solid fa-truck-ramp-box"></i> Terkirim: {{ number_format($part->delivered_qty) }} / {{ number_format($part->qty) }}
+                                <i class="fa-solid fa-truck-ramp-box"></i> Delivered: {{ number_format($part->delivered_qty) }} / {{ number_format($part->qty) }}
                             </div>
                             @endif
                             <div class="text-xs text-red-500 font-medium mt-1"><i class="fa-regular fa-calendar md:mr-1"></i> {{ \Carbon\Carbon::parse($part->delivery_date)->format('d M y') }}</div>
@@ -177,7 +177,7 @@
                                 <div class="mt-4 text-center">
                                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full {{ $part->status === 'CLOSED' ? 'bg-emerald-100 text-emerald-800 border-emerald-200' : 'bg-blue-100 text-blue-800 border-blue-200' }} text-[10px] font-bold tracking-wide shadow-sm">
                                         <i class="fa-solid {{ $part->status === 'CLOSED' ? 'fa-flag-checkered' : 'fa-truck-fast' }}"></i> 
-                                        {{ $part->status === 'CLOSED' ? 'PROJECT CLOSED (TERKIRIM)' : 'PENGIRIMAN PARSIAL' }}
+                                        {{ $part->status === 'CLOSED' ? 'PROJECT CLOSED (DELIVERED)' : 'PARTIAL DELIVERY' }}
                                     </span>
                                 </div>
                             @endif
@@ -201,7 +201,7 @@
                                                 $statusText = '<i class="fa-solid fa-bolt"></i> Lebih Cpt ' . abs($diffDays) . ' Hari';
                                             } else {
                                                 $statusClass = "bg-green-100 text-green-700 border-green-200";
-                                                $statusText = '<i class="fa-solid fa-check-double"></i> Tepat Waktu';
+                                                $statusText = '<i class="fa-solid fa-check-double"></i> Tepat Time';
                                             }
                                         @endphp
                                         <span class="inline-flex items-center gap-1 mt-1.5 px-2 py-0.5 rounded text-[10px] font-black tracking-wider uppercase border {{ $statusClass }}">
@@ -219,7 +219,7 @@
                         <td colspan="7" class="p-12 text-center text-gray-500 dark:text-gray-400">
                             <div class="flex flex-col items-center justify-center gap-3">
                                 <i class="fa-regular fa-folder-open text-4xl text-gray-300 dark:text-gray-600"></i>
-                                <p>Tidak ada data rute / tracking pada status ini.</p>
+                                <p>No data rute / tracking pada status ini.</p>
                             </div>
                         </td>
                     </tr>
@@ -236,12 +236,12 @@
     @endif
 </div>
 
-{{-- Modal: Produksi Selesai --}}
+{{-- Modal: Production Done --}}
 <div id="modal-complete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-full max-w-md mx-4 border border-gray-200 dark:border-gray-700">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-base font-semibold text-gray-800 dark:text-white flex items-center gap-2">
-                <i class="fa-solid fa-flag-checkered text-amber-500"></i> Konfirmasi Selesai Produksi
+                <i class="fa-solid fa-flag-checkered text-amber-500"></i> Konfirmasi Production Done
             </h3>
             <button onclick="closeCompleteModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 text-xl leading-none">&times;</button>
         </div>
@@ -250,21 +250,21 @@
             <input type="hidden" name="status" value="WAITING_QE_CHECK">
             <div class="px-6 py-5 space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Tanggal Selesai Aktual <span class="text-red-500">*</span></label>
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Date Done Aktual <span class="text-red-500">*</span></label>
                     <input type="date" name="actual_completion_date" required
                         class="w-full text-sm rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-amber-500 focus:ring-amber-500 dark:bg-gray-700 dark:text-white">
-                    <p class="text-[11px] text-gray-400 mt-1 italic">Tanggal part benar-benar selesai diproduksi.</p>
+                    <p class="text-[11px] text-gray-400 mt-1 italic">Date part benar-benar selesai diproduksi.</p>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Catatan Produksi <span class="text-gray-400 text-[10px] font-normal">(opsional)</span></label>
+                    <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Catatan Production <span class="text-gray-400 text-[10px] font-normal">(opsional)</span></label>
                     <textarea name="production_notes" rows="3" placeholder="Misal: selesai lebih awal / ada kendala mesin..."
                         class="w-full text-sm rounded border-gray-300 dark:border-gray-600 shadow-sm focus:border-amber-500 focus:ring-amber-500 dark:bg-gray-700 dark:text-white"></textarea>
                 </div>
             </div>
             <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 rounded-b-xl">
-                <button type="button" onclick="closeCompleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">Batal</button>
+                <button type="button" onclick="closeCompleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">Cancel</button>
                 <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 rounded-lg shadow-sm transition flex items-center gap-1">
-                    <i class="fa-solid fa-check"></i> Konfirmasi Selesai
+                    <i class="fa-solid fa-check"></i> Konfirmasi Done
                 </button>
             </div>
         </form>
