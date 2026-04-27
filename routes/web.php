@@ -35,6 +35,10 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('internal-categories', \App\Http\Controllers\NpcInternalCategoryController::class)->except(['show']);
         Route::resource('customer-categories', \App\Http\Controllers\NpcCustomerCategoryController::class)->except(['show']);
         Route::resource('delivery-groups', \App\Http\Controllers\NpcDeliveryGroupController::class)->except(['show']);
+        Route::resource('menus', \App\Http\Controllers\NpcMenuController::class)->except(['show']);
+        Route::resource('roles', \App\Http\Controllers\NpcRoleController::class)->except(['show']);
+        Route::resource('promise-users', \App\Http\Controllers\PromiseUserController::class)->except(['show']);
+        Route::resource('npc-users', \App\Http\Controllers\NpcUserController::class)->except(['show']);
     });
 
     // Dummy API Routes for Dashboard Filters

@@ -38,48 +38,54 @@ class AppServiceProvider extends ServiceProvider
         });
 
         \Illuminate\Support\Facades\View::composer('layouts.sidebar', function ($view) {
-            $sidebarMenus = [
-                (object)[
-                    'title' => 'Dashboard',
-                    'route' => 'dashboard',
-                    'icon' => 'fa-solid fa-gauge-high',
-                    'children' => collect([])
-                ],
-                (object)[
-                    'title' => 'Transaction',
-                    'route' => '#',
-                    'icon' => 'fa-solid fa-right-left',
-                    'children' => collect([
-                        (object)['title' => 'Global Tracking', 'route' => 'tracking.index'],
-                        (object)['title' => 'Production Routing Setup', 'route' => 'tracking.setup'],
-                        (object)['title' => 'Production Process', 'route' => 'tracking.production'],
-                        (object)['title' => 'Quality Check (QC)', 'route' => 'tracking.qc'],
-                        (object)['title' => 'Management Check', 'route' => 'tracking.mgm'],
-                        (object)['title' => 'Finished Goods Stock', 'route' => 'tracking.stock'],
-                        (object)['title' => 'Delivery History', 'route' => 'tracking.history'],
-                    ])
-                ],
-                (object)[
-                    'title' => 'Master Data',
-                    'route' => '#',
-                    'icon' => 'fa-solid fa-database',
-                    'children' => collect([
-                        (object)['title' => 'Internal Category Master', 'route' => 'master.internal-categories.index'],
-                        (object)['title' => 'Customer Mapping Master', 'route' => 'master.customer-categories.index'],
-                        (object)['title' => 'Department Master', 'route' => 'master.departments.index'],
-                        (object)['title' => 'Process Master', 'route' => 'master.processes.index'],
-                        (object)['title' => 'Routing per Part ID', 'route' => 'master.routings.index'],
-                        (object)['title' => 'QE Point Master', 'route' => 'master.checkpoints.index'],
-                        (object)['title' => 'Part Checksheet Master', 'route' => 'master.checksheets.index'],
-                        (object)['title' => 'Delivery Group Master', 'route' => 'master.delivery-groups.index'],
-                        (object)['title' => 'Delivery Target Master', 'route' => 'master.delivery-targets.index'],
-                        (object)['title' => 'Event Data (PO)', 'route' => 'events.index'],
-                    ])
-                ],
-            ];
+            $user = auth()->user();
+            $sidebarMenus = collect();
+            $userRoleCode = 'guest';
 
-            $view->with('sidebarMenus', collect($sidebarMenus))
-                 ->with('userRoleCode', 'admin');
+            if ($user) {
+                // Tentukan userRoleCode untuk UI jika diperlukan (misal: ambil role pertama)
+                $firstRole = $user->roles->first();
+                $userRoleCode = $firstRole ? $firstRole->code : 'user';
+
+                if ($userRoleCode === 'admin') {
+                    // Admin melihat semua menu aktif
+                    $sidebarMenus = \App\Models\NpcMenu::whereNull('parent_id')
+                        ->with(['children' => function ($q) {
+                            $q->where('is_active', true); // Removed orderBy('order') to avoid duplicate order by in SQL Server
+                        }])
+                        ->where('is_active', true)
+                        ->orderBy('order')
+                        ->get();
+                } else {
+                    // User lain hanya melihat menu yang diizinkan
+                    $accessibleMenus = $user->getAllAccessibleMenus()->where('is_active', true);
+                    
+                    $sidebarMenus = $accessibleMenus->whereNull('parent_id')->sortBy('order')->values();
+                    
+                    $sidebarMenus->map(function ($menu) use ($accessibleMenus) {
+                        $children = $accessibleMenus->where('parent_id', $menu->id)->sortBy('order')->values();
+                        $menu->setRelation('children', $children);
+                        return $menu;
+                    });
+                }
+            }
+
+            // Ubah route_name menjadi route agar kompatibel dengan sidebar blade yang sudah ada
+            $sidebarMenus->transform(function ($menu) {
+                $menu->route = $menu->route_name ?? '#';
+                if ($menu->relationLoaded('children')) {
+                    $menu->children->transform(function ($child) {
+                        $child->route = $child->route_name ?? '#';
+                        return $child;
+                    });
+                } else {
+                    $menu->setRelation('children', collect());
+                }
+                return $menu;
+            });
+
+            $view->with('sidebarMenus', $sidebarMenus)
+                 ->with('userRoleCode', $userRoleCode);
         });
     }
 }

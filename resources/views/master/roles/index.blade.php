@@ -1,0 +1,83 @@
+@extends('layouts.app')
+
+@section('title', 'Role Management')
+@section('page_title', 'User Management / Roles')
+
+@section('content')
+<div class="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+        <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+            <i class="fa-solid fa-id-badge text-blue-500"></i> Role Management
+        </h2>
+        <a href="{{ route('master.roles.create') }}" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:from-blue-700 hover:to-cyan-700 transition shadow-md shadow-blue-500/20 font-medium text-sm flex items-center gap-2">
+            <i class="fa-solid fa-plus"></i> Add Role
+        </a>
+    </div>
+
+    <div class="p-6">
+        @if(session('success'))
+            <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('success') }}</span>
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                <span class="block sm:inline">{{ session('error') }}</span>
+            </div>
+        @endif
+
+        <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
+            <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
+                <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
+                    <tr>
+                        <th scope="col" class="px-6 py-4 font-semibold">Role Name</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Code</th>
+                        <th scope="col" class="px-6 py-4 font-semibold">Description</th>
+                        <th scope="col" class="px-6 py-4 font-semibold text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($roles as $role)
+                    <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group">
+                        <td class="px-6 py-4 font-bold text-slate-900 dark:text-white">
+                            {{ $role->name }}
+                        </td>
+                        <td class="px-6 py-4 font-mono text-xs text-slate-500">
+                            {{ $role->code }}
+                        </td>
+                        <td class="px-6 py-4 text-slate-500 dark:text-slate-400">
+                            {{ $role->description ?: '-' }}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end gap-1 opacity-50 group-hover:opacity-100 transition">
+                                <a href="{{ route('master.roles.edit', $role->id) }}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-md transition" title="Edit & Set Permissions">
+                                    <i class="fa-solid fa-user-shield"></i> Permissions
+                                </a>
+                                @if($role->code !== 'admin')
+                                <form action="{{ route('master.roles.destroy', $role->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete this role permanently?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Delete">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="4" class="p-12 text-center text-gray-500 dark:text-gray-400">
+                            <div class="flex flex-col items-center justify-center gap-3">
+                                <i class="fa-regular fa-folder-open text-4xl text-gray-300 dark:text-gray-600"></i>
+                                <p>No roles registered yet.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@endsection

@@ -36,7 +36,7 @@ class NpcPartController extends Controller
             'qty' => 'required|integer|min:1',
             'delivery_date' => 'required|date',
         ], [
-            'part_no.exists' => 'The Part Number you entered is invalid or not part of this event's Model.'
+            'part_no.exists' => "The Part Number you entered is invalid or not part of this event's Model."
         ]);
 
         $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
@@ -88,7 +88,7 @@ class NpcPartController extends Controller
             'status' => 'required|in:WAITING_DEPT_CONFIRM,WAITING_QE_CHECK,WAITING_MGM_CHECK,FINISHED,CLOSED,OPEN',
             'condition' => 'nullable|string',
         ], [
-            'part_no.exists' => 'The Part Number you entered is invalid or not part of this event's Model.'
+            'part_no.exists' => "The Part Number you entered is invalid or not part of this event's Model."
         ]);
 
         $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
