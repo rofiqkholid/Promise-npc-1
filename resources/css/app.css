@@ -265,3 +265,78 @@ select:focus {
     border-color: #4b5563 !important; /* gray-600 */
     color: #e5e7eb !important;
 }
+
+/* ========================================================
+   GLOBAL TABLE MODERNIZATION (Flat SaaS Style)
+   ======================================================== */
+table {
+    border-collapse: separate !important;
+    border-spacing: 0;
+    width: 100% !important;
+}
+
+table thead th {
+    background-color: #f8fafc !important; /* slate-50 */
+    color: #475569 !important; /* slate-600 */
+    font-size: 0.75rem !important; /* text-xs */
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    font-weight: 600 !important;
+    padding: 1rem 1.25rem !important; /* py-4 px-5 */
+    border-bottom: 1px solid #e2e8f0 !important; /* slate-200 */
+    white-space: nowrap;
+}
+
+.dark table thead th {
+    background-color: rgba(30, 41, 59, 0.5) !important; /* slate-800/50 */
+    color: #94a3b8 !important; /* slate-400 */
+    border-bottom: 1px solid #334155 !important; /* slate-700 */
+}
+
+table tbody tr {
+    background-color: #ffffff !important;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.dark table tbody tr {
+    background-color: #1f2937 !important; /* gray-800 */
+}
+
+table tbody tr:hover {
+    background-color: #f8fafc !important; /* slate-50 */
+}
+
+.dark table tbody tr:hover {
+    background-color: rgba(51, 65, 85, 0.3) !important; /* slate-700/30 */
+}
+
+table tbody tr td {
+    padding: 0.875rem 1.25rem !important; /* py-3.5 px-5 */
+    font-size: 0.875rem !important; /* text-sm */
+    color: #334155 !important; /* slate-700 */
+    border-bottom: 1px solid #f1f5f9 !important; /* solid very faint slate-100 */
+    vertical-align: middle;
+    font-weight: 500;
+}
+
+.dark table tbody tr td {
+    color: #cbd5e1 !important; /* slate-300 */
+    border-bottom: 1px solid #374151 !important; /* solid gray-700 */
+}
+
+table tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+/* Premium Flat rounding for DataTables wrapper */
+.dataTables_wrapper .overflow-x-auto {
+    border-radius: 0.5rem !important; /* rounded-lg */
+    border: 1px solid #e5e7eb !important; /* gray-200 */
+    box-shadow: none !important; /* Flat design */
+}
+
+.dark .dataTables_wrapper .overflow-x-auto {
+    border: 1px solid #374151 !important; /* gray-700 */
+    box-shadow: none !important;
+}
+
