@@ -15,16 +15,7 @@
     </div>
 
     <div class="p-6">
-        @if(session('success'))
-            <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
-            </div>
-        @endif
-        @if(session('error'))
-            <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                <span class="block sm:inline">{{ session('error') }}</span>
-            </div>
-        @endif
+
 
         <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
@@ -63,10 +54,10 @@
                                     <i class="fa-solid fa-shield-halved"></i>
                                 </a>
                                 @if(auth()->id() !== $user->id)
-                                <form action="{{ route('master.npc-users.destroy', $user->id) }}" method="POST" class="inline" onsubmit="return confirm('Revoke NPC access from this user? (They will still be a Promise user)');">
+                                <form action="{{ route('master.npc-users.destroy', $user->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Revoke NPC Access">
+                                    <button type="button" onclick="confirmRevoke(this.closest('form'))" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Revoke NPC Access">
                                         <i class="fa-solid fa-user-xmark"></i>
                                     </button>
                                 </form>
@@ -90,3 +81,27 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+function confirmRevoke(form) {
+    Swal.fire({
+        title: 'Revoke NPC Access?',
+        text: 'Are you sure you want to revoke NPC access from this user? They will remain in the master Promise Users list.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#9ca3af',
+        confirmButtonText: '<i class="fa-solid fa-user-xmark mr-1"></i> Yes, Revoke Access',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true,
+        background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
+        color: document.documentElement.classList.contains('dark') ? '#f3f4f6' : '#111827',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.submit();
+        }
+    });
+}
+</script>
+@endpush

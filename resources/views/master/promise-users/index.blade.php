@@ -57,7 +57,7 @@
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
                                 @if(auth()->id() !== $user->id)
-                                <form action="{{ route('master.promise-users.destroy', $user->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete this user permanently from the Promise system?');">
+                                <form action="{{ route('master.promise-users.destroy', $user->id) }}" method="POST" class="inline" onsubmit="confirmAction(event, 'Delete this user permanently from the Promise system?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Delete">

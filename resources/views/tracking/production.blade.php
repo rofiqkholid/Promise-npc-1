@@ -109,7 +109,7 @@
                                     @if($hasFinishedProcess)
                                         <form action="{{ route('tracking.process.rollback', $part->id) }}" method="POST">
                                             @csrf
-                                            <button type="submit" class="text-[10px] text-red-500 hover:text-red-700 flex items-center justify-end w-full gap-1 font-semibold transition mb-2" onclick="return confirm('Are you sure you want to rollback the previous process?')">
+                                            <button type="submit" class="text-[10px] text-red-500 hover:text-red-700 flex items-center justify-end w-full gap-1 font-semibold transition mb-2" onclick="confirmAction(event, 'Are you sure you want to rollback the previous process?')">
                                                 <i class="fa-solid fa-rotate-left"></i> Rollback Previous Process
                                             </button>
                                         </form>
@@ -130,7 +130,7 @@
                                     @if($canRollback)
                                     <form action="{{ route('tracking.process.rollback', $part->id) }}" method="POST">
                                         @csrf
-                                        <button type="submit" class="text-[10px] text-red-500 hover:text-red-700 flex items-center gap-1 font-semibold transition mt-1" onclick="return confirm('Are you sure you want to rollback this part from QC to Production stage?')">
+                                        <button type="submit" class="text-[10px] text-red-500 hover:text-red-700 flex items-center gap-1 font-semibold transition mt-1" onclick="confirmAction(event, 'Are you sure you want to rollback this part from QC to Production stage?')">
                                             <i class="fa-solid fa-rotate-left"></i> Rollback Production
                                         </button>
                                     </form>

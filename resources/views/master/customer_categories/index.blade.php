@@ -45,7 +45,7 @@
                                 <a href="{{ route('master.customer-categories.edit', $category->id) }}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-md transition" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('master.customer-categories.destroy', $category->id) }}" method="POST" class="inline" onsubmit="return confirm('Permanently delete this mapping?');">
+                                <form action="{{ route('master.customer-categories.destroy', $category->id) }}" method="POST" class="inline" onsubmit="confirmAction(event, 'Permanently delete this mapping?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Delete">

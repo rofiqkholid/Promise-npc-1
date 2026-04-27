@@ -54,7 +54,7 @@
                                     <i class="fa-solid fa-user-shield"></i> Permissions
                                 </a>
                                 @if($role->code !== 'admin')
-                                <form action="{{ route('master.roles.destroy', $role->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete this role permanently?');">
+                                <form action="{{ route('master.roles.destroy', $role->id) }}" method="POST" class="inline" onsubmit="confirmAction(event, 'Delete this role permanently?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Delete">

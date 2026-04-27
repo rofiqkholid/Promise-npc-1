@@ -119,7 +119,7 @@
                                 <a href="{{ route('events.parts.edit', [$event->id, $part->id]) }}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-md transition" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('events.parts.destroy', [$event->id, $part->id]) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure ingin menghapus data ini?');">
+                                <form action="{{ route('events.parts.destroy', [$event->id, $part->id]) }}" method="POST" class="inline" onsubmit="confirmAction(event, 'Are you sure ingin menghapus data ini?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Delete">

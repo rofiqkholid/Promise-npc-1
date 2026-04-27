@@ -69,7 +69,7 @@
                                 <a href="{{ route('master.menus.edit', $menu->id) }}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-md transition" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('master.menus.destroy', $menu->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete ini secara permanen?');">
+                                <form action="{{ route('master.menus.destroy', $menu->id) }}" method="POST" class="inline" onsubmit="confirmAction(event, 'Delete ini secara permanen?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Delete">

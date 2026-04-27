@@ -34,7 +34,7 @@
                                 <a href="{{ route('master.delivery-groups.edit', $group->id) }}" class="text-blue-600 hover:text-blue-800 hover:bg-blue-50 p-2 rounded-md transition" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <form action="{{ route('master.delivery-groups.destroy', $group->id) }}" method="POST" class="inline" onsubmit="return confirm('Delete grup ini secara permanen?');">
+                                <form action="{{ route('master.delivery-groups.destroy', $group->id) }}" method="POST" class="inline" onsubmit="confirmAction(event, 'Delete grup ini secara permanen?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-md transition" title="Delete">

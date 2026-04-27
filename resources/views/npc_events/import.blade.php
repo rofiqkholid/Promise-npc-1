@@ -130,7 +130,7 @@
             <a href="{{ route('events.index') }}" class="px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 Cancel
             </a>
-            <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition flex items-center gap-2" onclick="return confirm('Start import process to database? This will create an Event and insert Parts in it.');">
+            <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition flex items-center gap-2" onclick="confirmAction(event, 'Start import process to database? This will create an Event and insert Parts in it.')">
                 <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Eksekusi
             </button>
         </div>

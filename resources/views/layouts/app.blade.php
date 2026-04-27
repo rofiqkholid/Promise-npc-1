@@ -123,6 +123,33 @@
 
     <script>
         /**
+         * Global SweetAlert Confirmation Wrapper
+         */
+        window.confirmAction = function(event, message) {
+            event.preventDefault();
+            const targetElement = event.currentTarget;
+            const form = targetElement.tagName === 'FORM' ? targetElement : targetElement.closest('form');
+            
+            Swal.fire({
+                title: 'Confirmation',
+                text: message,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#9ca3af',
+                confirmButtonText: '<i class="fa-solid fa-check mr-1"></i> Yes, Proceed',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true,
+                background: document.documentElement.classList.contains('dark') ? '#1f2937' : '#ffffff',
+                color: document.documentElement.classList.contains('dark') ? '#f3f4f6' : '#111827',
+            }).then((result) => {
+                if (result.isConfirmed && form) {
+                    form.submit();
+                }
+            });
+        }
+
+        /**
          * Global Select2 Initialization
          */
         $(function () {
