@@ -8,7 +8,19 @@ class NpcMenuController extends Controller
 {
     public function index()
     {
-        $menus = \App\Models\NpcMenu::with('parent')->orderBy('order')->get();
+        $parents = \App\Models\NpcMenu::whereNull('parent_id')
+            ->with('children')
+            ->orderBy('order')
+            ->get();
+
+        $menus = collect();
+        foreach ($parents as $parent) {
+            $menus->push($parent);
+            foreach ($parent->children as $child) {
+                $menus->push($child);
+            }
+        }
+
         return view('master.menus.index', compact('menus'));
     }
 
