@@ -40,8 +40,8 @@
                     @forelse($users as $user)
                     <tr class="bg-white dark:bg-gray-800 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group">
                         <td class="px-6 py-4 font-bold text-slate-900 dark:text-white flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 flex items-center justify-center font-bold">
-                                {{ substr($user->name, 0, 1) }}
+                            <div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-gray-700 text-slate-500 dark:text-gray-400 flex items-center justify-center border border-slate-200 dark:border-gray-600">
+                                <i class="fa-solid fa-user text-xs"></i>
                             </div>
                             {{ $user->name }}
                         </td>

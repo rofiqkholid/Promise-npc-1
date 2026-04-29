@@ -58,8 +58,8 @@
                 
                 <button @click="open = !open" @click.outside="open = false" 
                     class="flex items-center gap-3 hover:bg-primary-50 dark:hover:bg-gray-700 p-1.5 pr-3 rounded-full transition-colors border border-transparent hover:border-slate-100 dark:hover:border-gray-600">
-                    <div class="h-9 w-9 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 flex items-center justify-center font-bold text-sm border border-primary-200 dark:border-primary-800">
-                        {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
+                    <div class="h-9 w-9 rounded-full bg-slate-100 dark:bg-gray-700 text-slate-500 dark:text-gray-400 flex items-center justify-center border border-slate-200 dark:border-gray-600">
+                        <i class="fa-solid fa-user text-sm"></i>
                     </div>
                     <div class="hidden md:block text-right">
                         <p class="text-sm font-semibold text-slate-700 dark:text-gray-200 leading-none">{{ Auth::user()->name }}</p>
