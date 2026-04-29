@@ -18,7 +18,7 @@
             @method('PUT')
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Search Data -->
+                <!-- Data Pencarian -->
                 <div class="col-span-1 md:col-span-2 space-y-1 relative">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
                         Search Part No / Name of DB Drawing (Use this if you want to replace Part)

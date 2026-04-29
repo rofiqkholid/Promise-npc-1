@@ -441,7 +441,7 @@ $pOverdue = ($isDeliveryOverdue || $hasLateProcess) && !in_array($part->status, 
         $targetDate = \Carbon\Carbon::parse($pProc->target_completion_date)->startOfDay();
         
         if (!empty($pProc->actual_completion_date)) {
-            // Case 1: COMPLETED. Check if actual date exceeds target
+            // Case 1: SUDAH SELESAI. Cek apakah tanggal aktual melebihi target
             $actualDate = \Carbon\Carbon::parse($pProc->actual_completion_date)->startOfDay();
             if ($actualDate->greaterThan($targetDate)) {
                 $isSpLate = true;
