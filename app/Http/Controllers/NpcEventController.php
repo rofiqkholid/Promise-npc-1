@@ -165,21 +165,10 @@ class NpcEventController extends Controller
     public function importData(Request $request)
     {
         $request->validate([
-            'customer_id' => 'required',
-            'model_id' => 'required',
-            'customer_category_id' => 'required',
-            'delivery_group_id' => 'required',
-            'delivery_to' => 'nullable|string|max:255',
             'file' => 'required|mimes:xlsx,xls,csv|max:10240',
         ]);
 
         try {
-            $event = NpcEvent::create([
-                'customer_category_id' => $request->customer_category_id,
-                'delivery_group_id' => $request->delivery_group_id,
-                'delivery_to' => $request->delivery_to,
-            ]);
-
             $spreadsheet = IOFactory::load($request->file('file')->getRealPath());
             $worksheet = $spreadsheet->getActiveSheet();
             $rows = $worksheet->toArray();
@@ -188,9 +177,49 @@ class NpcEventController extends Controller
             $headers = array_shift($rows);
 
             $importedCount = 0;
+            $eventsCreated = []; // Untuk melacak event yang sudah dibuat agar tidak duplikat dlm satu proses
+
             foreach ($rows as $row) {
+                // Mapping Kolom (sesuai template baru):
+                // 0: PO NO, 1: PART NO, 2: PART NAME, 3: QTY, 4: DELV DATE, 
+                // 5: CUSTOMER CODE, 6: MODEL NAME, 7: EVENT CATEGORY, 8: DELIVERY GROUP, 9: DELIVERY TO
+                
                 if (empty($row[1])) continue; // Skip empty part no
 
+                $custCode = trim($row[5] ?? '');
+                $modelName = trim($row[6] ?? '');
+                $catName = trim($row[7] ?? '');
+                $groupName = trim($row[8] ?? '');
+                $deliveryTo = trim($row[9] ?? '');
+
+                if (empty($custCode) || empty($catName) || empty($groupName)) continue;
+
+                // 1. Resolve IDs
+                $customer = \App\Models\Customer::where('code', $custCode)->first();
+                if (!$customer) continue;
+
+                $category = \App\Models\NpcCustomerCategory::where('customer_id', $customer->id)
+                            ->where('name', $catName)->first();
+                if (!$category) {
+                    // Opsional: Buat kategori jika tidak ada? Untuk sekarang kita skip jika master datanya tidak ada.
+                    continue;
+                }
+
+                $delivGroup = \App\Models\NpcDeliveryGroup::where('name', $groupName)->first();
+                if (!$delivGroup) continue;
+
+                // 2. Find/Create Event (Batching by Category + Group + DeliveryTo)
+                $eventKey = $category->id . '_' . $delivGroup->id . '_' . $deliveryTo;
+                if (!isset($eventsCreated[$eventKey])) {
+                    $eventsCreated[$eventKey] = NpcEvent::create([
+                        'customer_category_id' => $category->id,
+                        'delivery_group_id' => $delivGroup->id,
+                        'delivery_to' => $deliveryTo ?: null,
+                    ]);
+                }
+                $event = $eventsCreated[$eventKey];
+
+                // 3. Process Part
                 $deliveryDate = null;
                 if (!empty($row[4])) {
                     try {
@@ -204,24 +233,19 @@ class NpcEventController extends Controller
                     }
                 }
 
-                $processString = $row[5] ?? 'GR.1';
-                // Smart Mapping Department via Master Process
-                $procStr = (string)$row[5];
-                $processObj = \App\Models\NpcProcess::where('process_name', 'LIKE', '%' . $procStr . '%')->first();
-                $department = $processObj ? $processObj->department : 'PUD';
-
-                $partName = $row[2] ?? '-';
-                if($partName === '-' || empty($partName)) {
-                    $product = \App\Models\Product::where('part_no', $row[1])->first();
-                    if($product) $partName = $product->part_name;
-                }
-
                 $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
                     'npc_event_id' => $event->id,
-                    'po_no' => $row[0] ?? optional($event->customerCategory)->name ?? 'PO-'.time()
+                    'po_no' => $row[0] ?? 'PO-'.time()
                 ]);
                 
-                $product = \App\Models\Product::where('part_no', $row[1])->first();
+                // Cari product, prioritaskan model name jika diisi
+                $productQuery = \App\Models\Product::where('part_no', $row[1]);
+                if (!empty($modelName)) {
+                    $productQuery->whereHas('vehicleModel', function($q) use ($modelName) {
+                        $q->where('name', $modelName);
+                    });
+                }
+                $product = $productQuery->first();
 
                 $part = NpcPart::create([
                     'npc_purchase_order_id' => $po->id,
@@ -231,16 +255,65 @@ class NpcEventController extends Controller
                     'status' => 'WAITING_DEPT_CONFIRM',
                 ]);
                 
-                if ($processObj) {
-                    // Processes will be generated at the Setup Routing phase
-                }
                 $importedCount++;
             }
 
-            return redirect()->route('events.index')->with('success', "Event dibuat dan $importedCount Part(s) successfully imported!");
+            $eventCount = count($eventsCreated);
+            return redirect()->route('events.index')->with('success', "Success! $eventCount Events created and $importedCount Part(s) imported from Excel.");
 
         } catch (Exception $e) {
-            return back()->with('error', 'Failed memproses file Excel: ' . $e->getMessage());
+            return back()->with('error', 'Failed processing Excel: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        try {
+            $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            
+            // Set Headers
+            $headers = [
+                'PO NO', 'PART NO', 'PART NAME', 'QTY', 'DELV DATE (YYYY-MM-DD)', 
+                'CUSTOMER CODE', 'MODEL NAME', 'EVENT CATEGORY', 'DELIVERY GROUP', 'DELIVERY TO'
+            ];
+            foreach ($headers as $index => $header) {
+                $column = chr(65 + $index);
+                if ($index >= 26) {
+                    // Handle columns after Z if needed, but here only 10 columns
+                }
+                $sheet->setCellValue($column . '1', $header);
+                $sheet->getStyle($column . '1')->getFont()->setBold(true);
+            }
+            
+            // Add Sample Data
+            $sampleData = [
+                ['PO/2026/001', 'PART-001', 'Sample Part Name', 100, '2026-05-20', 'TOYOTA', 'AVANZA', 'NEW MODEL', 'GR.1', 'CKD-PLANT'],
+                ['PO/2026/002', 'PART-002', 'Another Part', 50, '2026-05-25', 'HONDA', 'CIVIC', 'FACELIFT', 'GR.2', ''],
+            ];
+            
+            foreach ($sampleData as $rowIndex => $rowData) {
+                foreach ($rowData as $columnIndex => $value) {
+                    $column = chr(65 + $columnIndex);
+                    $sheet->setCellValue($column . ($rowIndex + 2), $value);
+                }
+            }
+            
+            // Auto size columns
+            foreach (range('A', 'J') as $columnID) {
+                $sheet->getColumnDimension($columnID)->setAutoSize(true);
+            }
+            
+            $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+            
+            $fileName = 'NPC_Bulk_Import_Template_' . date('Ymd_His') . '.xlsx';
+            $tempFile = tempnam(sys_get_temp_dir(), $fileName);
+            $writer->save($tempFile);
+            
+            return response()->download($tempFile, $fileName)->deleteFileAfterSend(true);
+            
+        } catch (Exception $e) {
+            return back()->with('error', 'Failed generating template: ' . $e->getMessage());
         }
     }
 }

@@ -14,6 +14,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', function () { return 'Profile Page'; })->name('profile.index');
 
     // NPC Events Master Route
+    Route::get('/events/import/template', [\App\Http\Controllers\NpcEventController::class, 'downloadTemplate'])->name('events.import.template');
     Route::get('/events/import', [\App\Http\Controllers\NpcEventController::class, 'importForm'])->name('events.import');
     Route::post('/events/import', [\App\Http\Controllers\NpcEventController::class, 'importData'])->name('events.import.store');
     Route::resource('events', \App\Http\Controllers\NpcEventController::class);

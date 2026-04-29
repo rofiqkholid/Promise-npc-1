@@ -16,110 +16,52 @@
         <div class="p-6 space-y-6">
 
             <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-lg border border-blue-100 dark:border-blue-800 text-sm text-blue-800 dark:text-blue-300">
-                <p class="font-semibold mb-2"><i class="fa-solid fa-circle-info mr-1"></i> Information Format Excel:</p>
-                <p class="mb-2">Ensure Excel columns follow this sequence (First row is considered Header and will be skipped):</p>
-                <ol class="list-decimal pl-5 space-y-1 font-mono text-xs mt-2 relative z-10 w-fit p-3 bg-white dark:bg-slate-800 rounded shadow-sm border border-blue-200 dark:border-blue-700 text-slate-700 dark:text-slate-300">
-                    <li>PO NO</li>
-                    <li>PART NO</li>
-                    <li>PART NAME</li>
-                    <li>QTY</li>
-                    <li>DELV DATE (YYYY-MM-DD / Format Date)</li>
-                    <li>PROCESS (Contoh: SUPP, STAMPING)</li>
-                </ol>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Customer Selection -->
-                <div class="space-y-1">
-                    <label for="customer_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Customer <span class="text-red-500">*</span>
-                    </label>
-                    <select id="customer_id" name="customer_id" required data-placeholder="Select Customer..."
-                        class="select2 w-full">
-                        <option value="">Select Customer</option>
-                        @foreach($customers as $customer)
-                            <option value="{{ $customer->id }}" {{ old('customer_id') == $customer->id ? 'selected' : '' }}>
-                                {{ $customer->code }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <!-- Model Selection (Dinamis via JS sama seperti form create) -->
-                <div class="space-y-1">
-                    <label for="model_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Model <span class="text-red-500">*</span>
-                    </label>
-                    <select id="model_id" name="model_id" required disabled data-placeholder="Select Model..."
-                        class="select2 w-full">
-                        <option value="">Select Customer Terlebih Dahulu</option>
-                    </select>
+                <div class="flex justify-between items-center mb-3">
+                    <div>
+                        <p class="font-bold text-base flex items-center gap-2">
+                            <i class="fa-solid fa-file-circle-check text-blue-600 dark:text-blue-400"></i>
+                            Import Instructions
+                        </p>
+                    </div>
+                    <a href="{{ route('events.import.template') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition-all hover:scale-105 active:scale-95">
+                        <i class="fa-solid fa-download"></i> Download Template
+                    </a>
                 </div>
                 
-                <!-- Category Select -->
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Category Event <span class="text-red-500">*</span>
-                    </label>
-                    <select name="customer_category_id" id="category_select" required disabled data-placeholder="Select Category Event..."
-                        class="select2 w-full">
-                        <option value="">Select Category</option>
-                    </select>
+                <div class="grid grid-cols-1 gap-4 mt-2">
+                    <div class="flex gap-3">
+                        <div class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center shrink-0 font-bold text-xs text-blue-600 dark:text-blue-300">1</div>
+                        <p class="text-xs leading-relaxed"><strong>Bulk Support</strong>: You can now import multiple Customers, Models, and POs in a single file. The system will automatically create separate Events for each combination of Customer Category and Delivery Group found in the Excel.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center shrink-0 font-bold text-xs text-blue-600 dark:text-blue-300">2</div>
+                        <p class="text-xs leading-relaxed"><strong>Data Matching</strong>: Ensure <code>CUSTOMER CODE</code>, <code>MODEL NAME</code>, <code>EVENT CATEGORY</code>, and <code>DELIVERY GROUP</code> match exactly with the names in Master Data.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <div class="w-6 h-6 rounded-full bg-blue-100 dark:bg-blue-800 flex items-center justify-center shrink-0 font-bold text-xs text-blue-600 dark:text-blue-300">3</div>
+                        <p class="text-xs leading-relaxed"><strong>Mandatory Fields</strong>: <code>PO NO</code>, <code>PART NO</code>, <code>QTY</code>, <code>DELV DATE</code>, <code>CUSTOMER CODE</code>, <code>EVENT CATEGORY</code>, and <code>DELIVERY GROUP</code> are required for each row.</p>
+                    </div>
                 </div>
-
-                <!-- Delivery Group Select -->
-                <div class="space-y-1">
-                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        Delivery Group (GR) <span class="text-red-500">*</span>
-                    </label>
-                    <select name="delivery_group_id" id="delivery_group_id" required data-placeholder="Select Delivery Group..."
-                        class="select2 w-full">
-                        <option value="">Select Grup</option>
-                        @foreach($delivery_groups as $group)
-                            <option value="{{ $group->id }}" {{ old('delivery_group_id') == $group->id ? 'selected' : '' }}>
-                                {{ $group->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-
-
-
-            <div class="space-y-1">
-                <label for="delivery_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Tujuan Pengiriman (Delivery To)
-                </label>
-                <select id="delivery_to" name="delivery_to" data-placeholder="Select Tujuan..."
-                    class="select2 w-full">
-                    <option value="">Select Tujuan (Optional)</option>
-                    @foreach($delivery_targets as $target)
-                        <option value="{{ $target->target_name }}" {{ old('delivery_to') == $target->target_name ? 'selected' : '' }}>
-                            {{ $target->target_name }}
-                        </option>
-                    @endforeach
-                </select>
             </div>
 
             <hr class="border-gray-200 dark:border-gray-700">
 
             <!-- File Upload -->
             <div class="space-y-1">
-                <label for="file" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Upload File Excel <span class="text-red-500">*</span>
+                <label for="file" class="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center mb-4">
+                    Upload Bulk Excel File <span class="text-red-500">*</span>
                 </label>
-                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg">
+                <div class="mt-1 flex justify-center px-6 pt-10 pb-10 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-xl bg-gray-50/50 dark:bg-gray-700/30 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors cursor-pointer" onclick="document.getElementById('file').click()">
                     <div class="space-y-1 text-center">
-                        <i class="fa-solid fa-file-excel text-4xl text-gray-400 dark:text-gray-500 mb-3"></i>
+                        <i class="fa-solid fa-file-excel text-5xl text-green-500 mb-4 animate-bounce-slow"></i>
                         <div class="flex text-sm text-gray-600 dark:text-gray-400 justify-center">
-                            <label for="file" class="relative cursor-pointer bg-white dark:bg-gray-700 rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500 p-1">
-                                <span>Select file .xlsx, .xls</span>
+                            <label for="file" class="relative cursor-pointer rounded-md font-bold text-blue-600 hover:text-blue-500 focus-within:outline-none">
+                                <span>Click to select bulk Excel file</span>
                                 <input id="file" name="file" type="file" class="sr-only" required accept=".xlsx, .xls, .csv">
                             </label>
-                            <p class="pl-1 pt-1">atau drag and drop</p>
                         </div>
-                        <p class="text-xs text-gray-500 dark:text-gray-500">Maks. 10MB</p>
-                        <p id="file-name-display" class="text-sm font-semibold text-green-600 dark:text-green-400 mt-2 hidden"></p>
+                        <p class="text-xs text-gray-500 dark:text-gray-500 mt-2">Support .xlsx, .xls, .csv (Max 10MB)</p>
+                        <p id="file-name-display" class="text-base font-black text-emerald-600 dark:text-emerald-400 mt-4 hidden p-2 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-800"></p>
                     </div>
                 </div>
             </div>
@@ -140,90 +82,6 @@
 
 @push('scripts')
 <script>
-    // Logic untuk Dropdown Model & Category Dinamis
-    $('#customer_id').on('change', function() {
-        const customerId = this.value;
-        const modelSelect = document.getElementById('model_id');
-        const categorySelect = document.getElementById('category_select');
-        
-        // Reset and show loading state
-        modelSelect.innerHTML = '<option value="">Memuat data...</option>';
-        modelSelect.disabled = true;
-        $(modelSelect).trigger('change.select2');
-        
-        categorySelect.innerHTML = '<option value="">Memuat data...</option>';
-        categorySelect.disabled = true;
-        $(categorySelect).trigger('change.select2');
-        
-
-
-        if(customerId) {
-            // Menggunakan proxy API Internal untuk menghindari CORS
-            fetch("{{ route('api.data.models') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ customer_id: customerId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                modelSelect.innerHTML = '<option value="">Select Model</option>';
-                if(data.results && data.results.length > 0) {
-                    data.results.forEach(model => {
-                        modelSelect.innerHTML += `<option value="${model.id}">${model.text}</option>`;
-                    });
-                    modelSelect.disabled = false;
-                } else {
-                    modelSelect.innerHTML = '<option value="">No model found</option>';
-                }
-                $(modelSelect).trigger('change.select2');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                modelSelect.innerHTML = '<option value="">Failed memuat data</option>';
-                $(modelSelect).trigger('change.select2');
-            });
-            
-            // Category AJAX
-            fetch("{{ route('api.data.customer-categories') }}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ customer_id: customerId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                categorySelect.innerHTML = '<option value="">Select Category</option>';
-                if(data.results && data.results.length > 0) {
-                    data.results.forEach(cat => {
-                        categorySelect.innerHTML += `<option value="${cat.id}">${cat.text}</option>`;
-                    });
-                    categorySelect.disabled = false;
-                } else {
-                    categorySelect.innerHTML = '<option value="">Category not found</option>';
-                }
-                $(categorySelect).trigger('change.select2');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                categorySelect.innerHTML = '<option value="">Failed memuat data</option>';
-                $(categorySelect).trigger('change.select2');
-            });
-            
-        } else {
-            modelSelect.innerHTML = '<option value="">Select Customer Terlebih Dahulu</option>';
-            $(modelSelect).trigger('change.select2');
-            categorySelect.innerHTML = '<option value="">Select Category</option>';
-            $(categorySelect).trigger('change.select2');
-        }
-    });
-
-
-
     // Logika menampilkan nama file Excel saat diselect
     document.getElementById('file').addEventListener('change', function(e) {
         const fileName = e.target.files[0]?.name;
