@@ -68,6 +68,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function getAuthIdentifierName()
+    {
+        return 'nik';
+    }
+
     public function roles()
     {
         return $this->belongsToMany(\App\Models\NpcRole::class, 'npc_user_roles', 'user_id', 'role_id', 'id');
