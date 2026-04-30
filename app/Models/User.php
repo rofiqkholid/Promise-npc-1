@@ -11,6 +11,27 @@ class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
+    
+    /**
+     * The primary key associated with the table.
+     *
+     * @var string
+     */
+    protected $primaryKey = 'nik';
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * The "type" of the primary key.
+     *
+     * @var string
+     */
+    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.
@@ -49,12 +70,12 @@ class User extends Authenticatable
 
     public function roles()
     {
-        return $this->belongsToMany(\App\Models\NpcRole::class, 'npc_user_roles', 'user_id', 'role_id');
+        return $this->belongsToMany(\App\Models\NpcRole::class, 'npc_user_roles', 'user_id', 'role_id', 'id');
     }
 
     public function specificMenus()
     {
-        return $this->belongsToMany(\App\Models\NpcMenu::class, 'npc_user_menus', 'user_id', 'menu_id')
+        return $this->belongsToMany(\App\Models\NpcMenu::class, 'npc_user_menus', 'user_id', 'menu_id', 'id')
             ->withPivot('can_view', 'can_create', 'can_update', 'can_delete', 'can_approve')
             ->withTimestamps();
     }

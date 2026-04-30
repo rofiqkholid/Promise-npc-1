@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\URL;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,7 +21,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \Illuminate\Support\Facades\View::composer(['layouts.header', 'components.stock-alert-modal', 'components.ecn-alert-modal'], function ($view) {
+        if (config('app.url')) {
+            URL::forceRootUrl(config('app.url'));
+        }
+
+        if (str_contains(config('app.url'), 'https://')) {
+            URL::forceScheme('https');
+        }
+
+        View::composer(['layouts.header', 'components.stock-alert-modal'], function ($view) {
+            $view->with('stockAlerts', collect([]))
+                ->with('stockAlertAutoOpen', false);
+        });
+
+        View::composer(['layouts.header', 'components.stock-alert-modal', 'components.ecn-alert-modal'], function ($view) {
             // Hitung part aktif yang memiliki ECN update
             $ecnQuery = \App\Models\NpcPart::with(['purchaseOrder.event.customerCategory', 'product'])
                 ->whereNotIn('status', ['FINISHED', 'CLOSED'])
@@ -27,17 +42,17 @@ class AppServiceProvider extends ServiceProvider
                 ->whereHas('product.docPackage', function ($query) {
                     $query->whereColumn('doc_packages.current_revision_id', '!=', 'npc_parts.part_revision_id');
                 });
-                
+
             $ecnNotificationCount = $ecnQuery->count();
             $ecnUpdatedParts = $ecnQuery->latest()->take(10)->get();
 
             $view->with('stockAlerts', collect([]))
-                 ->with('stockAlertAutoOpen', false)
-                 ->with('ecnNotificationCount', $ecnNotificationCount)
-                 ->with('ecnUpdatedParts', $ecnUpdatedParts);
+                ->with('stockAlertAutoOpen', false)
+                ->with('ecnNotificationCount', $ecnNotificationCount)
+                ->with('ecnUpdatedParts', $ecnUpdatedParts);
         });
 
-        \Illuminate\Support\Facades\View::composer('layouts.sidebar', function ($view) {
+        View::composer('layouts.sidebar', function ($view) {
             $user = auth()->user();
             $sidebarMenus = collect();
             $userRoleCode = 'guest';
@@ -59,9 +74,9 @@ class AppServiceProvider extends ServiceProvider
                 } else {
                     // User lain hanya melihat menu yang diizinkan
                     $accessibleMenus = $user->getAllAccessibleMenus()->where('is_active', true);
-                    
+
                     $sidebarMenus = $accessibleMenus->whereNull('parent_id')->sortBy('order')->values();
-                    
+
                     $sidebarMenus->map(function ($menu) use ($accessibleMenus) {
                         $children = $accessibleMenus->where('parent_id', $menu->id)->sortBy('order')->values();
                         $menu->setRelation('children', $children);
@@ -85,7 +100,7 @@ class AppServiceProvider extends ServiceProvider
             });
 
             $view->with('sidebarMenus', $sidebarMenus)
-                 ->with('userRoleCode', $userRoleCode);
+                ->with('userRoleCode', $userRoleCode);
         });
     }
 }

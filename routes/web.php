@@ -2,10 +2,23 @@
 
 use App\Http\Controllers\AuthController;
 
-Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login_post');
-Route::get('/forget-password', [AuthController::class, 'forgetPassword'])->name('forget_password');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/check-session-status', function () {
+    return response()->json(['active' => Auth::check()]);
+})->name('session.check');
+// Route for redirecting to Central SSO Portal
+Route::get('/login', function () {
+    return redirect(env('PORTAL_LOGIN_URL', 'https://promise.summitadyawinsa.co.id/login'));
+})->name('login');
+
+Route::get('/', function () {
+    return redirect()->route('dashboard');
+});
+
+Route::post('/logout', function () {
+    Auth::logout();
+    session()->invalidate();
+    return redirect(env('PORTAL_LOGIN_URL', 'https://promise.summitadyawinsa.co.id/login'));
+})->name('logout');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');

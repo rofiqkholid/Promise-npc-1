@@ -30,7 +30,7 @@ class NpcUserController extends Controller
             'role_ids.*' => 'exists:npc_roles,id'
         ]);
 
-        $user = \App\Models\User::findOrFail($request->user_id);
+        $user = \App\Models\User::where('id', $request->user_id)->firstOrFail();
         $user->roles()->sync($request->role_ids);
 
         return redirect()->route('master.npc-users.index')->with('success', 'NPC User added successfully. You can edit the user to configure individual permissions if needed.');
@@ -125,7 +125,7 @@ class NpcUserController extends Controller
         $user = \App\Models\User::findOrFail($id);
         
         // Prevent revoking admin from self if it's the last admin
-        if ($user->id === auth()->id() && $user->roles->contains('code', 'admin')) {
+        if ($user->nik === auth()->id() && $user->roles->contains('code', 'admin')) {
             // Checking if other admins exist could be done, but for simplicity:
             return redirect()->route('master.npc-users.index')->with('error', 'You cannot revoke your own access.');
         }

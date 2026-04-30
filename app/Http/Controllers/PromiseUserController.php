@@ -43,7 +43,7 @@ class PromiseUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $promise_user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $promise_user->nik . ',nik',
             'password' => 'nullable|string|min:8',
         ]);
 
@@ -64,7 +64,7 @@ class PromiseUserController extends Controller
     public function destroy(\App\Models\User $promise_user)
     {
         // Prevent deleting the current logged in user
-        if ($promise_user->id === auth()->id()) {
+        if ($promise_user->nik === auth()->id()) {
             return redirect()->route('master.promise-users.index')->with('error', 'You cannot delete your own account.');
         }
 

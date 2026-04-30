@@ -10,7 +10,7 @@ class NpcRole extends Model
 
     public function users()
     {
-        return $this->belongsToMany(\App\Models\User::class, 'npc_user_roles', 'role_id', 'user_id');
+        return $this->belongsToMany(\App\Models\User::class, 'npc_user_roles', 'role_id', 'user_id', 'id', 'id');
     }
 
     public function menus()
