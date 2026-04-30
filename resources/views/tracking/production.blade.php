@@ -33,7 +33,7 @@
                             <div class="text-gray-800 dark:text-gray-200 font-bold text-sm">{{ optional($part->product)->part_no }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 font-medium mb-2">{{ optional($part->product)->part_name }}</div>
                             
-                            <div class="text-blue-600 dark:text-blue-400 font-semibold text-[10px] uppercase">PO: {{ optional($part->purchaseOrder)->po_no }}</div>
+                            <div class="text-blue-600 dark:text-blue-400 font-semibold text-[10px] uppercase">PO: {{ optional($part->event)->po_no }}</div>
                             <div class="text-[10px] text-gray-400 mt-1"><span class="font-bold text-gray-600 dark:text-gray-300">{{ number_format($part->qty) }} PCS</span> | Delv Target: {{ \Carbon\Carbon::parse($part->delivery_date)->format('d M') }}</div>
                         </td>
                         <td class="px-6 py-4 text-center align-middle">

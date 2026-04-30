@@ -12,21 +12,16 @@ class NpcEvent extends Model
     protected $table = 'npc_events';
 
     protected $fillable = [
-
+        'po_no',
         'delivery_to',
         'customer_category_id',
         'delivery_group_id'
     ];
 
 
-    public function purchaseOrders()
-    {
-        return $this->hasMany(NpcPurchaseOrder::class, 'npc_event_id');
-    }
-
     public function parts()
     {
-        return $this->hasManyThrough(NpcPart::class, NpcPurchaseOrder::class, 'npc_event_id', 'npc_purchase_order_id');
+        return $this->hasMany(NpcPart::class, 'npc_event_id');
     }
 
     public function customerCategory()

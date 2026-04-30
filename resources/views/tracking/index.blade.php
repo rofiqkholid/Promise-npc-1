@@ -81,7 +81,7 @@
                     @forelse($parts as $part)
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group text-sm">
                         <td class="px-6 py-4">
-                            <div class="text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wide border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded inline-block mb-1">{{ optional(optional(optional($part->purchaseOrder)->event)->customerCategory)->name ?? 'Unknown Event' }}</div>
+                            <div class="text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wide border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded inline-block mb-1">{{ optional(optional($part->event)->customerCategory)->name ?? 'Unknown Event' }}</div>
                             @if($part->has_ecn_update)
                             <div class="mt-1 text-[10px] font-bold text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-900/30 px-2 py-0.5 rounded inline-flex items-center gap-1 shadow-sm">
                                 <span class="relative flex h-2 w-2 mr-0.5">
@@ -93,7 +93,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 text-gray-700 dark:text-gray-300 font-semibold text-sm">
-                            {{ optional($part->purchaseOrder)->po_no }}
+                            {{ optional($part->event)->po_no }}
                         </td>
                         <td class="px-6 py-4">
                             <div class="text-gray-800 dark:text-gray-200 font-medium text-sm">{{ optional($part->product)->part_no }}</div>
@@ -157,7 +157,7 @@
                                         @if($idx < count($steps) - 1)
                                             <div class="absolute w-[calc(100%-1.75rem)] top-3.5 left-[calc(50%+0.875rem)] h-[3px] rounded {{ $lineClass }}"></div>
                                         @endif
-                                        <div class="z-10 relative bg-white dark:bg-gray-800 {{ $circleClass }} border-2 w-7 h-7 flex items-center justify-center rounded-full text-[10px] transition-all duration-300">
+                                        <div class="z-10 relative {{ $circleClass }} border-2 w-7 h-7 flex items-center justify-center rounded-full text-[10px] transition-all duration-300">
                                             <i class="fa-solid {{ $step['icon'] }}"></i>
                                             
                                             @if($isFinished)

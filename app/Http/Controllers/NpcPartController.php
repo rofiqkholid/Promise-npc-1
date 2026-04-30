@@ -25,7 +25,6 @@ class NpcPartController extends Controller
     public function store(Request $request, \App\Models\NpcEvent $event)
     {
         $request->validate([
-            'po_no' => 'required|string|max:255',
             'part_no' => [
                 'required',
                 'string',
@@ -39,11 +38,6 @@ class NpcPartController extends Controller
             'part_no.exists' => "The Part Number you entered is invalid or not part of this event's Model."
         ]);
 
-        $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
-            'npc_event_id' => $event->id,
-            'po_no' => $request->po_no
-        ]);
-
         $product = \App\Models\Product::with('docPackage')->where('part_no', $request->part_no)->first();
 
         $currentRevisionId = null;
@@ -52,7 +46,7 @@ class NpcPartController extends Controller
         }
 
         $part = \App\Models\NpcPart::create([
-            'npc_purchase_order_id' => $po->id,
+            'npc_event_id' => $event->id,
             'product_id' => $product ? $product->id : null,
             'part_revision_id' => $currentRevisionId,
             'qty' => $request->qty,
@@ -73,7 +67,6 @@ class NpcPartController extends Controller
     public function update(Request $request, \App\Models\NpcEvent $event, \App\Models\NpcPart $part)
     {
         $request->validate([
-            'po_no' => 'required|string|max:255',
             'part_no' => [
                 'required',
                 'string',
@@ -91,19 +84,15 @@ class NpcPartController extends Controller
             'part_no.exists' => "The Part Number you entered is invalid or not part of this event's Model."
         ]);
 
-        $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
-            'npc_event_id' => $event->id,
-            'po_no' => $request->po_no
-        ]);
-
         $product = \App\Models\Product::where('part_no', $request->part_no)->first();
 
         $part->update([
-            'npc_purchase_order_id' => $po->id,
+            'npc_event_id' => $event->id,
             'product_id' => $product ? $product->id : null,
             'qty' => $request->qty,
             'delivery_date' => $request->delivery_date,
             'actual_delivery' => $request->actual_delivery,
+            'department' => $request->department,
             'status' => $request->status,
             'condition' => $request->condition
         ]);

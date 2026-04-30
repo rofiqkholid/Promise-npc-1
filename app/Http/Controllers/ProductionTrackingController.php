@@ -8,7 +8,7 @@ class ProductionTrackingController extends Controller
 {
     private function buildQuery($statusParam)
     {
-        $query = \App\Models\NpcPart::with(['purchaseOrder.event.customerCategory', 'purchaseOrder.event.deliveryGroup', 'processes.process', 'processes.department', 'checkpoints', 'checksheet', 'product.vehicleModel.customer'])->latest();
+        $query = \App\Models\NpcPart::with(['event.customerCategory', 'event.deliveryGroup', 'processes.process', 'processes.department', 'checkpoints', 'checksheet', 'product.vehicleModel.customer'])->latest();
 
         if ($statusParam !== 'all') {
             if ($statusParam === 'CLOSED') {
@@ -40,12 +40,12 @@ class ProductionTrackingController extends Controller
     {
         $metrics = [
             'total_events' => \App\Models\NpcEvent::count(),
-            'total_pos' => \App\Models\NpcPurchaseOrder::count(),
+            'total_pos' => \App\Models\NpcEvent::whereNotNull('po_no')->count(),
             'total_parts' => \App\Models\NpcPart::count(),
             'total_po_close' => \App\Models\NpcPart::where('status', 'CLOSED')->count(),
         ];
 
-        $query = \App\Models\NpcPurchaseOrder::with(['event', 'parts.product'])
+        $query = \App\Models\NpcEvent::with(['customerCategory', 'parts.product'])
                 ->whereHas('parts');
         
         $pos = $query->latest()->paginate(10);

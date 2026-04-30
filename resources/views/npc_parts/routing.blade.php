@@ -24,7 +24,7 @@
                 </div>
                 <div>
                     <span class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">PO No</span>
-                    <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ optional($part->purchaseOrder)->po_no }}</span>
+                    <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ optional($part->event)->po_no }}</span>
                 </div>
                 <div>
                     <span class="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Part No</span>

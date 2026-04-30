@@ -48,8 +48,8 @@
                         $customerName = optional(optional(optional($part->product)->vehicleModel)->customer)->code ?? 'Unknown Customer';
                         $modelName = optional(optional($part->product)->vehicleModel)->name ?? '-';
                         
-                        $categoryName = optional(optional(optional($part->purchaseOrder)->event)->customerCategory)->name ?? '-';
-                        $grName = optional(optional(optional($part->purchaseOrder)->event)->deliveryGroup)->name ?? '-';
+                        $categoryName = optional(optional($part->event)->customerCategory)->name ?? '-';
+                        $grName = optional(optional($part->event)->deliveryGroup)->name ?? '-';
                     @endphp
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition text-sm">
                         
@@ -75,7 +75,7 @@
                         <td class="px-6 py-4">
                             <div class="text-gray-800 dark:text-gray-200 font-bold text-sm">{{ optional($part->product)->part_no }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ optional($part->product)->part_name }}</div>
-                            <div class="text-[10px] text-gray-400 mt-1 uppercase">PO: {{ optional($part->purchaseOrder)->po_no }}</div>
+                            <div class="text-[10px] text-gray-400 mt-1 uppercase">PO: {{ optional($part->event)->po_no }}</div>
                         </td>
                         
                         {{-- Qty & Target Date --}}

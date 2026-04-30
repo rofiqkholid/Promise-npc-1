@@ -19,6 +19,15 @@
 
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Nomor PO -->
+                <div class="space-y-1">
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Nomor PO <span class="text-red-500">*</span>
+                    </label>
+                    <input type="text" name="po_no" required class="w-full text-sm rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white" placeholder="Masukkan No. PO" value="{{ old('po_no', $event->po_no) }}">
+                    @error('po_no') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                </div>
+
                 <!-- Customer Select -->
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -51,8 +60,6 @@
                     </select>
                     @error('model_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
-
-
 
                 <!-- Category Select -->
                 <div class="space-y-1">
@@ -87,21 +94,22 @@
                     </select>
                     @error('delivery_group_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
                 </div>
-            </div>
 
-            <div class="space-y-1">
-                <label for="delivery_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Tujuan Pengiriman (Delivery To)
-                </label>
-                <select id="delivery_to" name="delivery_to" data-placeholder="Select Tujuan..."
-                    class="select2 w-full">
-                    <option value="">Select Tujuan (Optional)</option>
-                    @foreach($delivery_targets as $target)
-                        <option value="{{ $target->target_name }}" {{ old('delivery_to', $event->delivery_to) == $target->target_name ? 'selected' : '' }}>
-                            {{ $target->target_name }}
-                        </option>
-                    @endforeach
-                </select>
+                <!-- Tujuan Pengiriman -->
+                <div class="space-y-1">
+                    <label for="delivery_to" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        Tujuan Pengiriman (Delivery To)
+                    </label>
+                    <select id="delivery_to" name="delivery_to" data-placeholder="Select Tujuan..."
+                        class="select2 w-full">
+                        <option value="">Select Tujuan (Optional)</option>
+                        @foreach($delivery_targets as $target)
+                            <option value="{{ $target->target_name }}" {{ old('delivery_to', $event->delivery_to) == $target->target_name ? 'selected' : '' }}>
+                                {{ $target->target_name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
 
             <div class="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">

@@ -85,11 +85,13 @@ Route::middleware(['auth'])->group(function () {
             $query = \App\Models\Product::with('vehicleModel.customer');
             
             // HANYA tampilkan product yang sudah disetup routing (proses) ATAU checksheet-nya
-            $query->where(function($q) {
-                $q->whereIn('id', function($sub) {
-                    $sub->select('part_id')->from('npc_master_routings');
-                })->orWhereHas('mappedCheckpoints');
-            });
+            if (!$request->boolean('all_products')) {
+                $query->where(function($q) {
+                    $q->whereIn('id', function($sub) {
+                        $sub->select('part_id')->from('npc_master_routings');
+                    })->orWhereHas('mappedCheckpoints');
+                });
+            }
             // Filter by model_id if provided
             if ($request->filled('model_id')) {
                 $query->where('model_id', $request->model_id);

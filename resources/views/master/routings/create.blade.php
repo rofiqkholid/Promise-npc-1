@@ -121,7 +121,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({ search: query })
+                    body: JSON.stringify({ search: query, all_products: true })
                 })
                 .then(response => response.json())
                 .then(data => {

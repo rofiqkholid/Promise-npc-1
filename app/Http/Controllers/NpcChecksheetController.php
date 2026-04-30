@@ -92,7 +92,7 @@ class NpcChecksheetController extends Controller
 
             $updateData = [
                 'accuracy_percentage' => $request->accuracy_percentage,
-                'qe_checked_by' => auth()->id() ?? 1,
+                'qe_checked_by' => auth()->check() ? auth()->user()->id : 1,
                 'qe_check_date' => Carbon::now()
             ];
 
@@ -133,7 +133,7 @@ class NpcChecksheetController extends Controller
 
             $checksheet->update([
                 'final_result' => $request->final_result,
-                'mgm_checked_by' => auth()->id() ?? 1, // Fallback if auth missing
+                'mgm_checked_by' => auth()->check() ? auth()->user()->id : 1, // Fallback if auth missing
                 'mgm_check_date' => Carbon::now()
             ]);
 
@@ -150,7 +150,7 @@ class NpcChecksheetController extends Controller
                             'product_id' => $part->product->id,
                             'problem_description' => trim($probDesc),
                             'npc_part_id_finder' => $part->id,
-                            'created_by' => auth()->id() ?? 1,
+                            'created_by' => auth()->check() ? auth()->user()->id : 1,
                             'created_at' => Carbon::now(),
                             'updated_at' => Carbon::now(),
                         ];

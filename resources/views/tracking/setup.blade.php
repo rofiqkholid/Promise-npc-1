@@ -31,8 +31,8 @@
                     @forelse($parts as $part)
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group text-sm">
                         <td class="px-6 py-4">
-                            <div class="text-blue-600 dark:text-blue-400 font-bold text-sm">{{ optional($part->purchaseOrder)->po_no }}</div>
-                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">{{ optional(optional(optional($part->purchaseOrder)->event)->customerCategory)->name ?? 'Unknown Event' }}</div>
+                            <div class="text-blue-600 dark:text-blue-400 font-bold text-sm">{{ optional($part->event)->po_no }}</div>
+                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">{{ optional(optional($part->event)->customerCategory)->name ?? 'Unknown Event' }}</div>
                             <div class="text-[10px] text-gray-400 mt-1"><i class="fa-regular fa-clock"></i> Login: {{ $part->created_at->format('d M Y') }}</div>
                         </td>
                         <td class="px-6 py-4">

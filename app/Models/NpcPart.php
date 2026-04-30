@@ -12,7 +12,7 @@ class NpcPart extends Model
     protected $table = 'npc_parts';
 
     protected $fillable = [
-        'npc_purchase_order_id',
+        'npc_event_id',
         'product_id',
         'qty',
         'delivery_date',
@@ -27,9 +27,9 @@ class NpcPart extends Model
         'part_revision_id'
     ];
 
-    public function purchaseOrder()
+    public function event()
     {
-        return $this->belongsTo(NpcPurchaseOrder::class, 'npc_purchase_order_id');
+        return $this->belongsTo(NpcEvent::class, 'npc_event_id');
     }
 
     public function product()
@@ -40,7 +40,8 @@ class NpcPart extends Model
     // Custom accessor / relationship-like method to get event if heavily relied upon
     public function getEventAttribute()
     {
-        return $this->purchaseOrder ? $this->purchaseOrder->event : null;
+        // This is kept for backwards compatibility if needed, but the true relationship is now event()
+        return $this->event()->first();
     }
 
     public function checksheet()

@@ -42,11 +42,16 @@ class NpcEventController extends Controller
             'customer_id' => 'required', // Needed for flow Validation
             'model_id' => 'required', // Needed to validate parts
             'customer_category_id' => 'required|exists:npc_customer_categories,id',
-
             'delivery_group_id' => 'required|exists:npc_delivery_groups,id',
             'delivery_to' => 'nullable|string|max:255',
+            'po_no' => [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::unique('npc_events')->where(function ($query) use ($request) {
+                    return $query->where('delivery_group_id', $request->delivery_group_id);
+                })
+            ],
             'parts' => 'required|array|min:1',
-            'parts.*.po_no' => 'required|string',
             'parts.*.part_no' => [
                 'required',
                 'string',
@@ -56,10 +61,12 @@ class NpcEventController extends Controller
             'parts.*.qty' => 'required|integer|min:1',
             'parts.*.delivery_date' => 'required|date'
         ], [
-            'parts.*.part_no.exists' => 'One of the Part Numbers entered is invalid or not part of the Model.'
+            'parts.*.part_no.exists' => 'One of the Part Numbers entered is invalid or not part of the Model.',
+            'po_no.unique' => 'The combination of PO No and Delivery Group already exists.'
         ]);
 
         $event = \App\Models\NpcEvent::create([
+            'po_no' => $request->po_no,
             'customer_category_id' => $request->customer_category_id,
             'delivery_group_id' => $request->delivery_group_id,
             'delivery_to' => $request->delivery_to,
@@ -84,12 +91,6 @@ class NpcEventController extends Controller
                 }
             }
 
-            // 1. Build PO
-            $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
-                'npc_event_id' => $event->id,
-                'po_no' => $partData['po_no']
-            ]);
-
             // Tentukan drawing_revision_id saat ini
             $currentRevisionId = null;
             if ($product && $product->docPackage) {
@@ -98,7 +99,7 @@ class NpcEventController extends Controller
 
             // 2. Build Part Details
             $part = \App\Models\NpcPart::create([
-                'npc_purchase_order_id' => $po->id,
+                'npc_event_id' => $event->id,
                 'product_id' => $product ? $product->id : null,
                 'part_revision_id' => $currentRevisionId,
                 'qty' => $partData['qty'],
@@ -134,12 +135,22 @@ class NpcEventController extends Controller
     public function update(Request $request, \App\Models\NpcEvent $event)
     {
         $request->validate([
+            'po_no' => [
+                'required',
+                'string',
+                \Illuminate\Validation\Rule::unique('npc_events')->where(function ($query) use ($request) {
+                    return $query->where('delivery_group_id', $request->delivery_group_id);
+                })->ignore($event->id)
+            ],
             'customer_category_id' => 'required|exists:npc_customer_categories,id',
             'delivery_group_id' => 'required|exists:npc_delivery_groups,id',
             'delivery_to' => 'nullable|string|max:255',
+        ], [
+            'po_no.unique' => 'The combination of PO No and Delivery Group already exists.'
         ]);
 
         $event->update([
+            'po_no' => $request->po_no,
             'customer_category_id' => $request->customer_category_id,
             'delivery_group_id' => $request->delivery_group_id,
             'delivery_to' => $request->delivery_to,
@@ -208,10 +219,12 @@ class NpcEventController extends Controller
                 $delivGroup = \App\Models\NpcDeliveryGroup::where('name', $groupName)->first();
                 if (!$delivGroup) continue;
 
-                // 2. Find/Create Event (Batching by Category + Group + DeliveryTo)
-                $eventKey = $category->id . '_' . $delivGroup->id . '_' . $deliveryTo;
+                // 2. Find/Create Event (Batching by PO + Category + Group + DeliveryTo)
+                $poNo = $row[0] ?? 'PO-'.time();
+                $eventKey = $poNo . '_' . $category->id . '_' . $delivGroup->id . '_' . $deliveryTo;
                 if (!isset($eventsCreated[$eventKey])) {
                     $eventsCreated[$eventKey] = NpcEvent::create([
+                        'po_no' => $poNo,
                         'customer_category_id' => $category->id,
                         'delivery_group_id' => $delivGroup->id,
                         'delivery_to' => $deliveryTo ?: null,
@@ -233,11 +246,6 @@ class NpcEventController extends Controller
                     }
                 }
 
-                $po = \App\Models\NpcPurchaseOrder::firstOrCreate([
-                    'npc_event_id' => $event->id,
-                    'po_no' => $row[0] ?? 'PO-'.time()
-                ]);
-                
                 // Cari product, prioritaskan model name jika diisi
                 $productQuery = \App\Models\Product::where('part_no', $row[1]);
                 if (!empty($modelName)) {
@@ -248,7 +256,7 @@ class NpcEventController extends Controller
                 $product = $productQuery->first();
 
                 $part = NpcPart::create([
-                    'npc_purchase_order_id' => $po->id,
+                    'npc_event_id' => $event->id,
                     'product_id' => $product ? $product->id : null,
                     'qty' => (int) ($row[3] ?? 1),
                     'delivery_date' => $deliveryDate,

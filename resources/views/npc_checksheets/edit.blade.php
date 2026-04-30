@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Input Quality Checksheet')
-@section('page_title', 'Checksheet Production / ' . (optional($part->purchaseOrder)->po_no ?? 'Part Has Been Deleted'))
+@section('page_title', 'Checksheet Production / ' . (optional($part->event)->po_no ?? 'Part Has Been Deleted'))
 
 @section('content')
 @php

@@ -41,11 +41,10 @@
 
                 <div class="space-y-1">
                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                        PO No <span class="text-red-500">*</span>
+                        PO No
                     </label>
-                    <input type="text" name="po_no" required value="{{ old('po_no', optional($part->purchaseOrder)->po_no) }}"
-                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm dark:bg-gray-700 dark:text-white">
-                    @error('po_no') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                    <input type="text" name="po_no" value="{{ optional($event)->po_no }}" readonly
+                        class="w-full rounded-lg border-gray-300 dark:border-gray-600 shadow-sm sm:text-sm dark:bg-gray-800 dark:text-gray-400 bg-gray-100 text-gray-500 cursor-not-allowed focus:ring-0 focus:border-gray-300">
                 </div>
 
                 <div class="space-y-1">

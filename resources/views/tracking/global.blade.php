@@ -145,7 +145,7 @@
                                         <i class="fa-solid fa-expand text-xs"></i>
                                     </div>
                                     <div>
-                                        <div class="text-blue-600 dark:text-blue-400 font-bold text-[11px] uppercase tracking-wide bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 px-2 py-0.5 inline-block rounded mb-1">{{ optional(optional($po->event)->customerCategory)->name ?? 'Unknown Event' }}</div>
+                                        <div class="text-blue-600 dark:text-blue-400 font-bold text-[11px] uppercase tracking-wide bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 px-2 py-0.5 inline-block rounded mb-1">{{ optional($po->customerCategory)->name ?? 'Unknown Event' }}</div>
                                         <div class="text-gray-800 dark:text-gray-200 font-bold text-sm">{{ $po->po_no }}</div>
                                     </div>
                                 </div>
@@ -207,12 +207,14 @@
                                                 </div>
                                             @endif
                                             
-                                            <div class="z-10 relative bg-white dark:bg-gray-800 border-2 {{ $circleBorder }} w-8 h-8 flex items-center justify-center rounded-full text-[12px] overflow-hidden shadow-sm transition-all duration-300" title="{{ $pCount }} of {{ $totalParts }} Parts selesai ({{ $pPct }}%)">
-                                                <div class="absolute bottom-0 left-0 right-0 {{ $fillClass }} transition-all duration-700 ease-out opacity-90" style="height: {{ $pPct }}%; z-index:0;"></div>
-                                                <i class="fa-solid {{ $step['icon'] }} relative z-10 {{ $iconColor }}"></i>
+                                            <div class="relative w-8 h-8 z-10" title="{{ $pCount }} of {{ $totalParts }} Parts selesai ({{ $pPct }}%)">
+                                                <div class="relative w-full h-full bg-white dark:bg-gray-800 border-2 {{ $circleBorder }} flex items-center justify-center rounded-full text-[12px] overflow-hidden shadow-sm transition-all duration-300">
+                                                    <div class="absolute bottom-0 left-0 right-0 {{ $fillClass }} transition-all duration-700 ease-out opacity-90" style="height: {{ $pPct }}%; z-index:0;"></div>
+                                                    <i class="fa-solid {{ $step['icon'] }} relative z-10 {{ $iconColor }}"></i>
+                                                </div>
                                                 
                                                 @if($showCheck)
-                                                    <div class="absolute -bottom-1 -right-1.5 bg-white dark:bg-gray-800 rounded-full w-4 h-4 flex items-center justify-center z-30">
+                                                    <div class="absolute -bottom-1 -right-1.5 bg-white dark:bg-gray-800 rounded-full w-4 h-4 flex items-center justify-center z-30 leading-none shadow-sm">
                                                         <i class="fa-solid fa-circle-check text-emerald-600 text-[12px]"></i>
                                                     </div>
                                                 @endif
@@ -222,8 +224,6 @@
                                                 <span class="text-[9px] font-bold uppercase tracking-wider text-center {{ $titleClass }} leading-tight block">{{ $step['title'] }}</span>
                                                 @if($rCount > 0 && $pPct < 100)
                                                     <span class="text-[9px] font-black {{ $isOverdueAny ? 'text-red-600' : 'text-amber-600' }} mt-0.5">{{ $pPct }}%</span>
-                                                @elseif($pPct == 100)
-                                                    <span class="text-[9px] font-black text-emerald-600 mt-0.5"><i class="fa-solid fa-check"></i></span>
                                                 @endif
                                             </div>
                                         </div>
@@ -298,7 +298,7 @@
                                             <tr>
                                                 <th class="px-4 py-3 w-1/4">Part Details</th>
                                                 <th class="px-4 py-3 w-1/5">Qty & Target</th>
-                                                <th class="px-4 py-3">Progress</th>
+                                                <th class="px-4 py-3 text-center">Progress</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-100 dark:divide-gray-800" x-data="{ expandedPM: null }">
@@ -373,40 +373,40 @@ $pOverdue = ($isDeliveryOverdue || $hasLateProcess) && !in_array($part->status, 
                                                                         if ($isActive) $circleBorder .= " ring-2 ring-emerald-100";
                                                                     } else if ($isActive) {
                                                                         if ($pOverdue) {
-                                                                            $circleBorder = "border-red-500 bg-red-50 dark:bg-red-900/30 text-red-600 ring-2 ring-red-100";
+                                                                            $circleBorder = "border-red-500 bg-red-50 dark:bg-red-900/30 text-red-600 ring-2 ring-red-100 shadow-sm";
                                                                         } else {
-                                                                            $circleBorder = "border-amber-500 bg-amber-50 dark:bg-amber-900/30 text-amber-600 ring-2 ring-amber-100";
+                                                                            $circleBorder = "border-amber-500 bg-amber-50 dark:bg-amber-900/30 text-amber-600 ring-2 ring-amber-100 shadow-sm";
                                                                         }
                                                                     } else {
-                                                                        $circleBorder = "border-gray-200 dark:bg-gray-800 text-gray-400";
+                                                                        $circleBorder = "border-gray-200 bg-white dark:bg-gray-800 text-gray-400";
                                                                     }
                                                                 @endphp
                                                                 <div class="flex flex-col items-center flex-1 relative">
                                                                     @if($sIdx < count($stepsArr) - 1)
-                                                                        <div class="absolute w-[calc(100%-1.25rem)] top-[10px] left-[calc(50%+0.625rem)] h-[2px] rounded {{ $lineBg }}"></div>
+                                                                        <div class="absolute h-[2px] rounded {{ $lineBg }}" style="width: calc(100% - 24px); left: calc(50% + 12px); top: 11px;"></div>
                                                                     @endif
                                                                     
                                                                     @if($stepObj['title'] === 'Part Making')
-                                                                        <div @click="expandedPM = expandedPM === {{ $part->id }} ? null : {{ $part->id }}" class="z-10 relative border-2 {{ $circleBorder }} w-5 h-5 flex items-center justify-center rounded-full text-[8px] transition-all duration-300 bg-white cursor-pointer hover:scale-125 hover:shadow-md" title="Klik untuk melihat Detail Rute Part Making">
+                                                                        <div @click="expandedPM = expandedPM === {{ $part->id }} ? null : {{ $part->id }}" class="z-10 relative border-2 {{ $circleBorder }} w-6 h-6 flex items-center justify-center rounded-full text-[10px] transition-all duration-300 cursor-pointer hover:scale-125 hover:shadow-md" title="Klik untuk melihat Detail Rute Part Making">
                                                                             <i class="fa-solid {{ $stepObj['icon'] }}"></i>
                                                                             @if($isPast || ($isReached && $sIdx == 4 && in_array($part->status, ['CLOSED'])))
-                                                                                <div class="absolute -bottom-1 -right-1 bg-white rounded-full w-2.5 h-2.5 flex items-center justify-center text-[7px] text-emerald-600">
+                                                                                <div class="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 rounded-full w-3 h-3 flex items-center justify-center text-[8px] text-emerald-600 shadow-sm">
                                                                                     <i class="fa-solid fa-circle-check"></i>
                                                                                 </div>
                                                                             @endif
                                                                         </div>
                                                                     @else
-                                                                        <div class="z-10 relative border-2 {{ $circleBorder }} w-5 h-5 flex items-center justify-center rounded-full text-[8px] transition-all duration-300 bg-white">
+                                                                        <div class="z-10 relative border-2 {{ $circleBorder }} w-6 h-6 flex items-center justify-center rounded-full text-[10px] transition-all duration-300">
                                                                             <i class="fa-solid {{ $stepObj['icon'] }}"></i>
                                                                             @if($isPast || ($isReached && $sIdx == 4 && in_array($part->status, ['CLOSED'])))
-                                                                                <div class="absolute -bottom-1 -right-1 bg-white rounded-full w-2.5 h-2.5 flex items-center justify-center text-[7px] text-emerald-600">
+                                                                                <div class="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 rounded-full w-3 h-3 flex items-center justify-center text-[8px] text-emerald-600 shadow-sm">
                                                                                     <i class="fa-solid fa-circle-check"></i>
                                                                                 </div>
                                                                             @endif
                                                                         </div>
                                                                     @endif
                                                                     
-                                                                    <span class="text-[7px] font-bold uppercase tracking-wider text-center mt-1 {{ $isActive ? ($pOverdue ? 'text-red-600' : 'text-amber-600') : ($isReached ? 'text-emerald-600' : 'text-gray-400') }}">{{ $stepObj['title'] }}</span>
+                                                                    <span class="text-[8px] font-bold uppercase tracking-wider text-center mt-1.5 whitespace-nowrap {{ $isActive ? ($pOverdue ? 'text-red-600' : 'text-amber-600') : ($isReached ? 'text-emerald-600' : 'text-gray-400') }}">{{ $stepObj['title'] }}</span>
                                                                 </div>
                                                             @endforeach
                                                         </div>

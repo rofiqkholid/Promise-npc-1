@@ -69,7 +69,7 @@
                                 </td>
                                 <td class="px-4 py-3">
                                     <span class="px-2 py-1 bg-slate-100 dark:bg-gray-700 rounded text-xs font-semibold border border-slate-200 dark:border-gray-600">
-                                        {{ optional($ep->purchaseOrder)->po_no }}
+                                        {{ optional($ep->event)->po_no }}
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 text-xs">
