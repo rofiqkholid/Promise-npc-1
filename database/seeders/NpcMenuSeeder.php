@@ -70,5 +70,26 @@ class NpcMenuSeeder extends Seeder
                 'is_active' => true,
             ]));
         }
+
+        $userManagement = \App\Models\NpcMenu::create([
+            'title' => 'User Management',
+            'icon' => 'fa-solid fa-user-shield',
+            'order' => 4,
+            'is_active' => true,
+        ]);
+
+        $userChildren = [
+            ['title' => 'All Promise Users', 'route_name' => 'master.promise-users.index', 'order' => 1],
+            ['title' => 'NPC User Access', 'route_name' => 'master.npc-users.index', 'order' => 2],
+            ['title' => 'NPC Roles', 'route_name' => 'master.roles.index', 'order' => 3],
+            ['title' => 'NPC Menus', 'route_name' => 'master.menus.index', 'order' => 4],
+        ];
+
+        foreach ($userChildren as $child) {
+            \App\Models\NpcMenu::create(array_merge($child, [
+                'parent_id' => $userManagement->id,
+                'is_active' => true,
+            ]));
+        }
     }
 }
