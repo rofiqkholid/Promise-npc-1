@@ -56,6 +56,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         View::composer('layouts.sidebar', function ($view) {
+            /** @var \App\Models\User $user */
             $user = Auth::user();
             $sidebarMenus = collect();
             $userRoleCode = 'guest';

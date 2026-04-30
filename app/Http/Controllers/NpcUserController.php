@@ -37,7 +37,7 @@ class NpcUserController extends Controller
         return redirect()->route('master.npc-users.index')->with('success', 'NPC User added successfully. You can edit the user to configure individual permissions if needed.');
     }
 
-    public function edit($id)
+    public function edit(string $id)
     {
         $user = \App\Models\User::findOrFail($id);
         
