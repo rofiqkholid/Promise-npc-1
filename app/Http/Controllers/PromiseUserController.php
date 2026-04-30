@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PromiseUserController extends Controller
 {
@@ -64,7 +65,7 @@ class PromiseUserController extends Controller
     public function destroy(\App\Models\User $promise_user)
     {
         // Prevent deleting the current logged in user
-        if ($promise_user->nik === auth()->id()) {
+        if ($promise_user->nik === Auth::id()) {
             return redirect()->route('master.promise-users.index')->with('error', 'You cannot delete your own account.');
         }
 

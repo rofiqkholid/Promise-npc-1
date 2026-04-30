@@ -16,7 +16,6 @@ use App\Http\Controllers\ProductChecksheetSetupController;
 use App\Http\Controllers\NpcInternalCategoryController;
 use App\Http\Controllers\NpcCustomerCategoryController;
 use App\Http\Controllers\NpcDeliveryGroupController;
-use App\Http\Controllers\NpcMasterEventController;
 use App\Http\Controllers\NpcPartProcessController;
 use App\Http\Controllers\ProductionTrackingController;
 use App\Http\Controllers\NpcChecksheetController;
@@ -69,7 +68,6 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('internal-categories', \App\Http\Controllers\NpcInternalCategoryController::class)->except(['show']);
         Route::resource('customer-categories', \App\Http\Controllers\NpcCustomerCategoryController::class)->except(['show']);
         Route::resource('delivery-groups', \App\Http\Controllers\NpcDeliveryGroupController::class)->except(['show']);
-        Route::resource('master-events', \App\Http\Controllers\NpcMasterEventController::class)->except(['show']);
         Route::resource('menus', \App\Http\Controllers\NpcMenuController::class)->except(['show']);
         Route::resource('roles', \App\Http\Controllers\NpcRoleController::class)->except(['show']);
         Route::resource('promise-users', \App\Http\Controllers\PromiseUserController::class)->except(['show']);
@@ -82,14 +80,6 @@ Route::middleware(['auth'])->group(function () {
             $models = \App\Models\VehicleModel::where('customer_id', $request->customer_id)->get(['id', 'name as text']);
             return response()->json(['results' => $models]);
         })->name('data.models');
-
-        Route::post('/data/master-events', function (\Illuminate\Http\Request $request) {
-            $events = \App\Models\NpcMasterEvent::where('customer_id', $request->customer_id)
-                ->where('model_id', $request->model_id)
-                ->orderBy('name')
-                ->get(['id', 'name as text']);
-            return response()->json(['results' => $events]);
-        })->name('data.master-events');
 
         Route::post('/data/products', function (\Illuminate\Http\Request $request) {
             $query = \App\Models\Product::with('vehicleModel.customer');

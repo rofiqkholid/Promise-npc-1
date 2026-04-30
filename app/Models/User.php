@@ -81,7 +81,7 @@ class User extends Authenticatable
     public function specificMenus()
     {
         return $this->belongsToMany(\App\Models\NpcMenu::class, 'npc_user_menus', 'user_id', 'menu_id', 'id')
-            ->withPivot('can_view', 'can_create', 'can_update', 'can_delete', 'can_approve')
+            ->withPivot(['can_view', 'can_create', 'can_update', 'can_delete', 'can_approve'])
             ->withTimestamps();
     }
 

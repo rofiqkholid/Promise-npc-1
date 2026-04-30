@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class NpcUserController extends Controller
 {
@@ -86,7 +87,7 @@ class NpcUserController extends Controller
         return view('master.npc-users.edit', compact('user', 'roles', 'menus', 'userMenuIds', 'inheritedPermissions'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, string $id)
     {
         $user = \App\Models\User::findOrFail($id);
 
@@ -120,12 +121,12 @@ class NpcUserController extends Controller
         return redirect()->route('master.npc-users.index')->with('success', 'NPC User roles and permissions updated successfully.');
     }
 
-    public function destroy($id)
+    public function destroy(string $id)
     {
         $user = \App\Models\User::findOrFail($id);
         
         // Prevent revoking admin from self if it's the last admin
-        if ($user->nik === auth()->id() && $user->roles->contains('code', 'admin')) {
+        if ($user->nik === Auth::id() && $user->roles->contains('code', 'admin')) {
             // Checking if other admins exist could be done, but for simplicity:
             return redirect()->route('master.npc-users.index')->with('error', 'You cannot revoke your own access.');
         }
