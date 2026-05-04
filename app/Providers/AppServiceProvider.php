@@ -39,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer(['layouts.header', 'components.stock-alert-modal', 'components.ecn-alert-modal'], function ($view) {
             // Hitung part aktif yang memiliki ECN update
-            $ecnQuery = \App\Models\NpcPart::with(['purchaseOrder.event.customerCategory', 'product'])
+            $ecnQuery = \App\Models\NpcPart::with(['event.customerCategory', 'product'])
                 ->whereNotIn('status', ['FINISHED', 'CLOSED'])
                 ->whereNotNull('part_revision_id')
                 ->whereHas('product.docPackage', function ($query) {

@@ -104,13 +104,13 @@ class DashboardController extends Controller
         ];
 
         // Chart 3: Customer Proportion (Active Parts)
-        $activeParts = NpcPart::with('purchaseOrder.event.customerCategory')
+        $activeParts = NpcPart::with('event.customerCategory')
             ->whereNotIn('status', ['CLOSED', 'OUTSTANDING'])
             ->get();
             
         $custCounts = [];
         foreach ($activeParts as $pt) {
-            $custName = $pt->purchaseOrder->event->customerCategory->name ?? 'No Category';
+            $custName = $pt->event->customerCategory->name ?? 'No Category';
             if (!isset($custCounts[$custName])) {
                 $custCounts[$custName] = 0;
             }
@@ -128,7 +128,7 @@ class DashboardController extends Controller
 
         // 3. Action Required (To-Do List)
         // a. ECN Updates
-        $ecnUpdates = NpcPart::with(['product', 'purchaseOrder.event.customerCategory'])
+        $ecnUpdates = NpcPart::with(['product', 'event.customerCategory'])
             ->whereNotIn('status', ['FINISHED', 'CLOSED'])
             ->whereNotNull('part_revision_id')
             ->whereHas('product.docPackage', function ($q) {
@@ -138,7 +138,7 @@ class DashboardController extends Controller
             ->get();
 
         // b. Stagnant Parts (No update for > 7 days, excluding finished/closed)
-        $stagnantParts = NpcPart::with(['product', 'purchaseOrder.event.customerCategory'])
+        $stagnantParts = NpcPart::with(['product', 'event.customerCategory'])
             ->whereNotIn('status', ['FINISHED', 'CLOSED'])
             ->where('updated_at', '<', Carbon::now()->subDays(7))
             ->orderBy('updated_at', 'asc')
@@ -146,7 +146,7 @@ class DashboardController extends Controller
             ->get();
 
         // 4. Recent Deliveries / History
-        $recentDeliveries = NpcPart::with(['product', 'purchaseOrder.event.customerCategory'])
+        $recentDeliveries = NpcPart::with(['product', 'event.customerCategory'])
             ->whereIn('status', ['CLOSED', 'OUTSTANDING'])
             ->orderBy('actual_delivery', 'desc')
             ->take(5)

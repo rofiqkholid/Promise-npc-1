@@ -15,7 +15,7 @@ class NpcPartProcessController extends Controller
      */
     public function edit(NpcPart $part)
     {
-        $part->load('processes.process.departments', 'processes.department', 'purchaseOrder.event.customerCategory');
+        $part->load('processes.process.departments', 'processes.department', 'event.customerCategory');
 
         // Jika belum ada proses, ambil of NpcMasterRouting sebagai default
         if ($part->processes->isEmpty()) {
