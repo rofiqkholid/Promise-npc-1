@@ -11,6 +11,14 @@ class Product extends Model
 
     protected $table = 'products';
 
+    protected $fillable = [
+        'customer_id',
+        'model_id',
+        'part_no',
+        'part_name',
+        'is_active',
+    ];
+
     public function customer()
     {
         return $this->belongsTo(Customer::class, 'customer_id');
@@ -34,5 +42,15 @@ class Product extends Model
     public function docPackage()
     {
         return $this->hasOne(DocPackage::class, 'product_id')->where('is_active', true)->latest('id');
+    }
+
+    public function specChildParts()
+    {
+        return $this->hasMany(NpcSpecChildPart::class, 'product_id');
+    }
+
+    public function productDetail()
+    {
+        return $this->hasOne(NpcProductDetail::class, 'product_id');
     }
 }

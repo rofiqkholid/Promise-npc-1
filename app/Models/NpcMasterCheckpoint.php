@@ -11,6 +11,8 @@ class NpcMasterCheckpoint extends Model
 
     protected $fillable = [
         'point_number',
+        'category',
+        'sequence_order',
         'check_item',
         'is_active'
     ];

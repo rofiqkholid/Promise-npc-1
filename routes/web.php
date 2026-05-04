@@ -12,6 +12,7 @@ use App\Http\Controllers\NpcDeliveryTargetController;
 use App\Http\Controllers\NpcMasterCheckpointController;
 use App\Http\Controllers\NpcMasterDepartmentController;
 use App\Http\Controllers\NpcMasterRoutingController;
+use App\Http\Controllers\NpcMasterStdPartController;
 use App\Http\Controllers\ProductChecksheetSetupController;
 use App\Http\Controllers\NpcInternalCategoryController;
 use App\Http\Controllers\NpcCustomerCategoryController;
@@ -57,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('processes', NpcProcessController::class)->except(['show']);
         Route::resource('delivery-targets', NpcDeliveryTargetController::class)->except(['show']);
         Route::resource('checkpoints', NpcMasterCheckpointController::class)->except(['show']);
+        Route::resource('std-parts', NpcMasterStdPartController::class)->except(['show']);
         Route::resource('departments', NpcMasterDepartmentController::class)->except(['show']);
         // Menambahkan Routings Route tapi dengan parameter part_id khusus
         Route::post('routings/reorder', [\App\Http\Controllers\NpcMasterRoutingController::class, 'reorder'])->name('routings.reorder');
@@ -134,6 +136,28 @@ Route::middleware(['auth'])->group(function () {
             $categories = \App\Models\NpcCustomerCategory::where('customer_id', $request->customer_id)->get(['id', 'name as text']);
             return response()->json(['results' => $categories]);
         })->name('data.customer-categories');
+
+        Route::post('/data/inventory-materials', function (\Illuminate\Http\Request $request) {
+            $query = \Illuminate\Support\Facades\DB::table('inv_m_material_spec');
+            if ($request->filled('search')) {
+                $query->where('spec_name', 'like', '%' . $request->search . '%');
+            }
+            $materials = $query->limit(30)->get();
+            $mapped = $materials->map(function($m) {
+                return ['id' => $m->id, 'text' => $m->spec_name];
+            });
+            return response()->json(['results' => $mapped]);
+        })->name('data.inventory-materials');
+
+        Route::post('/data/std-parts', function (\Illuminate\Http\Request $request) {
+            $query = \App\Models\NpcMasterStdPart::where('is_active', true);
+            if ($request->filled('search')) {
+                $query->where('name', 'like', '%' . $request->search . '%')
+                      ->orWhere('spec', 'like', '%' . $request->search . '%');
+            }
+            $parts = $query->limit(30)->get(['id', 'name as text']);
+            return response()->json(['results' => $parts]);
+        })->name('data.std-parts');
     });
 
     // Part Routing Routes
