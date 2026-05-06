@@ -20,7 +20,10 @@
                 <strong>Part No:</strong> {{ optional($part->product)->part_no ?? 'N/A' }} | <strong>Customer:</strong> {{ optional(optional(optional($part->event)->customerCategory)->customer)->code ?? 'N/A' }}
             </p>
         </div>
-        <div>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('checksheets.export', $checksheet->id) }}" class="inline-flex items-center gap-2 px-4 py-1.5 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-lg shadow-sm transition">
+                <i class="fa-regular fa-file-excel"></i> Export Excel
+            </a>
             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full {{ $isMGM ? 'bg-purple-100 text-purple-800' : 'bg-orange-100 text-orange-800' }} text-sm font-semibold shadow-sm border {{ $isMGM ? 'border-purple-200' : 'border-orange-200' }}">
                 <i class="fa-solid fa-user-shield"></i> {{ $role }} Review Mode
             </span>
@@ -182,6 +185,9 @@
                     <p class="text-xs text-gray-500 mt-1">Only shows points mapped to this part during PO registration.</p>
                 </div>
 
+                @php
+                    $checkCount = max(1, min($part->qty, 10));
+                @endphp
                 <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
                     <table class="min-w-full text-left text-sm whitespace-nowrap">
                         <thead class="bg-gray-100 dark:bg-gray-700/80 text-gray-700 dark:text-gray-300 uppercase text-xs font-semibold">
@@ -189,7 +195,10 @@
                                 <th class="px-4 py-3 border-r dark:border-gray-600 w-12 text-center">No</th>
                                 <th class="px-4 py-3 border-r dark:border-gray-600">Check Point</th>
                                 <th class="px-4 py-3 border-r dark:border-gray-600 w-48">Standard Parameter</th>
-                                <th class="px-4 py-3 text-center w-32">Status OK/NG</th>
+                                @for($i = 1; $i <= $checkCount; $i++)
+                                <th class="px-2 py-3 border-r dark:border-gray-600 text-center w-12">{{ $i }}</th>
+                                @endfor
+                                <th class="px-4 py-3 text-center w-32">Result</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -202,8 +211,25 @@
                                 <td class="px-4 py-3 border-r dark:border-gray-700 text-gray-600 dark:text-gray-400 whitespace-normal">
                                     {{ $detail->standard ?? '-' }}
                                 </td>
+                                @for($i = 1; $i <= $checkCount; $i++)
+                                @php
+                                    $sampleValue = $detail->samples[$i] ?? '';
+                                @endphp
+                                <td class="px-2 py-2 border-r dark:border-gray-700 text-center cursor-pointer sample-cell select-none" data-detail-id="{{ $detail->id }}" data-sample-index="{{ $i }}">
+                                    <input type="hidden" name="details[{{ $detail->id }}][samples][{{ $i }}]" value="{{ $sampleValue }}" class="sample-input-{{ $detail->id }}">
+                                    <div class="flex items-center justify-center h-8 w-8 mx-auto rounded transition hover:bg-gray-200 dark:hover:bg-gray-600 icon-container">
+                                        @if($sampleValue === 'OK')
+                                            <i class="fa-solid fa-circle text-green-500 text-lg"></i>
+                                        @elseif($sampleValue === 'NG')
+                                            <i class="fa-solid fa-xmark text-red-500 text-xl"></i>
+                                        @else
+                                            <i class="fa-solid fa-minus text-gray-300 dark:text-gray-600"></i>
+                                        @endif
+                                    </div>
+                                </td>
+                                @endfor
                                 <td class="px-4 py-2 text-center">
-                                    <select name="details[{{ $detail->id }}][row_result]"
+                                    <select name="details[{{ $detail->id }}][row_result]" id="row-result-{{ $detail->id }}"
                                             class="w-full text-xs py-1.5 px-2 font-bold border-gray-300 dark:border-gray-600 rounded shadow-sm focus:ring-1 focus:ring-blue-500 dark:bg-gray-800 dark:text-white
                                             @if($detail->row_result == 'OK') text-green-600 bg-green-50 dark:bg-green-900/20 
                                             @elseif($detail->row_result == 'NG') text-red-600 bg-red-50 dark:bg-red-900/20 @endif">
@@ -215,7 +241,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="4" class="px-4 py-6 text-center text-gray-500 italic">
+                                <td colspan="{{ 4 + $checkCount ?? 5 }}" class="px-4 py-6 text-center text-gray-500 italic">
                                     No check points mapped to this part.
                                 </td>
                             </tr>
@@ -293,6 +319,72 @@
                     removeBtn.closest('.history-row').remove();
                 }
             });
+        }
+
+        // Sample Check Toggle Logic
+        document.querySelectorAll('.sample-cell').forEach(cell => {
+            cell.addEventListener('click', function() {
+                if (this.closest('tr').querySelector('select[name$="[row_result]"]').disabled) return; // Prevent if readonly
+                
+                const detailId = this.dataset.detailId;
+                const input = this.querySelector('input[type="hidden"]');
+                const iconContainer = this.querySelector('.icon-container');
+                
+                let currentValue = input.value;
+                let newValue, iconHtml;
+
+                if (currentValue === '') {
+                    newValue = 'OK';
+                    iconHtml = '<i class="fa-solid fa-circle text-green-500 text-lg"></i>';
+                } else if (currentValue === 'OK') {
+                    newValue = 'NG';
+                    iconHtml = '<i class="fa-solid fa-xmark text-red-500 text-xl"></i>';
+                } else {
+                    newValue = '';
+                    iconHtml = '<i class="fa-solid fa-minus text-gray-300 dark:text-gray-600"></i>';
+                }
+
+                input.value = newValue;
+                iconContainer.innerHTML = iconHtml;
+
+                calculateRowResult(detailId);
+            });
+        });
+
+        function calculateRowResult(detailId) {
+            const inputs = document.querySelectorAll(`.sample-input-${detailId}`);
+            let hasNg = false;
+            let allOk = true;
+            let hasEmpty = false;
+
+            inputs.forEach(input => {
+                if (input.value === 'NG') hasNg = true;
+                if (input.value !== 'OK') allOk = false;
+                if (input.value === '') hasEmpty = true;
+            });
+
+            const resultSelect = document.getElementById(`row-result-${detailId}`);
+            if (!resultSelect) return;
+
+            if (hasNg) {
+                resultSelect.value = 'NG';
+                updateSelectStyle(resultSelect, 'NG');
+            } else if (allOk && !hasEmpty && inputs.length > 0) {
+                resultSelect.value = 'OK';
+                updateSelectStyle(resultSelect, 'OK');
+            } else {
+                resultSelect.value = '';
+                updateSelectStyle(resultSelect, '');
+            }
+        }
+
+        function updateSelectStyle(select, value) {
+            select.classList.remove('text-green-600', 'bg-green-50', 'dark:bg-green-900/20', 'text-red-600', 'bg-red-50', 'dark:bg-red-900/20');
+            if (value === 'OK') {
+                select.classList.add('text-green-600', 'bg-green-50', 'dark:bg-green-900/20');
+            } else if (value === 'NG') {
+                select.classList.add('text-red-600', 'bg-red-50', 'dark:bg-red-900/20');
+            }
         }
     });
 </script>

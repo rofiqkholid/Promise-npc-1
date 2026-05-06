@@ -102,6 +102,7 @@ class ProductChecksheetSetupController extends Controller
                         'inventory_material_id' => $mat['inventory_material_id'] ?? null,
                         'std_part_id' => null,
                         'thickness' => $mat['thickness'] ?? null,
+                        'spec' => null,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ];

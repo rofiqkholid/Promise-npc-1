@@ -185,6 +185,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/tracking/products/{product}/checksheet-setup', [ProductChecksheetSetupController::class, 'edit'])->name('checksheets.setup.edit');
     Route::post('/tracking/products/{product}/checksheet-setup', [ProductChecksheetSetupController::class, 'update'])->name('checksheets.setup.update');
     Route::get('/tracking/{part}/checksheet/create', [NpcChecksheetController::class, 'create'])->name('checksheets.create');
+    Route::get('/checksheets/{checksheet}/export', [NpcChecksheetController::class, 'export'])->name('checksheets.export');
     Route::get('/checksheets/{checksheet}/edit', [NpcChecksheetController::class, 'edit'])->name('checksheets.edit');
     Route::put('/checksheets/{checksheet}', [NpcChecksheetController::class, 'update'])->name('checksheets.update');
 });

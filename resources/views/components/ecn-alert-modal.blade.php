@@ -66,6 +66,15 @@
                                 <td class="px-4 py-3">
                                     <div class="font-bold text-blue-600 dark:text-blue-400">{{ optional($ep->product)->part_no }}</div>
                                     <div class="text-xs text-slate-500">{{ optional($ep->product)->part_name }}</div>
+                                    <div class="mt-1 flex items-center gap-2 text-[11px] font-medium bg-slate-100 dark:bg-gray-700 w-fit px-2 py-1 rounded">
+                                        <span class="text-red-500 line-through" title="Old ECN">
+                                            Rev {{ optional($ep->drawingRevision)->revision_no ?: '-' }} ({{ optional($ep->drawingRevision)->ecn_no ?: 'No ECN' }})
+                                        </span>
+                                        <i class="fa-solid fa-arrow-right text-gray-400"></i>
+                                        <span class="text-green-600" title="New ECN">
+                                            Rev {{ optional(optional(optional($ep->product)->docPackage)->currentRevision)->revision_no ?: '-' }} ({{ optional(optional(optional($ep->product)->docPackage)->currentRevision)->ecn_no ?: 'No ECN' }})
+                                        </span>
+                                    </div>
                                 </td>
                                 <td class="px-4 py-3">
                                     <span class="px-2 py-1 bg-slate-100 dark:bg-gray-700 rounded text-xs font-semibold border border-slate-200 dark:border-gray-600">

@@ -47,20 +47,32 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 text-right align-middle pointer-events-auto">
-                            @if(in_array($part->status, ['PO_REGISTERED', 'WAITING_DEPT_CONFIRM', 'WAITING_QE_CHECK']))
-                                <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed">
-                                    <i class="fa-solid fa-lock text-[8px]"></i> Not Yet Registered in MGM
-                                </div>
-                            @elseif($part->status === 'WAITING_MGM_CHECK')
-                                <a href="{{ route('checksheets.create', $part->id) }}" class="inline-flex px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded shadow-sm font-bold transition items-center gap-2 text-[11px]" style="background-color: #a855f7;">
-                                    <i class="fa-solid fa-user-check"></i> MGM Checksheet Form
-                                </a>
-                                <p class="text-[9px] text-gray-400 mt-2 italic text-right max-w-[150px] mx-auto float-right text-balance">Review checksheet and sign the FG parts check</p>
-                            @else
-                                <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed">
-                                    <i class="fa-solid fa-lock text-[8px]"></i> Completed
-                                </div>
-                            @endif
+                            <div class="flex flex-col items-end gap-2">
+                                @if(in_array($part->status, ['PO_REGISTERED', 'WAITING_DEPT_CONFIRM', 'WAITING_QE_CHECK']))
+                                    <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed w-full max-w-[150px]">
+                                        <i class="fa-solid fa-lock text-[8px]"></i> Not Yet Registered in MGM
+                                    </div>
+                                @elseif($part->status === 'WAITING_MGM_CHECK')
+                                    <a href="{{ route('checksheets.create', $part->id) }}" class="inline-flex px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded shadow-sm font-bold transition items-center justify-center gap-2 text-[11px] w-full max-w-[150px]" style="background-color: #a855f7;">
+                                        <i class="fa-solid fa-user-check"></i> MGM Checksheet Form
+                                    </a>
+                                    @if($part->checksheet)
+                                    <a href="{{ route('checksheets.export', $part->checksheet->id) }}" class="inline-flex px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded shadow-sm font-bold transition items-center justify-center gap-2 text-[11px] w-full max-w-[150px]">
+                                        <i class="fa-solid fa-file-excel"></i> Export Excel
+                                    </a>
+                                    @endif
+                                    <p class="text-[9px] text-gray-400 mt-1 italic text-right max-w-[150px] text-balance">Review checksheet and sign the FG parts check</p>
+                                @else
+                                    <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed w-full max-w-[150px]">
+                                        <i class="fa-solid fa-lock text-[8px]"></i> Completed
+                                    </div>
+                                    @if($part->checksheet)
+                                    <a href="{{ route('checksheets.export', $part->checksheet->id) }}" class="inline-flex px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded shadow-sm font-bold transition items-center justify-center gap-2 text-[11px] w-full max-w-[150px]">
+                                        <i class="fa-solid fa-file-excel"></i> Export Excel
+                                    </a>
+                                    @endif
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @empty
