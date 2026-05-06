@@ -25,61 +25,46 @@ class DashboardController extends Controller
             'ready_deliver' => $readyToDeliver,
         ];
 
-        // 2. Production Pipeline
-        // Get count grouped by status for active parts
-        $pipelineStats = NpcPart::selectRaw('status, count(*) as total')
+        // 2. Nearest Events
+        $nearestEvents = NpcPart::with(['product', 'event.customerCategory'])
             ->whereNotIn('status', ['CLOSED'])
-            ->groupBy('status')
-            ->pluck('total', 'status')
-            ->toArray();
-            
-        $pipeline = [
-            'setup' => $pipelineStats['PO_REGISTERED'] ?? 0,
-            'production' => ($pipelineStats['WAITING_DEPT_CONFIRM'] ?? 0) + ($pipelineStats['IN_PRODUCTION'] ?? 0),
-            'qc' => $pipelineStats['WAITING_QE_CHECK'] ?? 0,
-            'management' => $pipelineStats['WAITING_MGM_CHECK'] ?? 0,
-            'stock' => $pipelineStats['FINISHED'] ?? 0,
-            'delivery' => $pipelineStats['OUTSTANDING'] ?? 0, // partially delivered
-        ];
+            ->whereNotNull('delivery_date')
+            ->orderBy('delivery_date', 'asc')
+            ->take(5)
+            ->get();
 
         // --- DASHBOARD V2 CHARTS DATA ---
 
-        // Chart 1: 6-Month Trend (New Parts vs Finished Parts)
-        $months = [];
-        $newPartsData = [];
-        $finishedPartsData = [];
-        
-        for ($i = 5; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $monthKey = $date->format('Y-m');
-            $months[] = $date->format('M Y');
-            $newPartsData[$monthKey] = 0;
-            $finishedPartsData[$monthKey] = 0;
-        }
+        // Chart 1: Event Progress (Total Items vs Finished Items)
+        // Get 6 most recent active events
+        $recentEvents = NpcEvent::with(['parts' => function($q) {
+            $q->select('id', 'npc_event_id', 'status');
+        }])
+        ->orderBy('created_at', 'desc')
+        ->take(6)
+        ->get()
+        ->reverse(); // reverse to show oldest of the recent on the left
 
-        $trendParts = NpcPart::where('created_at', '>=', Carbon::now()->subMonths(6)->startOfMonth())
-            ->orWhere('actual_completion_date', '>=', Carbon::now()->subMonths(6)->startOfMonth())
-            ->get(['created_at', 'actual_completion_date', 'status']);
+        $eventLabels = [];
+        $totalItemsData = [];
+        $finishedItemsData = [];
 
-        foreach ($trendParts as $tp) {
-            if ($tp->created_at) {
-                $mCreated = Carbon::parse($tp->created_at)->format('Y-m');
-                if (isset($newPartsData[$mCreated])) {
-                    $newPartsData[$mCreated]++;
-                }
-            }
-            if ($tp->actual_completion_date && in_array($tp->status, ['FINISHED', 'CLOSED', 'OUTSTANDING'])) {
-                $mFinished = Carbon::parse($tp->actual_completion_date)->format('Y-m');
-                if (isset($finishedPartsData[$mFinished])) {
-                    $finishedPartsData[$mFinished]++;
-                }
-            }
+        foreach ($recentEvents as $ev) {
+            // Use PO No as label, truncate if too long
+            $poLabel = $ev->po_no ? (strlen($ev->po_no) > 12 ? substr($ev->po_no, 0, 12).'...' : $ev->po_no) : 'EV-'.$ev->id;
+            $eventLabels[] = $poLabel;
+            
+            $totalItems = $ev->parts->count();
+            $finishedItems = $ev->parts->whereIn('status', ['FINISHED', 'CLOSED', 'OUTSTANDING'])->count();
+            
+            $totalItemsData[] = $totalItems;
+            $finishedItemsData[] = $finishedItems;
         }
 
         $trendChart = [
-            'labels' => $months,
-            'new' => array_values($newPartsData),
-            'finished' => array_values($finishedPartsData),
+            'labels' => array_values($eventLabels),
+            'new' => array_values($totalItemsData),
+            'finished' => array_values($finishedItemsData),
         ];
 
         // Chart 2: Department Workload (Waiting Processes)
@@ -153,7 +138,7 @@ class DashboardController extends Controller
             ->get();
 
         return view('dashboard', compact(
-            'metrics', 'pipeline', 'ecnUpdates', 'stagnantParts', 'recentDeliveries',
+            'metrics', 'nearestEvents', 'ecnUpdates', 'stagnantParts', 'recentDeliveries',
             'trendChart', 'departmentChart', 'customerChart'
         ));
     }

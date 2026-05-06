@@ -550,4 +550,20 @@ class NpcChecksheetController extends Controller
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
     }
+
+    /**
+     * Print QC Quality Label for a specific part
+     */
+    public function printLabel(NpcPart $part)
+    {
+        // Pastikan part sudah memiliki checksheet dan product
+        $part->load(['product.vehicleModel.customer', 'checksheet.qeChecker', 'event.customerCategory']);
+
+        // Jika belum ada checksheet, abort atau redirect
+        if (!$part->checksheet) {
+            return redirect()->back()->with('error', 'QC data not found. Please complete QC first.');
+        }
+
+        return view('npc_checksheets.label_print', compact('part'));
+    }
 }

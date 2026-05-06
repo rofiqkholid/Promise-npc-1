@@ -67,71 +67,51 @@
         <!-- Left Column: Pipeline & Charts -->
         <div class="w-2/3 flex flex-col gap-4 min-h-0">
             
-            <!-- Production Pipeline -->
-            <div class="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex-none">
-                <div class="mb-2 flex items-center justify-between">
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white"><i class="fa-solid fa-route text-slate-400 mr-2"></i> Production Pipeline</h3>
+            <!-- Nearest Events -->
+            <div class="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 p-0 shadow-sm flex-none overflow-hidden">
+                <div class="p-3 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/80 flex items-center justify-between">
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white"><i class="fa-regular fa-calendar-check text-slate-400 mr-2"></i> Upcoming Events</h3>
+                    <a href="{{ route('events.index') }}" class="text-[10px] text-primary-600 font-medium">View All</a>
                 </div>
                 
-                @php
-                    $totalPipeline = array_sum($pipeline);
-                    $totalPipeline = $totalPipeline > 0 ? $totalPipeline : 1;
-                @endphp
-
-                <div class="relative pt-4 pb-1">
-                    <!-- Connecting Line -->
-                    <div class="absolute top-[35px] left-[10%] right-[10%] h-1 bg-slate-100 dark:bg-slate-700 -z-10 rounded-full"></div>
-                    
-                    <div class="grid grid-cols-6 gap-2 text-center relative z-10">
-                        <!-- Setup -->
-                        <div class="flex flex-col items-center">
-                            <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border-4 border-slate-200 dark:border-slate-600 flex items-center justify-center shadow-sm mb-1 {{ $pipeline['setup'] > 0 ? 'border-blue-500 text-blue-600' : 'text-slate-400' }}">
-                                <i class="fa-solid fa-file-signature text-sm"></i>
-                            </div>
-                            <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Setup</span>
-                            <span class="text-[10px] text-slate-500 mt-0.5 bg-slate-100 dark:bg-slate-700 px-1.5 rounded-sm">{{ $pipeline['setup'] }}</span>
+                <div class="overflow-x-auto overflow-y-auto max-h-[220px]">
+                    @if($nearestEvents->count() > 0)
+                        <table class="w-full text-left border-collapse">
+                            <thead class="sticky top-0 bg-slate-50 dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700 z-10">
+                                <tr>
+                                    <th class="p-2 pl-3 text-[10px] font-semibold text-slate-500 uppercase">Part No</th>
+                                    <th class="p-2 text-[10px] font-semibold text-slate-500 uppercase">Customer</th>
+                                    <th class="p-2 text-[10px] font-semibold text-slate-500 uppercase">Status</th>
+                                    <th class="p-2 pr-3 text-[10px] font-semibold text-slate-500 uppercase text-right">Delivery Date</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-700/50">
+                                @foreach($nearestEvents as $evt)
+                                    <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                        <td class="p-2 pl-3">
+                                            <p class="text-xs font-semibold text-slate-800 dark:text-white">{{ $evt->product->part_no ?? '-' }}</p>
+                                        </td>
+                                        <td class="p-2">
+                                            <p class="text-[10px] text-slate-600 dark:text-slate-400">{{ $evt->event->customerCategory->name ?? '-' }}</p>
+                                        </td>
+                                        <td class="p-2">
+                                            <span class="text-[9px] font-medium px-1.5 py-0.5 rounded-sm bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600">{{ str_replace('_', ' ', $evt->status) }}</span>
+                                        </td>
+                                        <td class="p-2 pr-3 text-right">
+                                            <span class="text-xs font-bold {{ \Carbon\Carbon::parse($evt->delivery_date)->isPast() ? 'text-rose-500' : 'text-slate-700 dark:text-slate-300' }}">
+                                                {{ \Carbon\Carbon::parse($evt->delivery_date)->format('d M Y') }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    @else
+                        <div class="p-6 text-center text-slate-400">
+                            <i class="fa-regular fa-calendar-xmark text-2xl mb-2"></i>
+                            <p class="text-xs">No upcoming events found.</p>
                         </div>
-                        <!-- Production -->
-                        <div class="flex flex-col items-center">
-                            <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border-4 border-slate-200 dark:border-slate-600 flex items-center justify-center shadow-sm mb-1 {{ $pipeline['production'] > 0 ? 'border-amber-500 text-amber-600' : 'text-slate-400' }}">
-                                <i class="fa-solid fa-industry text-sm"></i>
-                            </div>
-                            <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Production</span>
-                            <span class="text-[10px] text-slate-500 mt-0.5 bg-slate-100 dark:bg-slate-700 px-1.5 rounded-sm">{{ $pipeline['production'] }}</span>
-                        </div>
-                        <!-- QC -->
-                        <div class="flex flex-col items-center">
-                            <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border-4 border-slate-200 dark:border-slate-600 flex items-center justify-center shadow-sm mb-1 {{ $pipeline['qc'] > 0 ? 'border-purple-500 text-purple-600' : 'text-slate-400' }}">
-                                <i class="fa-solid fa-microscope text-sm"></i>
-                            </div>
-                            <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">QC Check</span>
-                            <span class="text-[10px] text-slate-500 mt-0.5 bg-slate-100 dark:bg-slate-700 px-1.5 rounded-sm">{{ $pipeline['qc'] }}</span>
-                        </div>
-                        <!-- Management -->
-                        <div class="flex flex-col items-center">
-                            <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border-4 border-slate-200 dark:border-slate-600 flex items-center justify-center shadow-sm mb-1 {{ $pipeline['management'] > 0 ? 'border-indigo-500 text-indigo-600' : 'text-slate-400' }}">
-                                <i class="fa-solid fa-user-tie text-sm"></i>
-                            </div>
-                            <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">MGM Check</span>
-                            <span class="text-[10px] text-slate-500 mt-0.5 bg-slate-100 dark:bg-slate-700 px-1.5 rounded-sm">{{ $pipeline['management'] }}</span>
-                        </div>
-                        <!-- Stock -->
-                        <div class="flex flex-col items-center">
-                            <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border-4 border-slate-200 dark:border-slate-600 flex items-center justify-center shadow-sm mb-1 {{ $pipeline['stock'] > 0 ? 'border-emerald-500 text-emerald-600' : 'text-slate-400' }}">
-                                <i class="fa-solid fa-boxes-stacked text-sm"></i>
-                            </div>
-                            <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Stock</span>
-                            <span class="text-[10px] text-slate-500 mt-0.5 bg-slate-100 dark:bg-slate-700 px-1.5 rounded-sm">{{ $pipeline['stock'] }}</span>
-                        </div>
-                        <!-- Delivery -->
-                        <div class="flex flex-col items-center">
-                            <div class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 border-4 border-slate-200 dark:border-slate-600 flex items-center justify-center shadow-sm mb-1 {{ $pipeline['delivery'] > 0 ? 'border-teal-500 text-teal-600' : 'text-slate-400' }}">
-                                <i class="fa-solid fa-truck-fast text-sm"></i>
-                            </div>
-                            <span class="text-[10px] font-semibold text-slate-700 dark:text-slate-300">Delivery</span>
-                            <span class="text-[10px] text-slate-500 mt-0.5 bg-slate-100 dark:bg-slate-700 px-1.5 rounded-sm">{{ $pipeline['delivery'] }}</span>
-                        </div>
-                    </div>
+                    @endif
                 </div>
             </div>
 
@@ -139,7 +119,7 @@
             <div class="flex-1 grid grid-cols-2 gap-4 min-h-0">
                 <!-- Trend Chart -->
                 <div class="bg-white dark:bg-slate-800 rounded-sm border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex flex-col relative min-h-0">
-                    <h3 class="text-sm font-bold text-slate-800 dark:text-white flex-none mb-2">Production vs Demand</h3>
+                    <h3 class="text-sm font-bold text-slate-800 dark:text-white flex-none mb-2">Event Progress (Items)</h3>
                     <div class="flex-1 w-full relative">
                         <canvas id="trendChart"></canvas>
                     </div>
@@ -275,7 +255,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 labels: @json($trendChart['labels']),
                 datasets: [
                     {
-                        label: 'New Parts (Demand)',
+                        label: 'Total Items (Parts)',
                         data: @json($trendChart['new']),
                         backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)',
                         borderColor: '#3b82f6',
@@ -284,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         order: 2
                     },
                     {
-                        label: 'Finished/Delivered',
+                        label: 'Finished Items',
                         data: @json($trendChart['finished']),
                         type: 'line',
                         backgroundColor: '#10b981',
@@ -316,7 +296,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 scales: {
                     x: { grid: { display: false } },
-                    y: { grid: { color: gridColor }, beginAtZero: true }
+                    y: { 
+                        grid: { color: gridColor }, 
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    }
                 }
             }
         });
@@ -354,7 +338,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 },
                 scales: {
-                    x: { grid: { color: gridColor }, beginAtZero: true },
+                    x: { 
+                        grid: { color: gridColor }, 
+                        beginAtZero: true,
+                        ticks: { stepSize: 1 }
+                    },
                     y: { grid: { display: false } }
                 }
             }
