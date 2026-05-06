@@ -19,7 +19,7 @@
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
-                        <th scope="col" class="px-6 py-4 font-semibold w-16 text-center">ID</th>
+                        <th scope="col" class="px-6 py-4 font-semibold w-16 text-center">No</th>
                         <th scope="col" class="px-6 py-4 font-semibold">Name</th>
                         <th scope="col" class="px-6 py-4 font-semibold w-24">Status</th>
                         <th scope="col" class="px-6 py-4 font-semibold text-right w-24">Action</th>
@@ -28,7 +28,7 @@
                 <tbody>
                     @forelse($stdParts as $part)
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group">
-                        <td class="px-6 py-4 font-bold text-center text-indigo-600 dark:text-indigo-400">{{ $part->id }}</td>
+                        <td class="px-6 py-4 font-bold text-center text-indigo-600 dark:text-indigo-400">{{ ($stdParts->currentPage() - 1) * $stdParts->perPage() + $loop->iteration }}</td>
                         <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white">{{ $part->name }}</td>
                         <td class="px-6 py-4">
                             @if($part->is_active)

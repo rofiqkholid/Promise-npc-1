@@ -22,7 +22,7 @@ class NpcMasterStdPartController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:npc_master_std_parts,name',
             'is_active' => 'boolean'
         ]);
 
@@ -42,7 +42,7 @@ class NpcMasterStdPartController extends Controller
     public function update(Request $request, NpcMasterStdPart $std_part)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:npc_master_std_parts,name,' . $std_part->id,
             'is_active' => 'boolean'
         ]);
 

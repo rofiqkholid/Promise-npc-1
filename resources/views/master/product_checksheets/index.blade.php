@@ -13,12 +13,12 @@
             <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 pl-7">Manage QC checkpoint specifications for each part number.</p>
         </div>
 
-        <form method="GET" action="{{ route('master.checksheets.index') }}" class="w-full sm:w-auto flex-shrink-0">
+        <form id="searchForm" method="GET" action="{{ route('master.checksheets.index') }}" class="w-full sm:w-auto flex-shrink-0">
             <div class="relative w-full sm:w-72 md:w-80">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fa-solid fa-search text-gray-400"></i>
                 </div>
-                <input type="text" name="search" value="{{ request('search') }}" 
+                <input type="text" id="searchInput" name="search" value="{{ request('search') }}" 
                     class="w-full pr-4 py-2 bg-white text-sm border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder-gray-400" 
                     style="padding-left: 2.5rem;"
                     placeholder="Search Part No / Name...">
@@ -99,4 +99,31 @@
     </div>
     @endif
 </div>
+@endsection
+
+@section('js')
+<script>
+    $(document).ready(function() {
+        let typingTimer;
+        const doneTypingInterval = 500; // time in ms, 500ms delay
+        const $input = $('#searchInput');
+        const $form = $('#searchForm');
+
+        // on keyup, start the countdown
+        $input.on('keyup', function () {
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(doneTyping, doneTypingInterval);
+        });
+
+        // on keydown, clear the countdown 
+        $input.on('keydown', function () {
+            clearTimeout(typingTimer);
+        });
+
+        // user is "finished typing," do something
+        function doneTyping () {
+            $form.submit();
+        }
+    });
+</script>
 @endsection

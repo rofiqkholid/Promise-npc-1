@@ -190,6 +190,50 @@
                 }, 10);
             });
         });
+
+        /**
+         * Global Form Submit Spinner & Disable Double Submit
+         */
+        $(document).on('submit', 'form', function(e) {
+            // If the form fails HTML5 validation, don't show spinner
+            if (this.checkValidity && !this.checkValidity()) {
+                return;
+            }
+
+            const $form = $(this);
+            // Skip if the form has data-no-spinner attribute
+            if ($form.data('no-spinner')) return;
+
+            // Find the submit button(s)
+            let $submitBtn = $form.find('button[type="submit"]');
+
+            $submitBtn.each(function() {
+                const $btn = $(this);
+                // Disable button to prevent double-clicks
+                $btn.prop('disabled', true).addClass('opacity-75 cursor-not-allowed');
+
+                // Swap icon to spinner if an icon exists
+                const $icon = $btn.find('i.fa-solid, i.fas, i.far, i.fal');
+                if ($icon.length > 0) {
+                    $icon.attr('class', 'fa-solid fa-spinner fa-spin');
+                } else {
+                    // Or prepend a spinner if there is no icon
+                    $btn.prepend('<i class="fa-solid fa-spinner fa-spin mr-2"></i>');
+                }
+                
+                // If it's a "Save" button or similar, change text
+                const currentText = $btn.text().trim();
+                if (currentText.toLowerCase().includes('save') || currentText.toLowerCase().includes('simpan')) {
+                    // Try to replace text safely without removing the icon
+                    const childNodes = $btn.contents();
+                    childNodes.each(function() {
+                        if (this.nodeType === Node.TEXT_NODE && this.textContent.trim().length > 0) {
+                            this.textContent = ' Saving...';
+                        }
+                    });
+                }
+            });
+        });
     </script>
 </body>
 
