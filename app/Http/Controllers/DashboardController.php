@@ -30,9 +30,8 @@ class DashboardController extends Controller
             ->whereNotIn('status', ['CLOSED'])
             ->whereNotNull('delivery_date')
             ->orderBy('delivery_date', 'asc')
-            ->get()
-            ->unique('npc_event_id')
-            ->take(5);
+            ->take(5)
+            ->get();
 
         // --- DASHBOARD V2 CHARTS DATA ---
 
