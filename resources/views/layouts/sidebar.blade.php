@@ -66,9 +66,13 @@
                          x-cloak>
                         @foreach($menu->children as $child)
                             @php
-                                $baseChildRoute = preg_replace('/\.index$/', '', $child->route);
-                                $isActive = request()->routeIs($child->route) || request()->routeIs($baseChildRoute . '.*');
-                            @endphp
+                            $baseChildRoute = preg_replace('/\.index$/', '', $child->route);
+                            // Wildcard only for CRUD nested routes (e.g. master.customers.index → master.customers.*)
+                            // NOT for simple prefixes (e.g. tracking.index → tracking would match all tracking.*)
+                            $isCrudRoute = str_contains($child->route, '.index') && str_contains($baseChildRoute, '.');
+                            $isActive = request()->routeIs($child->route)
+                                || ($isCrudRoute && request()->routeIs($baseChildRoute . '.*'));
+                        @endphp
                             <a href="{{ route($child->route) }}"
                                 class="flex items-center gap-3 px-3 py-2 transition-all duration-200 text-sm {{ $isActive ? 'text-primary-700 dark:text-primary-400 font-medium bg-primary-100/50 dark:bg-primary-900/20' : 'text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-gray-700/50' }}">
                                 <span class="w-1.5 h-1.5 {{ $isActive ? 'bg-primary-700 dark:bg-primary-400' : 'bg-slate-400 dark:bg-gray-600' }}"></span>

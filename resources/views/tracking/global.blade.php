@@ -65,6 +65,29 @@
 
     <!-- Table & Modals -->
     <div class="p-6" x-data="{ activeModal: {{ request('open_event', 'null') }}, activeGlobalPhotoModal: null }">
+
+        <!-- Search Form -->
+        <form action="{{ route('tracking.index') }}" method="GET" class="mb-4 flex items-center gap-2">
+            <div class="relative w-full sm:w-80">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </div>
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search PO No, Customer, Delivery To..."
+                    class="!pl-10 !pr-10 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full transition shadow-sm rounded-none">
+                @if(request('search'))
+                <a href="{{ route('tracking.index') }}" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-red-500 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </a>
+                @endif
+            </div>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition shadow-sm rounded-none flex items-center gap-2 shrink-0">
+                <i class="fa-solid fa-magnifying-glass"></i> Search
+            </button>
+            @if(request('search'))
+            <span class="text-xs text-gray-500 dark:text-gray-400 italic">Results for: <strong>"{{ request('search') }}"</strong></span>
+            @endif
+        </form>
+
         <div class="overflow-x-auto border border-gray-200 dark:border-gray-700">
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">

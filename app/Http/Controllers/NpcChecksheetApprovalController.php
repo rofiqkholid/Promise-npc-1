@@ -9,18 +9,34 @@ use Carbon\Carbon;
 
 class NpcChecksheetApprovalController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Get checksheets that are in approval phase
-        $checksheets = NpcChecksheet::with([
+        $query = NpcChecksheet::with([
             'npcPart.product.vehicleModel.customer', 
             'npcPart.event.customerCategory.customer',
             'npcPart.event.deliveryGroup'
         ])
             ->whereHas('npcPart', function($q) {
                 $q->whereIn('status', ['WAITING_APPROVAL', 'FINISHED']);
-            })
-            ->get();
+            });
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->whereHas('npcPart.product', function($q) use ($search) {
+                    $q->where('part_no', 'like', "%{$search}%")
+                      ->orWhere('part_name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('npcPart.event', function($q) use ($search) {
+                    $q->where('po_no', 'like', "%{$search}%");
+                })
+                ->orWhereHas('npcPart.event.customerCategory', function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
+
+        $checksheets = $query->latest()->paginate(20);
 
         return view('npc_checksheets.approval_index', compact('checksheets'));
     }

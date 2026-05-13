@@ -6,16 +6,13 @@ use Illuminate\Http\Request;
 
 class ProductionTrackingController extends Controller
 {
-    private function buildQuery($statusParam)
+    private function buildQuery($statusParam, $search = null)
     {
         $query = \App\Models\NpcPart::with(['event.customerCategory', 'event.deliveryGroup', 'processes.process', 'processes.department', 'checkpoints', 'checksheet', 'product.vehicleModel.customer'])->latest();
 
         if ($statusParam !== 'all') {
             if ($statusParam === 'CLOSED') {
-                // Page History khusus untuk yang sudah CLOSED atau OUTSTANDING (pengiriman parsial)
                 $query->whereIn('status', ['CLOSED', 'OUTSTANDING']);
-            } else {
-                // Show SEMUA task (termasuk yang sudah CLOSED) agar riwayat tidak hilang of Stock/tahap lain
             }
         }
         
@@ -26,13 +23,26 @@ class ProductionTrackingController extends Controller
                       $q->whereColumn('doc_packages.current_revision_id', '!=', 'npc_parts.part_revision_id');
                   });
         }
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('product', function ($q) use ($search) {
+                    $q->where('part_no', 'like', "%{$search}%")
+                      ->orWhere('part_name', 'like', "%{$search}%");
+                })
+                ->orWhereHas('event', function ($q) use ($search) {
+                    $q->where('po_no', 'like', "%{$search}%");
+                });
+            });
+        }
         
         return $query;
     }
 
     private function renderTrackingPage($statusParam, $pageTitle, $pageIcon, $pageDesc, $viewFile = 'tracking.index')
     {
-        $parts = $this->buildQuery($statusParam)->paginate(15);
+        $search = request('search');
+        $parts = $this->buildQuery($statusParam, $search)->paginate(15);
         return view($viewFile, compact('parts', 'statusParam', 'pageTitle', 'pageIcon', 'pageDesc'));
     }
 
@@ -49,7 +59,18 @@ class ProductionTrackingController extends Controller
                 ->whereHas('parts');
         
         if ($request->filled('search')) {
-            $query->where('po_no', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('po_no', 'like', "%{$search}%")
+                  ->orWhere('delivery_to', 'like', "%{$search}%")
+                  ->orWhereHas('customerCategory', function ($q) use ($search) {
+                      $q->where('name', 'like', "%{$search}%")
+                        ->orWhereHas('customer', function ($q) use ($search) {
+                            $q->where('code', 'like', "%{$search}%")
+                              ->orWhere('name', 'like', "%{$search}%");
+                        });
+                  });
+            });
         }
         
         $pos = $query->latest()->paginate(10);

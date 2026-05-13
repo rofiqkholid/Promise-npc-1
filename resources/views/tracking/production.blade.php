@@ -16,6 +16,39 @@
 
     <!-- Table -->
     <div class="p-6">
+
+        <!-- Search Form -->
+        <div class="mb-4" x-data="{
+            searchQuery: '{{ request('search') }}',
+            performSearch() {
+                fetch('{{ route('tracking.production') }}?search=' + encodeURIComponent(this.searchQuery))
+                .then(res => res.text())
+                .then(html => {
+                    let doc = new DOMParser().parseFromString(html, 'text/html');
+                    document.querySelector('tbody').innerHTML = doc.querySelector('tbody').innerHTML;
+                    let pagination = document.querySelector('.p-4.border-t nav');
+                    let newPagination = doc.querySelector('.p-4.border-t nav');
+                    if(pagination && newPagination) pagination.parentElement.innerHTML = newPagination.parentElement.innerHTML;
+                    window.history.pushState(null, '', '?search=' + encodeURIComponent(this.searchQuery));
+                });
+            }
+        }">
+            <div class="relative w-full sm:w-80">
+                <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </div>
+                <input type="text" x-model="searchQuery" x-ref="searchInput"
+                    placeholder="Search Part No, Part Name, PO No..."
+                    @input.debounce.500ms="performSearch()"
+                    class="!pl-10 !pr-10 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm w-full transition shadow-sm rounded-none">
+                <button type="button" x-show="searchQuery.length > 0" style="display:none;"
+                    @click="searchQuery=''; performSearch(); $refs.searchInput.focus()"
+                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-red-500 transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+
         <div class="overflow-x-auto border border-gray-200 dark:border-gray-700">
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
