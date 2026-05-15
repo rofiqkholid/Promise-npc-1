@@ -105,26 +105,29 @@
                     </div>
                 </div>
 
-                <!-- Right: Sketch Image -->
+                <!-- Right: Sketch Image (untuk Checksheet) -->
                 <div class="space-y-4">
-                    <h3 class="text-lg font-bold text-gray-800 dark:text-white border-b pb-2 border-gray-200 dark:border-gray-700">2. Sketch Image (Problem History)</h3>
-                    
-                    <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 flex flex-col items-center justify-center text-center bg-gray-50 dark:bg-gray-800/50 min-h-[300px] relative">
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white border-b pb-2 border-gray-200 dark:border-gray-700">2. Sketch Image <span class="text-sm font-normal text-gray-400">(For Checksheet)</span></h3>
+
+                    <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 flex flex-col items-center justify-center text-center bg-gray-50 dark:bg-gray-800/50 min-h-[260px] relative">
                         @if($product->productDetail && $product->productDetail->sketch_image_path)
                             <div class="mb-4 w-full h-full flex justify-center items-center">
-                                <img src="{{ Storage::url($product->productDetail->sketch_image_path) }}" alt="Sketch" class="max-w-full max-h-[300px] object-contain">
+                                <img src="{{ Storage::url($product->productDetail->sketch_image_path) }}" alt="Sketch" class="max-w-full max-h-[220px] object-contain">
                             </div>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Upload a new image to replace the current one.</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">Upload new image to replace the existing image.</p>
                         @else
                             <i class="fa-regular fa-image text-4xl text-gray-400 mb-3"></i>
-                            <p class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">No sketch image uploaded</p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Upload an image showing the part layout and pointers (a, b, c, 1, 2, 3...)</p>
+                            <p class="text-sm font-medium text-gray-600 dark:text-gray-300 mb-1">No sketch image yet</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Upload layout image with pointers (a, b, c, 1, 2, 3...)</p>
                         @endif
-                        
                         <input type="file" name="sketch_image" id="sketch_image" class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-400 cursor-pointer" accept="image/*">
                     </div>
+
                 </div>
-            </div>
+
+
+            </div>{{-- end grid cols-2 --}}
+
 
             <!-- SECTION: Checkpoints -->
             <div>

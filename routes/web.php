@@ -14,6 +14,7 @@ use App\Http\Controllers\NpcMasterDepartmentController;
 use App\Http\Controllers\NpcMasterRoutingController;
 use App\Http\Controllers\NpcMasterStdPartController;
 use App\Http\Controllers\ProductChecksheetSetupController;
+use App\Http\Controllers\ProductImageController;
 use App\Http\Controllers\NpcInternalCategoryController;
 use App\Http\Controllers\NpcCustomerCategoryController;
 use App\Http\Controllers\NpcDeliveryGroupController;
@@ -76,6 +77,12 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('roles', \App\Http\Controllers\NpcRoleController::class)->except(['show']);
         Route::resource('promise-users', \App\Http\Controllers\PromiseUserController::class)->except(['show']);
         Route::resource('npc-users', \App\Http\Controllers\NpcUserController::class)->except(['show']);
+
+        // Master Label Image Produk
+        Route::get('product-images', [ProductImageController::class, 'index'])->name('product-images.index');
+        Route::get('product-images/{product}/edit', [ProductImageController::class, 'edit'])->name('product-images.edit');
+        Route::put('product-images/{product}', [ProductImageController::class, 'update'])->name('product-images.update');
+        Route::delete('product-images/{product}', [ProductImageController::class, 'destroy'])->name('product-images.destroy');
     });
 
     // Dummy API Routes for Dashboard Filters

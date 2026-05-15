@@ -588,7 +588,7 @@ class NpcChecksheetController extends Controller
     public function printLabel(NpcPart $part)
     {
         // Pastikan part sudah memiliki checksheet dan product
-        $part->load(['product.vehicleModel.customer', 'product.docPackage.currentRevision', 'checksheet.qeChecker', 'event.customerCategory']);
+        $part->load(['product.vehicleModel.customer', 'product.docPackage.currentRevision', 'product.productDetail', 'checksheet.qeChecker', 'event.customerCategory']);
 
         // Jika belum ada checksheet, abort atau redirect
         if (!$part->checksheet) {

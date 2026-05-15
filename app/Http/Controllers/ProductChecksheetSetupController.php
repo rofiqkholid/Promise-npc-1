@@ -90,17 +90,17 @@ class ProductChecksheetSetupController extends Controller
             'std_parts' => 'nullable|array',
         ]);
 
-        // 1. Handle Sketch Image
+        // 1. Handle Sketch Image (untuk checksheet)
         if ($request->hasFile('sketch_image')) {
             $file = $request->file('sketch_image');
-            $filename = time() . '_' . $file->getClientOriginalName();
+            $filename = time() . '_sketch_' . $file->getClientOriginalName();
             $path = $file->storeAs('public/checksheets/sketches', $filename);
-            
+
             // Delete old if exists
             if ($product->productDetail && $product->productDetail->sketch_image_path) {
                 Storage::delete($product->productDetail->sketch_image_path);
             }
-            
+
             NpcProductDetail::updateOrCreate(
                 ['product_id' => $product->id],
                 ['sketch_image_path' => $path]
