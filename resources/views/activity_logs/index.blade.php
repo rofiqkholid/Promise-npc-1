@@ -16,40 +16,93 @@
         </div>
     </div>
 
-    <!-- Search Form -->
-    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-        <form action="{{ route('activity-logs.index') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
-            <div class="relative flex-1">
+    <!-- Filter Form -->
+    <div class="p-5 border-b border-gray-200 dark:border-gray-700 bg-gray-50/30 dark:bg-gray-800/30">
+        <form action="{{ route('activity-logs.index') }}" method="GET" class="space-y-4">
+            <!-- Text Search -->
+            <div class="relative w-full">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                 </div>
-                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by description, subject model, or user name..."
-                       class="!pl-10 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white py-2">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search by Part Number, description, or user..."
+                       class="!pl-10 block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white py-2.5">
             </div>
-            <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none transition">
-                Search
-            </button>
-            @if(request('search'))
-            <a href="{{ route('activity-logs.index') }}" class="inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition">
-                Clear
-            </a>
-            @endif
+
+            <!-- Filters Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 pt-2 border-t border-gray-200 dark:border-gray-700">
+                <div>
+                    <label class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">Start Date</label>
+                    <input type="date" name="start_date" value="{{ request('start_date') }}" onchange="this.form.submit()" class="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white py-2 px-3">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">End Date</label>
+                    <input type="date" name="end_date" value="{{ request('end_date') }}" onchange="this.form.submit()" class="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white py-2 px-3">
+                </div>
+
+                <!-- Event Filter -->
+                <div>
+                    <label class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">Action</label>
+                    <select name="event" onchange="this.form.submit()" class="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white py-2 px-3">
+                        <option value="">All Actions</option>
+                        <option value="created" {{ request('event') == 'created' ? 'selected' : '' }}>Created</option>
+                        <option value="updated" {{ request('event') == 'updated' ? 'selected' : '' }}>Updated</option>
+                        <option value="deleted" {{ request('event') == 'deleted' ? 'selected' : '' }}>Deleted</option>
+                        <option value="imported" {{ request('event') == 'imported' ? 'selected' : '' }}>Imported</option>
+                    </select>
+                </div>
+
+                <!-- User Filter -->
+                <div>
+                    <label class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">User (Causer)</label>
+                    <select name="causer_id" onchange="this.form.submit()" class="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white py-2 px-3">
+                        <option value="">All Users</option>
+                        @foreach($users as $user)
+                            <option value="{{ $user->nik }}" {{ request('causer_id') == $user->nik ? 'selected' : '' }}>{{ $user->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Menu Filter -->
+                <div>
+                    <label class="block text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1.5">Subject (Menu)</label>
+                    <select name="menu" onchange="this.form.submit()" class="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white py-2 px-3">
+                        <option value="">All Menus</option>
+                        @foreach($menus as $modelClass => $menuName)
+                            <option value="{{ $modelClass }}" {{ request('menu') === $modelClass ? 'selected' : '' }}>{{ $menuName }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-4">
+                @if(request()->anyFilled(['search', 'start_date', 'end_date', 'event', 'causer_id', 'menu']))
+                <a href="{{ route('activity-logs.index') }}" class="inline-flex justify-center items-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700 transition">
+                    Reset Filters
+                </a>
+                @endif
+                <!-- Hidden submit button so Enter key works on text inputs -->
+                <button type="submit" class="hidden"></button>
+            </div>
         </form>
     </div>
 
     <div class="overflow-x-auto" x-data="{ openModal: null }">
-        <table class="min-w-full table-fixed divide-y divide-gray-200 dark:divide-gray-700 text-sm text-left">
-            <thead class="bg-gray-50 dark:bg-gray-800/80 text-gray-700 dark:text-gray-300 uppercase text-xs">
+        <table class="min-w-full table-fixed text-sm text-left">
+            <thead class="bg-gray-50/80 text-gray-900 font-bold uppercase text-xs">
                 <tr>
-                    <th scope="col" class="px-6 py-3 font-semibold w-1/4">Date / Time</th>
-                    <th scope="col" class="px-6 py-3 font-semibold w-1/4">User (Causer)</th>
-                    <th scope="col" class="px-6 py-3 font-semibold w-1/4 text-left">Action</th>
-                    <th scope="col" class="px-6 py-3 font-semibold w-1/4">Subject</th>
+                    <th scope="col" class="px-6 py-3 font-semibold w-[5%] text-center">No.</th>
+                    <th scope="col" class="px-6 py-3 font-semibold w-[20%]">Date / Time</th>
+                    <th scope="col" class="px-6 py-3 font-semibold w-[25%]">User (Causer)</th>
+                    <th scope="col" class="px-6 py-3 font-semibold w-[20%] text-left">Action</th>
+                    <th scope="col" class="px-6 py-3 font-semibold w-[30%]">Subject</th>
                 </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+            <tbody class="bg-white">
                 @forelse($logs as $log)
-                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                    <tr class="hover:bg-gray-100 transition even:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-gray-500 dark:text-gray-400 font-medium">
+                            {{ $logs->firstItem() + $loop->index }}
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-200">
                             <div class="font-bold">{{ $log->created_at->timezone('Asia/Jakarta')->format('d M Y') }}</div>
                             <div class="text-xs text-gray-500">{{ $log->created_at->timezone('Asia/Jakarta')->format('H:i:s') }}</div>
@@ -160,7 +213,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                        <td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                             <i class="fa-solid fa-ghost text-4xl text-gray-300 dark:text-gray-600 mb-3 block"></i>
                             <p class="font-medium text-lg">No activity logs found</p>
                             <p class="text-sm mt-1">Changes made to tracked models will appear here.</p>
@@ -171,10 +224,8 @@
         </table>
     </div>
 
-    @if($logs->hasPages())
-    <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+    <div class="px-6 py-4 flex justify-center mt-2 border-t border-gray-200">
         {{ $logs->links() }}
     </div>
-    @endif
 </div>
 @endsection
