@@ -243,7 +243,7 @@
                     previous: "Previous",
                     next: "Next"
                 },
-                emptyTable: '<div class="py-8"><i class="fa-solid fa-ghost text-4xl text-gray-300 dark:text-gray-600 mb-3 block"></i><p class="font-medium text-lg">No activity logs found</p><p class="text-sm mt-1">Changes made to tracked models will appear here.</p></div>'
+                emptyTable: '<div class="py-8 text-center"><i class="fa-solid fa-ghost text-4xl text-gray-300 dark:text-gray-600 mb-3 block"></i><p class="font-medium text-lg">No activity logs found</p><p class="text-sm mt-1">Changes made to tracked models will appear here.</p></div>'
             },
             drawCallback: function() {
                 // Style the pagination container
