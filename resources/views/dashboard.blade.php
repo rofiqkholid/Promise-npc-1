@@ -116,7 +116,7 @@
             </div>
 
             <!-- Charts Row -->
-            <div class="flex-1 grid grid-cols-2 gap-4 min-h-0">
+            <div class="flex-1 grid grid-cols-1 gap-4 min-h-0">
                 <!-- Trend Chart -->
                 <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex flex-col relative min-h-0">
                     <h3 class="text-sm font-bold text-slate-800 dark:text-white flex-none mb-2">Event Progress (Items)</h3>
@@ -127,12 +127,14 @@
 
                 <!-- Dept / Customer Charts (Tabs/Stacked or Side by Side internally) -->
                 <!-- Let's put Dept Workload here -->
+                {{-- Department Bottleneck temporarily hidden
                 <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex flex-col relative min-h-0">
                     <h3 class="text-sm font-bold text-slate-800 dark:text-white flex-none mb-2">Department Bottleneck</h3>
                     <div class="flex-1 w-full relative">
                         <canvas id="deptChart"></canvas>
                     </div>
                 </div>
+                --}}
             </div>
 
         </div>
@@ -246,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
     Chart.defaults.color = textColor;
     Chart.defaults.font.family = "'Outfit', sans-serif";
 
-    // 1. Trend Chart (Line/Bar)
+    // 1. Trend Chart (Stacked Bar + Line)
     const trendCtx = document.getElementById('trendChart');
     if (trendCtx) {
         new Chart(trendCtx, {
@@ -255,24 +257,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 labels: @json($trendChart['labels']),
                 datasets: [
                     {
-                        label: 'Total Items (Parts)',
-                        data: @json($trendChart['new']),
-                        backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.1)',
-                        borderColor: '#3b82f6',
-                        borderWidth: 2,
-                        borderRadius: 4,
-                        order: 2
-                    },
-                    {
                         label: 'Finished Items',
                         data: @json($trendChart['finished']),
+                        backgroundColor: '#10b981', // emerald
+                        borderRadius: 4,
+                        stack: 'Stack 0',
+                        order: 3,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'In Progress Items',
+                        data: @json($trendChart['in_progress'] ?? []),
+                        backgroundColor: '#f59e0b', // amber
+                        borderRadius: 4,
+                        stack: 'Stack 0',
+                        order: 2,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Completion %',
+                        data: @json($trendChart['rates'] ?? []),
                         type: 'line',
-                        backgroundColor: '#10b981',
-                        borderColor: '#10b981',
-                        borderWidth: 3,
+                        backgroundColor: '#3b82f6', // blue
+                        borderColor: '#3b82f6',
+                        borderWidth: 2,
                         tension: 0.3,
-                        pointBackgroundColor: '#10b981',
-                        order: 1
+                        pointBackgroundColor: '#3b82f6',
+                        order: 1,
+                        yAxisID: 'y1'
                     }
                 ]
             },
@@ -292,14 +304,52 @@ document.addEventListener('DOMContentLoaded', function() {
                         bodyColor: isDark ? '#cbd5e1' : '#475569',
                         borderColor: isDark ? '#334155' : '#e2e8f0',
                         borderWidth: 1,
+                        callbacks: {
+                            title: function(tooltipItems) {
+                                // Use the original label array to maintain multi-line in tooltip title
+                                const index = tooltipItems[0].dataIndex;
+                                const originalLabel = tooltipItems[0].chart.data.labels[index];
+                                return originalLabel;
+                            },
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.datasetIndex === 2) {
+                                    label += context.raw + '%';
+                                } else {
+                                    label += context.raw;
+                                }
+                                return label;
+                            }
+                        }
                     }
                 },
                 scales: {
-                    x: { grid: { display: false } },
+                    x: { grid: { display: false }, stacked: true },
                     y: { 
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        stacked: true,
                         grid: { color: gridColor }, 
                         beginAtZero: true,
                         ticks: { stepSize: 1 }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        stacked: false,
+                        beginAtZero: true,
+                        max: 100,
+                        grid: { drawOnChartArea: false },
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
                     }
                 }
             }

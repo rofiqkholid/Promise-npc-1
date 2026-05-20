@@ -36,35 +36,68 @@ class DashboardController extends Controller
         // --- DASHBOARD V2 CHARTS DATA ---
 
         // Chart 1: Event Progress (Total Items vs Finished Items)
-        // Get 6 most recent active events
-        $recentEvents = NpcEvent::with(['parts' => function($q) {
-            $q->select('id', 'npc_event_id', 'status');
+        // Get 10 most recent active events (expanded for full width)
+        $recentEvents = NpcEvent::with(['customerCategory', 'parts' => function($q) {
+            $q->select('id', 'npc_event_id', 'status', 'product_id')->with(['product.customer', 'product.vehicleModel']);
         }])
         ->orderBy('created_at', 'desc')
-        ->take(6)
+        ->take(10)
         ->get()
         ->reverse(); // reverse to show oldest of the recent on the left
 
         $eventLabels = [];
         $totalItemsData = [];
         $finishedItemsData = [];
+        $inProgressItemsData = [];
+        $completionRates = [];
 
         foreach ($recentEvents as $ev) {
-            // Use PO No as label, truncate if too long
+            // Use Customer + PO No as label
             $poLabel = $ev->po_no ? (strlen($ev->po_no) > 12 ? substr($ev->po_no, 0, 12).'...' : $ev->po_no) : 'EV-'.$ev->id;
-            $eventLabels[] = $poLabel;
+            $custName = $ev->customerCategory ? $ev->customerCategory->name : 'Unknown';
+            
+            // Get unique customers and models from parts
+            $customers = [];
+            $models = [];
+            foreach($ev->parts as $part) {
+                if ($part->product) {
+                    if ($part->product->customer) {
+                        $customers[] = $part->product->customer->code;
+                    }
+                    if ($part->product->vehicleModel) {
+                        $models[] = $part->product->vehicleModel->name;
+                    }
+                }
+            }
+            $customers = array_unique($customers);
+            $models = array_unique($models);
+            
+            $customerStr = count($customers) > 0 ? implode(', ', $customers) : '-';
+            $modelStr = count($models) > 0 ? implode(', ', $models) : '-';
+
+            // Multi-line label for Chart.js
+            $eventLabels[] = [
+                $custName . ' (' . $poLabel . ')',
+                $customerStr . ' | ' . $modelStr
+            ];
             
             $totalItems = $ev->parts->count();
             $finishedItems = $ev->parts->whereIn('status', ['FINISHED', 'CLOSED', 'OUTSTANDING'])->count();
+            $inProgressItems = $totalItems - $finishedItems;
+            $rate = $totalItems > 0 ? round(($finishedItems / $totalItems) * 100) : 0;
             
             $totalItemsData[] = $totalItems;
             $finishedItemsData[] = $finishedItems;
+            $inProgressItemsData[] = $inProgressItems;
+            $completionRates[] = $rate;
         }
 
         $trendChart = [
             'labels' => array_values($eventLabels),
             'new' => array_values($totalItemsData),
             'finished' => array_values($finishedItemsData),
+            'in_progress' => array_values($inProgressItemsData),
+            'rates' => array_values($completionRates),
         ];
 
         // Chart 2: Department Workload (Waiting Processes)
