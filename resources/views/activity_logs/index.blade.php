@@ -158,7 +158,7 @@
                                 
                                 $identifier = null;
                                 // Try to resolve identifier by checking common name fields or resolving foreign keys
-                                foreach(['part_no', 'customer_name', 'process_name', 'name', 'title', 'role_name', 'po_number', 'part_id'] as $k) {
+                                foreach(['part_no', 'customer_name', 'process_name', 'name', 'title', 'role_name', 'po_number', 'po_no', 'point_check', 'part_id'] as $k) {
                                     if (isset($combinedAttrs[$k])) {
                                         // Use the resolveValue closure defined below in the Changes column if possible,
                                         // but since it's defined lower down, we'll implement a quick resolver here
@@ -202,13 +202,19 @@
                                         $identifier = $modelName ? $modelName . ' - ' . $log->subject->part_no : $log->subject->part_no;
                                     } elseif (isset($log->subject->name)) {
                                         $identifier = $log->subject->name;
+                                    } elseif (isset($log->subject->po_no)) {
+                                        $identifier = "PO: " . $log->subject->po_no;
+                                    } elseif (isset($log->subject->point_check)) {
+                                        $identifier = "Point: " . $log->subject->point_check;
                                     }
                                 }
                                 
-                                if (!$identifier) $identifier = "ID: " . $log->subject_id;
+                                if (!$identifier) $identifier = "";
                             @endphp
                             <div class="font-bold text-gray-800 dark:text-gray-200">{{ $displayModelName }}</div>
+                            @if($identifier)
                             <div class="font-mono text-xs mt-0.5 text-blue-600 dark:text-blue-400 font-semibold">{{ $identifier }}</div>
+                            @endif
                         </td>
                     </tr>
                 @empty

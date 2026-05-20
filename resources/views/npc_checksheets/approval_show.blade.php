@@ -35,7 +35,7 @@
     <div class="px-6 py-4 grid grid-cols-2 md:grid-cols-5 gap-4 bg-slate-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div>
             <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Event/Project</span>
-            <span class="text-sm font-medium text-gray-700 dark:text-white">{{ optional($part->event)->event_name ?? 'N/A' }}</span>
+            <span class="text-sm font-medium text-gray-700 dark:text-white">{{ optional(optional($part->event)->customerCategory)->name ?? 'N/A' }}</span>
         </div>
         <div>
             <span class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">ECN / Revision</span>
