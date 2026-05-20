@@ -98,7 +98,7 @@
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                @forelse($logs as $log)
+                @foreach($logs as $log)
                     <tr class="hover:bg-gray-100 transition">
                         <td class="px-6 py-4 whitespace-nowrap text-center text-gray-500 dark:text-gray-400 font-medium">
                             {{ $loop->iteration }}
@@ -217,15 +217,7 @@
                             @endif
                         </td>
                     </tr>
-                @empty
-                    <tr>
-                        <td colspan="5" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
-                            <i class="fa-solid fa-ghost text-4xl text-gray-300 dark:text-gray-600 mb-3 block"></i>
-                            <p class="font-medium text-lg">No activity logs found</p>
-                            <p class="text-sm mt-1">Changes made to tracked models will appear here.</p>
-                        </td>
-                    </tr>
-                @endforelse
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -250,7 +242,8 @@
                 paginate: {
                     previous: "Previous",
                     next: "Next"
-                }
+                },
+                emptyTable: '<div class="py-8"><i class="fa-solid fa-ghost text-4xl text-gray-300 dark:text-gray-600 mb-3 block"></i><p class="font-medium text-lg">No activity logs found</p><p class="text-sm mt-1">Changes made to tracked models will appear here.</p></div>'
             },
             drawCallback: function() {
                 // Style the pagination container
