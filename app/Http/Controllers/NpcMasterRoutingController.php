@@ -242,46 +242,91 @@ class NpcMasterRoutingController extends Controller
 
             $importedCount = 0;
             $partsProcessed = [];
+            $rowErrors = [];
+            $validRows = [];
 
-            DB::beginTransaction();
-
-            foreach ($rows as $row) {
+            foreach ($rows as $index => $row) {
                 if (empty($row[0])) continue; // Skip empty PART NO
 
+                $actualRowNumber = $index + 2; // +1 for 0-index, +1 for header
                 $partNo = trim($row[0]);
                 $processName = trim($row[1] ?? '');
                 $deptName = trim($row[2] ?? '');
                 $seqOrder = (int) ($row[3] ?? 1);
 
-                if (empty($processName) || empty($deptName)) continue;
+                if (empty($processName) || empty($deptName)) {
+                    $rowErrors[] = "Row {$actualRowNumber}: Process Name and Department Name are required.";
+                    continue;
+                }
 
                 // 1. Resolve IDs
                 $product = Product::where('part_no', $partNo)->first();
-                if (!$product) continue;
-
-                $process = \App\Models\NpcProcess::where('process_name', $processName)->first();
-                if (!$process) continue;
-
-                $department = \App\Models\NpcDepartment::where('name', $deptName)->first();
-                if (!$department) continue;
-
-                // 2. Delete existing routing for this part if not processed yet in this loop
-                if (!in_array($product->id, $partsProcessed)) {
-                    NpcMasterRouting::where('part_id', $product->id)->delete();
-                    $partsProcessed[] = $product->id;
+                if (!$product) {
+                    $rowErrors[] = "Row {$actualRowNumber}: Part No '{$partNo}' is not found in the system.";
+                    continue;
                 }
 
-                // 3. Insert routing
-                NpcMasterRouting::create([
-                    'part_id' => $product->id,
+                $process = \App\Models\NpcProcess::where('process_name', $processName)->first();
+                if (!$process) {
+                    $rowErrors[] = "Row {$actualRowNumber}: Process '{$processName}' is not registered in Master Process.";
+                    continue;
+                }
+
+                $department = \App\Models\NpcDepartment::where('name', $deptName)
+                    ->orWhere('full_name', $deptName)
+                    ->first();
+                if (!$department) {
+                    $rowErrors[] = "Row {$actualRowNumber}: Department '{$deptName}' is not found.";
+                    continue;
+                }
+
+                if (!$process->departments()->where('npc_departments.id', $department->id)->exists()) {
+                    $rowErrors[] = "Row {$actualRowNumber}: Process '{$processName}' is not linked to Department '{$deptName}'. Please configure the relation in Master Process.";
+                    continue;
+                }
+
+                $validRows[] = [
+                    'product_id' => $product->id,
                     'process_id' => $process->id,
                     'department_id' => $department->id,
-                    'sequence_order' => $seqOrder,
+                    'sequence_order' => $seqOrder
+                ];
+            }
+
+            if (!empty($rowErrors)) {
+                $displayErrors = array_slice($rowErrors, 0, 15);
+                if (count($rowErrors) > 15) {
+                    $displayErrors[] = "<i>...and " . (count($rowErrors) - 15) . " other errors.</i>";
+                }
+                $errorMsg = "<strong>Import failed due to data mismatch:</strong><ul class='list-disc pl-5 mt-2'><li>" . implode("</li><li>", $displayErrors) . "</li></ul>";
+                
+                return back()
+                    ->with('error', 'Import failed due to data mismatches. Please check the details on the page.')
+                    ->with('error_details', $errorMsg);
+            }
+
+            DB::beginTransaction();
+
+            foreach ($validRows as $valid) {
+                // Delete existing routing for this part if not processed yet in this loop
+                if (!in_array($valid['product_id'], $partsProcessed)) {
+                    NpcMasterRouting::where('part_id', $valid['product_id'])->delete();
+                    $partsProcessed[] = $valid['product_id'];
+                }
+
+                // Insert routing
+                NpcMasterRouting::create([
+                    'part_id' => $valid['product_id'],
+                    'process_id' => $valid['process_id'],
+                    'department_id' => $valid['department_id'],
+                    'sequence_order' => $valid['sequence_order'],
                 ]);
 
                 $importedCount++;
             }
 
+            $partCount = count($partsProcessed);
+            
             DB::commit();
             
             activity()
@@ -289,7 +334,6 @@ class NpcMasterRoutingController extends Controller
                 ->event('imported')
                 ->log("Routing per Part ID - $importedCount rows for $partCount parts");
 
-            $partCount = count($partsProcessed);
             return redirect()->route('master.routings.index')->with('success', "Success! $importedCount routing steps imported for $partCount Part(s).");
 
         } catch (Exception $e) {

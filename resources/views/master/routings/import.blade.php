@@ -14,9 +14,13 @@
     <form action="{{ route('master.routings.import.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="p-6">
-            @if(session('error'))
+            @if(session('error_details'))
                 <div class="mb-4 p-4 text-red-700 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800" role="alert">
-                    <i class="fa-solid fa-circle-exclamation mr-1"></i> {{ session('error') }}
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> {!! session('error_details') !!}
+                </div>
+            @elseif(session('error'))
+                <div class="mb-4 p-4 text-red-700 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800" role="alert">
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> {!! session('error') !!}
                 </div>
             @endif
 

@@ -207,40 +207,73 @@ class NpcEventController extends Controller
             // Skip Header
             $headers = array_shift($rows);
 
+            \Illuminate\Support\Facades\DB::beginTransaction();
+
             $importedCount = 0;
             $eventsCreated = []; // Untuk melacak event yang sudah dibuat agar tidak duplikat dlm satu proses
+            $rowErrors = [];
 
-            foreach ($rows as $row) {
+            foreach ($rows as $index => $row) {
                 // Mapping Kolom (sesuai template baru):
-                // 0: PO NO, 1: PART NO, 2: PART NAME, 3: QTY, 4: DELV DATE, 
-                // 5: CUSTOMER CODE, 6: MODEL NAME, 7: EVENT CATEGORY, 8: DELIVERY GROUP, 9: DELIVERY TO
+                // 0: PO NO, 1: CUSTOMER CODE, 2: MODEL NAME, 3: EVENT CATEGORY, 4: DELIVERY GROUP, 5: DELIVERY TO, 6: DELV DATE, 7: PART NO, 8: PART NAME, 9: QTY
                 
-                if (empty($row[1])) continue; // Skip empty part no
+                $actualRowNumber = $index + 2;
 
-                $custCode = trim($row[5] ?? '');
-                $modelName = trim($row[6] ?? '');
-                $catName = trim($row[7] ?? '');
-                $groupName = trim($row[8] ?? '');
-                $deliveryTo = trim($row[9] ?? '');
+                $partNo = trim($row[7] ?? '');
+                if (empty($partNo)) continue; // Skip empty part no
 
-                if (empty($custCode) || empty($catName) || empty($groupName)) continue;
+                $poNo = trim($row[0] ?? '');
+                $custCode = trim($row[1] ?? '');
+                $modelName = trim($row[2] ?? '');
+                $catName = trim($row[3] ?? '');
+                $groupName = trim($row[4] ?? '');
+                $deliveryTo = trim($row[5] ?? '');
+                
+                $deliveryDateRaw = $row[6] ?? null;
+                $partName = trim($row[8] ?? '');
+                $qty = (int) ($row[9] ?? 1);
+
+                if (empty($custCode) || empty($catName) || empty($groupName)) {
+                    $rowErrors[] = "Row {$actualRowNumber}: CUSTOMER CODE, EVENT CATEGORY, and DELIVERY GROUP are required.";
+                    continue;
+                }
 
                 // 1. Resolve IDs
                 $customer = \App\Models\Customer::where('code', $custCode)->first();
-                if (!$customer) continue;
+                if (!$customer) {
+                    $rowErrors[] = "Row {$actualRowNumber}: Customer Code '{$custCode}' not found in system.";
+                    continue;
+                }
 
                 $category = \App\Models\NpcCustomerCategory::where('customer_id', $customer->id)
                             ->where('name', $catName)->first();
                 if (!$category) {
-                    // Opsional: Buat kategori jika tidak ada? Untuk sekarang kita skip jika master datanya tidak ada.
+                    $rowErrors[] = "Row {$actualRowNumber}: Event Category '{$catName}' not found for Customer '{$custCode}'.";
                     continue;
                 }
 
                 $delivGroup = \App\Models\NpcDeliveryGroup::where('name', $groupName)->first();
-                if (!$delivGroup) continue;
+                if (!$delivGroup) {
+                    $rowErrors[] = "Row {$actualRowNumber}: Delivery Group '{$groupName}' not found.";
+                    continue;
+                }
+
+                // Cari product, prioritaskan model name jika diisi
+                $productQuery = \App\Models\Product::where('part_no', $partNo);
+                if (!empty($modelName)) {
+                    $productQuery->whereHas('vehicleModel', function($q) use ($modelName) {
+                        $q->where('name', $modelName);
+                    });
+                }
+                $product = $productQuery->first();
+
+                if (!$product) {
+                    $rowErrors[] = "Row {$actualRowNumber}: Product Part No '{$partNo}' (Model: '{$modelName}') not found.";
+                    continue;
+                }
 
                 // 2. Find/Create Event (Batching by PO + Category + Group + DeliveryTo)
-                $poNo = $row[0] ?? 'PO-'.time();
+                $poNo = $poNo ?: 'PO-'.time();
                 $eventKey = $poNo . '_' . $category->id . '_' . $delivGroup->id . '_' . $deliveryTo;
                 if (!isset($eventsCreated[$eventKey])) {
                     $eventsCreated[$eventKey] = NpcEvent::create([
@@ -254,31 +287,22 @@ class NpcEventController extends Controller
 
                 // 3. Process Part
                 $deliveryDate = null;
-                if (!empty($row[4])) {
+                if (!empty($deliveryDateRaw)) {
                     try {
-                        if (is_numeric($row[4])) {
-                            $deliveryDate = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[4])->format('Y-m-d');
+                        if (is_numeric($deliveryDateRaw)) {
+                            $deliveryDate = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($deliveryDateRaw)->format('Y-m-d');
                         } else {
-                            $deliveryDate = Carbon::parse($row[4])->format('Y-m-d');
+                            $deliveryDate = Carbon::parse($deliveryDateRaw)->format('Y-m-d');
                         }
                     } catch (Exception $e) {
                         $deliveryDate = now()->format('Y-m-d');
                     }
                 }
 
-                // Cari product, prioritaskan model name jika diisi
-                $productQuery = \App\Models\Product::where('part_no', $row[1]);
-                if (!empty($modelName)) {
-                    $productQuery->whereHas('vehicleModel', function($q) use ($modelName) {
-                        $q->where('name', $modelName);
-                    });
-                }
-                $product = $productQuery->first();
-
                 $part = NpcPart::create([
                     'npc_event_id' => $event->id,
-                    'product_id' => $product ? $product->id : null,
-                    'qty' => (int) ($row[3] ?? 1),
+                    'product_id' => $product->id,
+                    'qty' => $qty,
                     'delivery_date' => $deliveryDate,
                     'status' => 'WAITING_DEPT_CONFIRM',
                 ]);
@@ -286,10 +310,27 @@ class NpcEventController extends Controller
                 $importedCount++;
             }
 
+            if (!empty($rowErrors)) {
+                \Illuminate\Support\Facades\DB::rollBack();
+                $errorList = "<ul class='list-disc pl-5 mt-2 space-y-1'>";
+                foreach (array_slice($rowErrors, 0, 10) as $err) {
+                    $errorList .= "<li>{$err}</li>";
+                }
+                if (count($rowErrors) > 10) {
+                    $errorList .= "<li>...and " . (count($rowErrors) - 10) . " more errors.</li>";
+                }
+                $errorList .= "</ul>";
+                
+                return back()->with('error_details', "<strong>Import failed due to data mismatch:</strong>" . $errorList)
+                             ->with('error', 'Import failed. Please check the details on the page.');
+            }
+
+            \Illuminate\Support\Facades\DB::commit();
             $eventCount = count($eventsCreated);
             return redirect()->route('events.index')->with('success', "Success! $eventCount Events created and $importedCount Part(s) imported from Excel.");
 
         } catch (Exception $e) {
+            \Illuminate\Support\Facades\DB::rollBack();
             return back()->with('error', 'Failed processing Excel: ' . $e->getMessage());
         }
     }
@@ -302,8 +343,8 @@ class NpcEventController extends Controller
             
             // Set Headers
             $headers = [
-                'PO NO', 'PART NO', 'PART NAME', 'QTY', 'DELV DATE (YYYY-MM-DD)', 
-                'CUSTOMER CODE', 'MODEL NAME', 'EVENT CATEGORY', 'DELIVERY GROUP', 'DELIVERY TO'
+                'PO NO', 'CUSTOMER CODE', 'MODEL NAME', 'EVENT CATEGORY', 'DELIVERY GROUP', 'DELIVERY TO',
+                'DELV DATE (YYYY-MM-DD)', 'PART NO', 'PART NAME', 'QTY'
             ];
             foreach ($headers as $index => $header) {
                 $column = chr(65 + $index);
@@ -316,8 +357,8 @@ class NpcEventController extends Controller
             
             // Add Sample Data
             $sampleData = [
-                ['PO/2026/001', 'PART-001', 'Sample Part Name', 100, '2026-05-20', 'TOYOTA', 'AVANZA', 'NEW MODEL', 'GR.1', 'CKD-PLANT'],
-                ['PO/2026/002', 'PART-002', 'Another Part', 50, '2026-05-25', 'HONDA', 'CIVIC', 'FACELIFT', 'GR.2', ''],
+                ['PO/2026/001', 'TOYOTA', 'AVANZA', 'NEW MODEL', 'GR.1', 'CKD-PLANT', '2026-05-20', 'PART-001', 'Sample Part Name', 100],
+                ['PO/2026/002', 'HONDA', 'CIVIC', 'FACELIFT', 'GR.2', '', '2026-05-25', 'PART-002', 'Another Part', 50],
             ];
             
             foreach ($sampleData as $rowIndex => $rowData) {

@@ -229,13 +229,15 @@
             `;
             container.insertAdjacentHTML('beforeend', itemHtml);
             updateSequenceNumbers();
+            $(document).trigger('select2:reinit', container);
         });
 
-        container.addEventListener('change', function(e) {
-            if (e.target.classList.contains('process-select')) {
-                const processId = e.target.value;
-                const deptSelect = e.target.closest('.process-item').querySelector('.department-select');
-                deptSelect.innerHTML = getDepartmentOptions(processId);
+        $(container).on('change', '.process-select', function(e) {
+            const processId = e.target.value;
+            const deptSelect = e.target.closest('.process-item').querySelector('.department-select');
+            deptSelect.innerHTML = getDepartmentOptions(processId);
+            if ($(deptSelect).hasClass('select2-hidden-accessible')) {
+                $(deptSelect).trigger('change');
             }
         });
 

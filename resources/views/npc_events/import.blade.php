@@ -14,6 +14,15 @@
     <form action="{{ route('events.import.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="p-6 space-y-6">
+            @if(session('error_details'))
+                <div class="mb-4 p-4 text-red-700 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800" role="alert">
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> {!! session('error_details') !!}
+                </div>
+            @elseif(session('error'))
+                <div class="mb-4 p-4 text-red-700 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800" role="alert">
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> {!! session('error') !!}
+                </div>
+            @endif
 
             <div class="bg-blue-50 dark:bg-blue-900/30 p-4 border border-blue-100 dark:border-blue-800 text-sm text-blue-800 dark:text-blue-300">
                 <div class="flex justify-between items-center mb-3">

@@ -14,9 +14,13 @@
     <form action="{{ route('master.checksheets.import.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="p-6">
-            @if(session('error'))
+            @if(session('error_details'))
                 <div class="mb-4 p-4 text-red-700 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800" role="alert">
-                    <i class="fa-solid fa-circle-exclamation mr-1"></i> {{ session('error') }}
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> {!! session('error_details') !!}
+                </div>
+            @elseif(session('error'))
+                <div class="mb-4 p-4 text-red-700 bg-red-100 dark:bg-red-900/30 border border-red-200 dark:border-red-800" role="alert">
+                    <i class="fa-solid fa-circle-exclamation mr-1"></i> {!! session('error') !!}
                 </div>
             @endif
 
@@ -24,8 +28,9 @@
                 <h3 class="text-sm font-bold text-blue-800 dark:text-blue-300 mb-2">Instructions:</h3>
                 <ul class="list-disc pl-5 text-sm text-blue-700 dark:text-blue-400 space-y-1">
                     <li>Download the template file to see the required format.</li>
-                    <li>Fill in <strong>PART NO</strong>, <strong>CHECKPOINT NUMBER</strong> (or <strong>POINT CHECK NAME</strong>), and <strong>CUSTOM STANDARD</strong>.</li>
-                    <li>Make sure the Part No and Checkpoint already exist in the system.</li>
+                    <li>Fill in <strong>PART NO</strong>, <strong>CHECKPOINT NUMBER</strong>, and <strong>CUSTOM STANDARD</strong>.</li>
+                    <li>The available <strong>Checkpoints</strong> are listed on the right side of the template (Columns E & F) as a reference. You can easily copy the numbers from there.</li>
+                    <li>Make sure the Part No already exists in the system.</li>
                     <li><strong>Important:</strong> Uploading will <strong class="text-red-600">REPLACE</strong> all existing checkpoints for any Part No included in the file.</li>
                 </ul>
                 <div class="mt-4">

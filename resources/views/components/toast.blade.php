@@ -6,7 +6,7 @@
     /**
      * Global Toast Function (SweetAlert2)
      */
-    window.toast = function(icon, title, text) {
+    window.toast = function(icon, title, message, isHtml = true) {
         const isDark = document.documentElement.classList.contains('dark');
         const theme = isDark ? {
             bg: 'rgba(30, 41, 59, 0.95)',
@@ -22,15 +22,14 @@
             icon: { success: '#16a34a', error: '#dc2626', warning: '#d97706', info: '#2563eb' }
         };
         
-        Swal.fire({
+        let swalOptions = {
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
-            timer: 3000,
+            timer: 4500,
             timerProgressBar: true,
             icon,
             title,
-            text,
             iconColor: theme.icon[icon] || theme.icon.info,
             background: theme.bg,
             color: theme.fg,
@@ -45,7 +44,15 @@
                 const popup = t.querySelector('.swal2-popup');
                 if (popup) popup.style.borderColor = theme.border;
             }
-        });
+        };
+
+        if (isHtml) {
+            swalOptions.html = message;
+        } else {
+            swalOptions.text = message;
+        }
+        
+        Swal.fire(swalOptions);
     }
 
     /**
