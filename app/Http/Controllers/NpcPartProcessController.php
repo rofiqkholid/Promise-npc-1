@@ -79,10 +79,14 @@ class NpcPartProcessController extends Controller
             'routing' => 'nullable|array',
             'routing.*.process_name' => 'required|string',
             'routing.*.department_id' => 'required|exists:npc_departments,id',
-            'routing.*.target_completion_date' => 'required|date',
+            'routing.*.target_completion_date' => 'required|date|before_or_equal:' . $part->delivery_date,
             'routing.*.sequence_order' => 'required|integer',
-            'qc_target_date' => 'nullable|date',
-            'mgm_target_date' => 'nullable|date',
+            'qc_target_date' => 'nullable|date|before_or_equal:' . $part->delivery_date,
+            'mgm_target_date' => 'nullable|date|before_or_equal:' . $part->delivery_date,
+        ], [
+            'routing.*.target_completion_date.before_or_equal' => 'Target completion date cannot exceed the delivery target date.',
+            'qc_target_date.before_or_equal' => 'QC target date cannot exceed the delivery target date.',
+            'mgm_target_date.before_or_equal' => 'MGM target date cannot exceed the delivery target date.',
         ]);
 
         // Clear existing un-finished processes or resync all if you prefer pure overwrite
