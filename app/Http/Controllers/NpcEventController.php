@@ -259,7 +259,7 @@ class NpcEventController extends Controller
                 }
 
                 // Cari product, prioritaskan model name jika diisi
-                $productQuery = \App\Models\Product::where('part_no', $partNo);
+                $productQuery = \App\Models\Product::with('docPackage')->where('part_no', $partNo);
                 if (!empty($modelName)) {
                     $productQuery->whereHas('vehicleModel', function($q) use ($modelName) {
                         $q->where('name', $modelName);
@@ -299,12 +299,19 @@ class NpcEventController extends Controller
                     }
                 }
 
+                // Tentukan drawing_revision_id saat ini
+                $currentRevisionId = null;
+                if ($product && $product->docPackage) {
+                    $currentRevisionId = $product->docPackage->current_revision_id;
+                }
+
                 $part = NpcPart::create([
                     'npc_event_id' => $event->id,
                     'product_id' => $product->id,
+                    'part_revision_id' => $currentRevisionId,
                     'qty' => $qty,
                     'delivery_date' => $deliveryDate,
-                    'status' => 'WAITING_DEPT_CONFIRM',
+                    'status' => 'PO_REGISTERED',
                 ]);
                 
                 $importedCount++;
