@@ -112,7 +112,10 @@
                                             </div>
                                             <div class="flex flex-col">
                                                 <span class="text-[11px] font-bold {{ $textColor }} transition-colors">{{ optional($process->process)->process_name ?? 'Unknown Process' }}</span>
-                                                <span class="text-[9px] text-gray-500 {{ $isFinished ? 'opacity-50' : '' }}"><i class="fa-solid fa-building-user text-[8px] mr-0.5"></i> {{ optional($process->department)->name ?? 'Unknown Department' }}</span>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="text-[9px] text-gray-500 {{ $isFinished ? 'opacity-50' : '' }}"><i class="fa-solid fa-building-user text-[8px] mr-0.5"></i> {{ optional($process->department)->name ?? 'Unknown Department' }}</span>
+                                                    <span class="text-[9px] text-gray-500 {{ $isFinished ? 'opacity-50' : '' }}"><i class="fa-regular fa-calendar-check text-[8px] mr-0.5"></i> Target: {{ $process->target_completion_date ? \Carbon\Carbon::parse($process->target_completion_date)->format('d M') : '-' }}</span>
+                                                </div>
                                             </div>
                                         </div>
                                     @endforeach
@@ -135,7 +138,7 @@
                                         $hasFinishedProcess = $part->processes->where('status', 'FINISHED')->count() > 0;
                                     @endphp
                                     <button type="button"
-                                        onclick="openCompleteModal('{{ $part->hashed_id }}', '{{ $activeProcess->hashed_id }}', '{{ optional($activeProcess->process)->process_name }}', '{{ optional($activeProcess->department)->name }}', '{{ route('tracking.process.complete', $part->hashed_id) }}')"
+                                        onclick="openCompleteModal('{{ $part->hashed_id }}', '{{ $activeProcess->hashed_id }}', '{{ optional($activeProcess->process)->process_name }}', '{{ optional($activeProcess->department)->name }}', '{{ $activeProcess->target_completion_date ? \Carbon\Carbon::parse($activeProcess->target_completion_date)->format('d M Y') : '-' }}', '{{ route('tracking.process.complete', $part->hashed_id) }}', {{ $part->qty }})"
                                         class="inline-flex px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white shadow-sm font-bold transition items-center gap-2 text-[11px] mb-2 w-full justify-center" style="background-color: #f59e0b;">
                                         Complete {{ optional($activeProcess->process)->process_name }} <i class="fa-solid fa-forward-step"></i>
                                     </button>
@@ -218,6 +221,10 @@
                         <span class="text-gray-400 dark:text-gray-500 text-[10px]">IN DEPARTMENT</span>
                         <span id="modal-department-name" class="font-bold text-gray-600 dark:text-gray-300 uppercase text-[10px]"></span>
                     </div>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-gray-500 dark:text-gray-400 text-[10px]"><i class="fa-solid fa-crosshairs"></i> Target Deadline:</span>
+                        <span id="modal-target-date" class="font-bold text-gray-700 dark:text-gray-200 text-[10px]"></span>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
@@ -225,12 +232,12 @@
                         <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Total Qty Completed <span class="text-red-500">*</span></label>
                         <input type="number" name="actual_qty" required min="0" placeholder="Pcs Count"
                             class="w-full text-sm border-gray-300 dark:border-gray-600 shadow-sm focus:border-amber-500 focus:ring-amber-500 dark:bg-gray-700 dark:text-white">
-                        <p class="text-[9px] text-gray-400 mt-1 italic">Total actual parts (Actual Qty).</p>
+                        <p class="text-[9px] text-gray-400 mt-1 italic" id="modal-qty-helper">Total actual parts (Actual Qty).</p>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">Actual Completion Date <span class="text-red-500">*</span></label>
-                        <input type="date" name="actual_completion_date" required
-                            class="w-full text-sm border-gray-300 dark:border-gray-600 shadow-sm focus:border-amber-500 focus:ring-amber-500 dark:bg-gray-700 dark:text-white">
+                        <input type="date" name="actual_completion_date" required readonly
+                            class="w-full text-sm border-gray-300 dark:border-gray-600 shadow-sm focus:border-amber-500 focus:ring-amber-500 bg-gray-100 dark:bg-gray-700 dark:text-white cursor-not-allowed text-gray-600">
                     </div>
                 </div>
 
@@ -259,12 +266,17 @@
 
 @push('scripts')
 <script>
-function openCompleteModal(partId, processId, processName, departmentName, actionUrl) {
+function openCompleteModal(partId, processId, processName, departmentName, targetDate, actionUrl, partQty) {
     document.getElementById('form-complete').action = actionUrl;
     document.getElementById('modal-process-id').value = processId;
     document.getElementById('modal-process-name-title').textContent = processName;
     document.getElementById('modal-process-name').textContent = processName;
     document.getElementById('modal-department-name').textContent = departmentName;
+    document.getElementById('modal-target-date').textContent = targetDate;
+    
+    const qtyInput = document.querySelector('#modal-complete input[name="actual_qty"]');
+    qtyInput.min = partQty;
+    document.getElementById('modal-qty-helper').innerHTML = 'Minimal sama dengan Planning PO: <b>' + partQty + ' PCS</b>.';
     
     document.getElementById('modal-complete').classList.remove('hidden');
     // Set today as default

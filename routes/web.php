@@ -202,6 +202,7 @@ Route::middleware(['auth'])->group(function () {
     // Quality Checksheet Routes
     Route::get('/tracking/products/{product}/checksheet-setup', [ProductChecksheetSetupController::class, 'edit'])->name('checksheets.setup.edit');
     Route::post('/tracking/products/{product}/checksheet-setup', [ProductChecksheetSetupController::class, 'update'])->name('checksheets.setup.update');
+    Route::get('/tracking/products/{product}/checksheet-setup/preview', [ProductChecksheetSetupController::class, 'preview'])->name('checksheets.setup.preview');
     Route::get('/tracking/{part}/checksheet/create', [NpcChecksheetController::class, 'create'])->name('checksheets.create');
     Route::get('/tracking/{part}/print-label', [NpcChecksheetController::class, 'printLabel'])->name('checksheets.print-label');
     Route::get('/checksheets/{checksheet}/preview', [NpcChecksheetController::class, 'preview'])->name('checksheets.preview');

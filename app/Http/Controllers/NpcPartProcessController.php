@@ -89,6 +89,41 @@ class NpcPartProcessController extends Controller
             'mgm_target_date.before_or_equal' => 'MGM target date cannot exceed the delivery target date.',
         ]);
 
+        if ($request->has('routing') && is_array($request->routing)) {
+            $routings = collect($request->routing)->sortBy('sequence_order')->values();
+            $previousDate = null;
+            $previousProcessName = null;
+            
+            foreach ($routings as $route) {
+                $currentDate = $route['target_completion_date'];
+                if ($previousDate && $currentDate < $previousDate) {
+                    return back()->withErrors(['routing' => "Target date for process '{$route['process_name']}' ({$currentDate}) cannot be earlier than previous process '{$previousProcessName}' ({$previousDate})."])->withInput();
+                }
+                $previousDate = $currentDate;
+                $previousProcessName = $route['process_name'];
+            }
+
+            $qcDate = $request->qc_target_date;
+            $mgmDate = $request->mgm_target_date;
+
+            if ($qcDate && $previousDate && $qcDate < $previousDate) {
+                return back()->withErrors(['qc_target_date' => "Quality Check (QE) target date ({$qcDate}) cannot be earlier than the last process '{$previousProcessName}' ({$previousDate})."])->withInput();
+            }
+
+            $qcMinDate = $qcDate ?: $previousDate;
+            if ($mgmDate && $qcMinDate && $mgmDate < $qcMinDate) {
+                $compareName = $qcDate ? 'Quality Check (QE)' : "the last process '{$previousProcessName}'";
+                return back()->withErrors(['mgm_target_date' => "Management Check (MGM) target date ({$mgmDate}) cannot be earlier than {$compareName} ({$qcMinDate})."])->withInput();
+            }
+        } else {
+            $qcDate = $request->qc_target_date;
+            $mgmDate = $request->mgm_target_date;
+
+            if ($qcDate && $mgmDate && $mgmDate < $qcDate) {
+                return back()->withErrors(['mgm_target_date' => "Management Check (MGM) target date ({$mgmDate}) cannot be earlier than Quality Check (QE) target date ({$qcDate})."])->withInput();
+            }
+        }
+
         // Clear existing un-finished processes or resync all if you prefer pure overwrite
         // For safety, we should only allow editing if they haven't started, or smartly merge.
         // For simplicity now: delete all and recreate (assuming this is done during planning phase)

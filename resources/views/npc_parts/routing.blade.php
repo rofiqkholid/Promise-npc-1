@@ -36,7 +36,20 @@
                 </div>
             </div>
 
-            <form action="{{ route('parts.routing.update', $part->hashed_id) }}" method="POST">
+            @if($errors->any())
+                <div class="mb-6 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md">
+                    <div class="flex items-center gap-2 text-red-600 dark:text-red-400 font-semibold mb-2">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Validation Error
+                    </div>
+                    <ul class="list-disc list-inside text-sm text-red-600 dark:text-red-400">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form id="routing-form" action="{{ route('parts.routing.update', $part->hashed_id) }}" method="POST">
                 @csrf
                 
                 <div class="flex justify-between items-center mb-3">
@@ -126,6 +139,56 @@
             } else {
                 emptyState.classList.add('hidden');
             }
+            updateDateConstraints();
+        }
+
+        function updateDateConstraints() {
+            const rows = container.querySelectorAll('tr');
+            let minDate = null;
+            
+            rows.forEach((row) => {
+                const dateInput = row.querySelector('input[type="date"]');
+                if (dateInput) {
+                    if (minDate) {
+                        dateInput.setAttribute('min', minDate);
+                    } else {
+                        dateInput.removeAttribute('min');
+                    }
+                    
+                    if (dateInput.value) {
+                        minDate = dateInput.value;
+                    } else if (dateInput.getAttribute('min')) {
+                        minDate = dateInput.getAttribute('min');
+                    }
+                }
+            });
+
+            // Update QC & MGM constraints
+            const qcDateInput = document.querySelector('input[name="qc_target_date"]');
+            const mgmDateInput = document.querySelector('input[name="mgm_target_date"]');
+
+            if (qcDateInput) {
+                if (minDate) {
+                    qcDateInput.setAttribute('min', minDate);
+                } else {
+                    qcDateInput.removeAttribute('min');
+                }
+            }
+
+            if (mgmDateInput) {
+                let mgmMinDate = minDate;
+                if (qcDateInput && qcDateInput.value) {
+                    mgmMinDate = qcDateInput.value;
+                } else if (qcDateInput && qcDateInput.getAttribute('min')) {
+                    mgmMinDate = qcDateInput.getAttribute('min');
+                }
+
+                if (mgmMinDate) {
+                    mgmDateInput.setAttribute('min', mgmMinDate);
+                } else {
+                    mgmDateInput.removeAttribute('min');
+                }
+            }
         }
 
         function createRow(data = null) {
@@ -170,6 +233,21 @@
             emptyState.classList.remove('hidden');
         }
 
+        // Attach event listener to update constraints when a date is changed
+        container.addEventListener('change', function(e) {
+            if (e.target && e.target.type === 'date') {
+                updateDateConstraints();
+            }
+        });
+
+        const qcDateInput = document.querySelector('input[name="qc_target_date"]');
+        if (qcDateInput) {
+            qcDateInput.addEventListener('change', updateDateConstraints);
+        }
+
+        // Initialize constraints on load
+        updateDateConstraints();
+
         if (typeof Sortable !== 'undefined') {
             new Sortable(container, {
                 handle: '.cursor-move',
@@ -180,6 +258,52 @@
                 }
             });
         }
+
+        document.getElementById('routing-form').addEventListener('submit', function(e) {
+            const rows = container.querySelectorAll('tr');
+            let previousDate = null;
+            let previousProcessName = null;
+            
+            for(let i=0; i<rows.length; i++) {
+                const row = rows[i];
+                const dateInput = row.querySelector('input[type="date"]');
+                const processName = row.querySelector('td:nth-child(2) span').textContent.trim();
+                
+                if(!dateInput || !dateInput.value) continue;
+                
+                if(previousDate && dateInput.value < previousDate) {
+                    e.preventDefault();
+                    alert(`Urutan tanggal tidak valid!\nTanggal target untuk proses '${processName}' tidak boleh lebih awal dari proses sebelumnya '${previousProcessName}'.`);
+                    dateInput.focus();
+                    return false;
+                }
+                previousDate = dateInput.value;
+                previousProcessName = processName;
+            }
+
+            const qcDateInput = document.querySelector('input[name="qc_target_date"]');
+            const mgmDateInput = document.querySelector('input[name="mgm_target_date"]');
+
+            if (qcDateInput && qcDateInput.value && previousDate && qcDateInput.value < previousDate) {
+                e.preventDefault();
+                alert(`Urutan tanggal tidak valid!\nTanggal target untuk Quality Check (QE) tidak boleh lebih awal dari proses terakhir '${previousProcessName}'.`);
+                qcDateInput.focus();
+                return false;
+            }
+
+            let qcMinDate = previousDate;
+            if (qcDateInput && qcDateInput.value) {
+                qcMinDate = qcDateInput.value;
+            }
+
+            if (mgmDateInput && mgmDateInput.value && qcMinDate && mgmDateInput.value < qcMinDate) {
+                e.preventDefault();
+                let compareName = (qcDateInput && qcDateInput.value) ? 'Quality Check (QE)' : (previousProcessName ? `proses terakhir '${previousProcessName}'` : 'proses sebelumnya');
+                alert(`Urutan tanggal tidak valid!\nTanggal target untuk Management Check (MGM) tidak boleh lebih awal dari ${compareName}.`);
+                mgmDateInput.focus();
+                return false;
+            }
+        });
     });
 </script>
 @endpush

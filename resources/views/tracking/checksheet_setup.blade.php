@@ -196,6 +196,11 @@
             <a href="{{ route('master.checksheets.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition shadow-sm text-sm font-medium">
                 Cancel
             </a>
+            @if($product->mappedCheckpoints->isNotEmpty())
+                <a href="{{ route('checksheets.setup.preview', $product->hashed_id) }}" target="_blank" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white transition shadow-sm font-bold flex items-center gap-2 text-sm shadow-md">
+                    <i class="fa-solid fa-eye"></i> Preview Checksheet
+                </a>
+            @endif
             <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white transition shadow-sm font-bold flex items-center gap-2 text-sm shadow-md">
                 <i class="fa-solid fa-floppy-disk"></i> Save Configuration
             </button>

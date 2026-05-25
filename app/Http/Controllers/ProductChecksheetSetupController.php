@@ -190,6 +190,37 @@ class ProductChecksheetSetupController extends Controller
         return redirect()->route('master.checksheets.index')->with('success', 'Master Checksheet for Part ' . $product->part_no . ' successfully saved!');
     }
 
+    public function preview(Product $product)
+    {
+        $product->load('mappedCheckpoints.masterCheckpoint', 'productDetail', 'specChildParts.stdPart', 'docPackage.currentRevision', 'vehicleModel.customer');
+
+        if ($product->mappedCheckpoints->isEmpty()) {
+            return back()->with('error', 'Part checksheet has not been mapped yet. Cannot preview.');
+        }
+
+        $fakeChecksheet = new \App\Models\NpcChecksheet();
+        $fakeChecksheet->final_result = 'Preview Mode';
+        
+        $details = collect();
+        foreach ($product->mappedCheckpoints as $mapped) {
+            if ($mapped->masterCheckpoint) {
+                $detail = new \App\Models\NpcChecksheetDetail([
+                    'point_check' => $mapped->masterCheckpoint->check_item,
+                    'standard' => $mapped->custom_standard ?? $mapped->masterCheckpoint->standard,
+                    'row_result' => null,
+                    'samples' => [],
+                ]);
+                $details->push($detail);
+            }
+        }
+        $fakeChecksheet->setRelation('details', $details);
+
+        $part = null;
+        $checksheet = $fakeChecksheet;
+
+        return view('npc_checksheets.preview', compact('checksheet', 'part', 'product'));
+    }
+
     public function importForm()
     {
         return view('master.product_checksheets.import');

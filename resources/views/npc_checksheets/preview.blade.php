@@ -164,7 +164,7 @@
                 <td colspan="2" class="font-bold">Model</td>
                 <td colspan="7" class="text-center font-bold text-blue">{{ optional(optional($product)->vehicleModel)->name ?? '-' }}</td>
                 <td colspan="4">Event</td>
-                <td colspan="4" class="text-center text-blue">{{ optional(optional($part->event)->customerCategory)->name ?? '-' }}</td>
+                <td colspan="4" class="text-center text-blue">{{ optional(optional(optional($part)->event)->customerCategory)->name ?? '-' }}</td>
             </tr>
             
             <!-- Row 6 -->
@@ -172,7 +172,7 @@
                 <td colspan="2" class="font-bold">Part Name</td>
                 <td colspan="7" class="text-center font-bold text-blue">{{ optional($product)->part_name ?? '-' }}</td>
                 <td colspan="4">PO Number</td>
-                <td colspan="4" class="text-center text-blue">{{ optional($part->event)->po_no ?? '-' }}</td>
+                <td colspan="4" class="text-center text-blue">{{ optional(optional($part)->event)->po_no ?? '-' }}</td>
             </tr>
             
             <!-- Row 7 -->
@@ -182,14 +182,14 @@
                 <td colspan="1" class="font-bold text-center">EO No.</td>
                 <td colspan="5" class="text-center text-blue">{{ optional(optional(optional($product)->docPackage)->currentRevision)->ecn_no ?? '-' }}</td>
                 <td colspan="4">Quantity Order (pcs)</td>
-                <td colspan="4" class="text-center text-blue">{{ $part->qty }}</td>
+                <td colspan="4" class="text-center text-blue">{{ optional($part)->qty ?? '-' }}</td>
             </tr>
             
             <!-- Row 8 -->
             <tr>
                 <td colspan="2" class="font-bold">Process</td>
                 @php
-                    $processNames = $part->processes ? $part->processes->map(function($p) { return optional($p->process)->process_name; })->filter()->implode(', ') : '-';
+                    $processNames = optional($part)->processes ? optional($part)->processes->map(function($p) { return optional($p->process)->process_name; })->filter()->implode(', ') : '-';
                     if (empty($processNames)) $processNames = '-';
                 @endphp
                 <td colspan="1" class="text-center text-blue">{{ $processNames }}</td>

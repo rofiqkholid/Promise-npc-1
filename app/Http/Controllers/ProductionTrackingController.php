@@ -144,9 +144,11 @@ class ProductionTrackingController extends Controller
         $request->validate([
             'process_id'              => 'required',
             'actual_completion_date'  => 'required|date',
-            'actual_qty'              => 'required|integer|min:0',
+            'actual_qty'              => 'required|integer|min:' . $part->qty,
             'photo'                   => 'required|image|mimes:jpeg,png,jpg,gif|max:5120',
             'production_notes'        => 'nullable|string|max:500',
+        ], [
+            'actual_qty.min' => 'Total Qty Completed cannot be less than Planning PO (' . $part->qty . ' PCS).'
         ]);
 
         // Decode hashed process_id

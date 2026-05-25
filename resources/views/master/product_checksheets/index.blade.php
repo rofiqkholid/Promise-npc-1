@@ -126,9 +126,16 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 text-right align-middle">
-                            <a href="{{ route('checksheets.setup.edit', $product->hashed_id) }}" class="inline-flex px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-500 font-medium transition items-center gap-1.5 text-xs shadow-sm border border-blue-200 dark:border-blue-800/50 hover:border-transparent">
-                                <i class="fa-solid fa-pencil"></i> Mapping Checksheet
-                            </a>
+                            <div class="flex items-center justify-end gap-2">
+                                @if($product->mappedCheckpoints->isNotEmpty())
+                                    <a href="{{ route('checksheets.setup.preview', $product->hashed_id) }}" target="_blank" class="inline-flex px-3 py-1.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-500 font-medium transition items-center gap-1.5 text-xs shadow-sm border border-emerald-200 dark:border-emerald-800/50 hover:border-transparent" title="Preview Checksheet">
+                                        <i class="fa-solid fa-eye"></i> Preview
+                                    </a>
+                                @endif
+                                <a href="{{ route('checksheets.setup.edit', $product->hashed_id) }}" class="inline-flex px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 hover:bg-blue-600 hover:text-white dark:hover:bg-blue-500 font-medium transition items-center gap-1.5 text-xs shadow-sm border border-blue-200 dark:border-blue-800/50 hover:border-transparent">
+                                    <i class="fa-solid fa-pencil"></i> Mapping Checksheet
+                                </a>
+                            </div>
                         </td>
                     </tr>
                     @empty
