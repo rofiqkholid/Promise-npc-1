@@ -251,14 +251,7 @@ class ProductChecksheetSetupController extends Controller
                 $sheet->getStyle($column . '1')->getFont()->setBold(true);
             }
             
-            // Add Sample Data
-            $sheet->setCellValue('A2', 'PART-001');
-            if ($masterPoints->count() > 0) {
-                $sheet->setCellValue('B2', 'No Scratch');
-                if ($masterPoints->count() > 1) {
-                    $sheet->setCellValue('C2', '-');
-                }
-            }
+
             
             // Auto size columns
             for ($i = 1; $i <= $colIndex; $i++) {
