@@ -341,15 +341,18 @@
 
             <!-- Footer -->
             <div class="label-footer">
-                <div>
+                <div style="flex: 1;">
                     <span class="field-label">Inspected By &amp; Date</span>
-                    <span class="field-value">
+                    <span class="field-value" style="margin-bottom: 6px; display:block;">
                         {{ optional(optional($part->checksheet)->qeChecker)->name ?? 'QC Inspector' }}
                         &nbsp;|&nbsp;
                         {{ optional($part->checksheet)->qe_check_date ? \Carbon\Carbon::parse($part->checksheet->qe_check_date)->format('d M Y') : \Carbon\Carbon::now()->format('d M Y') }}
                     </span>
+                    <div style="border: 1px solid #94a3b8; width: 120px; height: 35px; border-radius: 4px; display: flex; flex-direction: column; justify-content: flex-end; padding: 3px 4px; background: #f8fafc;">
+                        <span style="font-size: 7px; font-weight: bold; color: #64748b; text-transform: uppercase;">QC Signature</span>
+                    </div>
                 </div>
-                <div class="text-right">
+                <div class="text-right" style="display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end;">
                     <span class="field-label" style="text-align:right">Piece No</span>
                     <div class="piece-no">{{ $i }}<span class="piece-total">/{{ $part->qty }}</span></div>
                 </div>
