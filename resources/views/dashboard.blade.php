@@ -287,12 +287,16 @@ document.addEventListener('DOMContentLoaded', function() {
                         borderWidth: 2,
                         tension: 0.3,
                         pointBackgroundColor: '#3b82f6',
+                        clip: false,
                         order: 1,
                         yAxisID: 'y1'
                     }
                 ]
             },
             options: {
+                layout: {
+                    padding: { top: 10 }
+                },
                 responsive: true,
                 maintainAspectRatio: false,
                 plugins: {

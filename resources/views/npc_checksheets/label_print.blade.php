@@ -223,6 +223,32 @@
             color: #6b7280;
         }
 
+        /* ===== SCALING FOR 3 & 4 COLUMNS ===== */
+        .cols-3 .label-card { padding: 10px; min-height: 160px; }
+        .cols-3 .label-header h1 { font-size: 12px; }
+        .cols-3 .label-header .company { font-size: 7px; }
+        .cols-3 .label-badge { font-size: 9px; padding: 3px 6px; }
+        .cols-3 .part-no { font-size: 16px; }
+        .cols-3 .part-name { font-size: 9px; }
+        .cols-3 .field-label { font-size: 6px; }
+        .cols-3 .field-value { font-size: 8px; }
+        .cols-3 .piece-no { font-size: 14px; }
+        .cols-3 .piece-total { font-size: 8px; }
+        .cols-3 .qc-signature-box { width: 90px !important; height: 28px !important; }
+
+        .cols-4 .label-card { padding: 8px; min-height: 140px; }
+        .cols-4 .label-header h1 { font-size: 10px; }
+        .cols-4 .label-header .company { font-size: 6px; }
+        .cols-4 .label-badge { font-size: 8px; padding: 2px 4px; }
+        .cols-4 .part-no { font-size: 13px; }
+        .cols-4 .part-name { font-size: 8px; margin-bottom: 4px; }
+        .cols-4 .field-label { font-size: 5px; }
+        .cols-4 .field-value { font-size: 7px; }
+        .cols-4 .piece-no { font-size: 12px; }
+        .cols-4 .piece-total { font-size: 7px; }
+        .cols-4 .qc-signature-box { width: 70px !important; height: 24px !important; }
+        .cols-4 .qc-signature-box span { font-size: 5px !important; }
+
         /* ===== PRINT STYLES ===== */
         @media print {
             @page {
@@ -287,7 +313,7 @@
     </div>
 
     <!-- ===== LABELS GRID ===== -->
-    <div id="labels-wrapper">
+    <div id="labels-wrapper" class="cols-2">
         @for($i = 1; $i <= $part->qty; $i++)
         <div class="label-card">
             <!-- Header -->
@@ -348,7 +374,7 @@
                         &nbsp;|&nbsp;
                         {{ optional($part->checksheet)->qe_check_date ? \Carbon\Carbon::parse($part->checksheet->qe_check_date)->format('d M Y') : \Carbon\Carbon::now()->format('d M Y') }}
                     </span>
-                    <div style="border: 1px solid #94a3b8; width: 120px; height: 35px; border-radius: 4px; display: flex; flex-direction: column; justify-content: flex-end; padding: 3px 4px; background: #f8fafc;">
+                    <div class="qc-signature-box" style="border: 1px solid #94a3b8; width: 120px; height: 35px; border-radius: 4px; display: flex; flex-direction: column; justify-content: flex-end; padding: 3px 4px; background: #f8fafc;">
                         <span style="font-size: 7px; font-weight: bold; color: #64748b; text-transform: uppercase;">QC Signature</span>
                     </div>
                 </div>
@@ -366,6 +392,8 @@
         function setColumns(cols) {
             const wrapper = document.getElementById('labels-wrapper');
             wrapper.style.gridTemplateColumns = 'repeat(' + cols + ', 1fr)';
+            wrapper.className = 'cols-' + cols; // Apply class for scaling
+            
             // Simpan pilihan ke CSS variable untuk media print
             document.documentElement.style.setProperty('--print-cols', cols);
             // Inject print style override

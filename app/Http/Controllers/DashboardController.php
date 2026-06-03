@@ -37,7 +37,7 @@ class DashboardController extends Controller
 
         // Chart 1: Event Progress (Total Items vs Finished Items)
         // Get 10 most recent active events (expanded for full width)
-        $recentEvents = NpcEvent::with(['customerCategory', 'parts' => function($q) {
+        $recentEvents = NpcEvent::with(['customerCategory', 'deliveryGroup', 'parts' => function($q) {
             $q->select('id', 'npc_event_id', 'status', 'product_id')->with(['product.customer', 'product.vehicleModel']);
         }])
         ->orderBy('created_at', 'desc')
@@ -55,7 +55,13 @@ class DashboardController extends Controller
             // Use Customer + PO No as label
             $poLabel = $ev->po_no ? $ev->po_no : 'EV-'.$ev->id;
             $custName = $ev->customerCategory ? $ev->customerCategory->name : 'Unknown';
+            $grName = $ev->deliveryGroup ? $ev->deliveryGroup->name : '';
             
+            $firstLineLabel = $custName . ' (' . $poLabel . ')';
+            if ($grName) {
+                $firstLineLabel .= ' - ' . $grName;
+            }
+
             // Get unique customers and models from parts
             $customers = [];
             $models = [];
@@ -77,7 +83,7 @@ class DashboardController extends Controller
 
             // Multi-line label for Chart.js
             $eventLabels[] = [
-                $custName . ' (' . $poLabel . ')',
+                $firstLineLabel,
                 $customerStr . ' | ' . $modelStr
             ];
             
