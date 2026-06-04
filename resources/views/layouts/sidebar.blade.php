@@ -17,19 +17,40 @@
 
         @foreach($sidebarMenus as $menu)
             @php
+                $crudSuffixes = [
+                    '.create', '.store', '.edit', '.update', '.show', '.destroy', 
+                    '.approval', '.history', '.detail', '.process',
+                    '.import', '.import.template', '.import.store', '.export'
+                ];
+                
                 $isParentActive = false;
                 if ($menu->route !== '#') {
-                    $baseRoute = preg_replace('/\.index$/', '', $menu->route);
-                    if (request()->routeIs($menu->route) || request()->routeIs($baseRoute . '.*')) {
+                    if (request()->routeIs($menu->route)) {
                         $isParentActive = true;
+                    } else {
+                        $baseRoute = preg_replace('/\.index$/', '', $menu->route);
+                        foreach ($crudSuffixes as $suffix) {
+                            if (request()->routeIs($baseRoute . $suffix)) {
+                                $isParentActive = true;
+                                break;
+                            }
+                        }
                     }
                 }
-                if ($menu->children->count() > 0) {
+                
+                if (!$isParentActive && $menu->children->count() > 0) {
                     foreach($menu->children as $child) {
-                        $baseChildRoute = preg_replace('/\.index$/', '', $child->route);
-                        if (request()->routeIs($child->route) || request()->routeIs($baseChildRoute . '.*')) {
+                        if (request()->routeIs($child->route)) {
                             $isParentActive = true;
                             break;
+                        } else {
+                            $baseChildRoute = preg_replace('/\.index$/', '', $child->route);
+                            foreach ($crudSuffixes as $suffix) {
+                                if (request()->routeIs($baseChildRoute . $suffix)) {
+                                    $isParentActive = true;
+                                    break 2;
+                                }
+                            }
                         }
                     }
                 }
@@ -66,13 +87,17 @@
                          x-cloak>
                         @foreach($menu->children as $child)
                             @php
-                            $baseChildRoute = preg_replace('/\.index$/', '', $child->route);
-                            // Wildcard only for CRUD nested routes (e.g. master.customers.index → master.customers.*)
-                            // NOT for simple prefixes (e.g. tracking.index → tracking would match all tracking.*)
-                            $isCrudRoute = str_contains($child->route, '.index') && str_contains($baseChildRoute, '.');
-                            $isActive = request()->routeIs($child->route)
-                                || ($isCrudRoute && request()->routeIs($baseChildRoute . '.*'));
-                        @endphp
+                                $baseChildRoute = preg_replace('/\.index$/', '', $child->route);
+                                $isActive = request()->routeIs($child->route);
+                                if (!$isActive) {
+                                    foreach ($crudSuffixes as $suffix) {
+                                        if (request()->routeIs($baseChildRoute . $suffix)) {
+                                            $isActive = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                            @endphp
                             <a href="{{ route($child->route) }}"
                                 class="flex items-center gap-3 px-3 py-2 transition-all duration-200 text-sm {{ $isActive ? 'text-primary-700 dark:text-primary-400 font-medium bg-primary-100/50 dark:bg-primary-900/20' : 'text-slate-600 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-50 dark:hover:bg-gray-700/50' }}">
                                 <span class="w-1.5 h-1.5 {{ $isActive ? 'bg-primary-700 dark:bg-primary-400' : 'bg-slate-400 dark:bg-gray-600' }}"></span>
@@ -124,3 +149,57 @@
         </a>
     </div>
 </div>
+
+<script>
+    (function() {
+        const sidebarNav = document.querySelector('.custom-scrollbar');
+        if (!sidebarNav) return;
+        
+        const savedScroll = sessionStorage.getItem('sidebarScrollPos');
+        let isRestoring = false;
+
+        if (savedScroll !== null) {
+            isRestoring = true;
+            const targetScroll = parseInt(savedScroll, 10);
+            sidebarNav.scrollTop = targetScroll;
+
+            let attempts = 0;
+            const interval = setInterval(() => {
+                sidebarNav.scrollTop = targetScroll;
+                attempts++;
+                
+                if (sidebarNav.scrollTop === targetScroll || attempts >= 15) {
+                    clearInterval(interval);
+                    setTimeout(() => { isRestoring = false; }, 50);
+                }
+            }, 20);
+        } else {
+            isRestoring = true;
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => {
+                    const activeItem = sidebarNav.querySelector('.bg-primary-100, .bg-primary-100\\/50');
+                    if (activeItem) {
+                        const navRect = sidebarNav.getBoundingClientRect();
+                        const itemRect = activeItem.getBoundingClientRect();
+                        if (itemRect.top < navRect.top || itemRect.bottom > navRect.bottom) {
+                            sidebarNav.scrollTop = activeItem.offsetTop - (navRect.height / 2);
+                        }
+                    }
+                    setTimeout(() => { isRestoring = false; }, 50);
+                }, 100);
+            });
+        }
+        
+        sidebarNav.addEventListener('scroll', function() {
+            if (!isRestoring) {
+                sessionStorage.setItem('sidebarScrollPos', sidebarNav.scrollTop);
+            }
+        }, { passive: true });
+
+        sidebarNav.addEventListener('click', function() {
+            if (!isRestoring) {
+                sessionStorage.setItem('sidebarScrollPos', sidebarNav.scrollTop);
+            }
+        });
+    })();
+</script>

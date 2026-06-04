@@ -157,92 +157,70 @@
                                 $combinedAttrs = array_merge($oldAttrs, $attrs);
                                 
                                 $identifier = null;
-                                
-                                if ($modelBasename === 'NpcEvent' && isset($combinedAttrs['po_no'])) {
-                                    $eventName = '';
-                                    if (!empty($combinedAttrs['customer_category_id'])) {
-                                        try {
-                                            $category = \App\Models\NpcCustomerCategory::find($combinedAttrs['customer_category_id']);
-                                            if ($category) {
-                                                $eventName = $category->category_name ?? $category->name ?? '';
-                                            }
-                                        } catch (\Exception $e) {}
-                                    }
-                                    $identifier = "PO: " . $combinedAttrs['po_no'] . ($eventName ? " - Event: " . $eventName : "");
-                                } elseif ($modelBasename === 'NpcChecksheet' && isset($combinedAttrs['npc_part_id'])) {
-                                    $partId = $combinedAttrs['npc_part_id'];
-                                    $part = \App\Models\NpcPart::find($partId);
-                                    if ($part && $part->product) {
-                                        $identifier = "Part: " . $part->product->part_no;
-                                    } else {
-                                        $partLog = \Spatie\Activitylog\Models\Activity::where('subject_type', \App\Models\NpcPart::class)->where('subject_id', $partId)->where('event', 'deleted')->first();
-                                        if ($partLog) {
-                                            $partProps = is_iterable($partLog->properties) ? $partLog->properties : collect(json_decode($partLog->properties ?? '[]', true));
-                                            $partOldAttrs = $partProps['old'] ?? [];
-                                            if (isset($partOldAttrs['product_id'])) {
-                                                $prod = \App\Models\Product::find($partOldAttrs['product_id']);
-                                                if ($prod) {
-                                                    $identifier = "Part: " . $prod->part_no;
-                                                }
-                                            }
+                                $subject = $log->subject;
+
+                                // Prioritaskan mengambil nama/identitas dari Model asli (jika belum dihapus)
+                                if ($subject) {
+                                    if ($modelBasename === 'NpcChecksheet') {
+                                        if ($subject->npcPart && $subject->npcPart->product) {
+                                            $identifier = "Part: " . $subject->npcPart->product->part_no;
                                         }
-                                        if (!$identifier) {
-                                            $identifier = "Part ID: " . $partId;
+                                    } elseif ($modelBasename === 'NpcPart') {
+                                        if ($subject->product) {
+                                            $identifier = "Part: " . $subject->product->part_no;
                                         }
+                                    } elseif ($modelBasename === 'NpcEvent') {
+                                        $eventName = optional($subject->customerCategory)->category_name ?? optional($subject->customerCategory)->name ?? '';
+                                        $identifier = "PO: " . $subject->po_no . ($eventName ? " - Event: " . $eventName : "");
+                                    } elseif ($modelBasename === 'NpcPartProcess') {
+                                        if ($subject->npcPart && $subject->npcPart->product && $subject->npcProcess) {
+                                            $identifier = "Part: " . $subject->npcPart->product->part_no . " - Process: " . $subject->npcProcess->process_name;
+                                        }
+                                    } elseif ($modelBasename === 'ProductCheckpoint') {
+                                        if ($subject->product) {
+                                            $identifier = "Part: " . $subject->product->part_no;
+                                        }
+                                    } elseif (isset($subject->part_no)) {
+                                        $modelName = optional($subject->vehicleModel)->name ?? '';
+                                        $identifier = $modelName ? $modelName . ' - ' . $subject->part_no : $subject->part_no;
+                                    } elseif (isset($subject->name)) {
+                                        $identifier = $subject->name;
+                                    } elseif (isset($subject->po_no)) {
+                                        $identifier = "PO: " . $subject->po_no;
+                                    } elseif (isset($subject->point_check)) {
+                                        $identifier = "Point: " . $subject->point_check;
                                     }
                                 }
-                                
-                                // Try to resolve identifier by checking common name fields or resolving foreign keys
+
+                                // Fallback jika Model sudah dihapus (DELETED) atau belum ketemu identitasnya
+                                // Kita cari dari data JSON properties yang tersimpan saat aksi terjadi
                                 if (!$identifier) {
-                                    foreach(['part_no', 'customer_name', 'process_name', 'name', 'title', 'role_name', 'po_number', 'po_no', 'point_check', 'part_id', 'product_id'] as $k) {
-                                    if (isset($combinedAttrs[$k])) {
-                                        // Use the resolveValue closure defined below in the Changes column if possible,
-                                        // but since it's defined lower down, we'll implement a quick resolver here
-                                        $val = $combinedAttrs[$k];
-                                        if (str_ends_with($k, '_id') && $val) {
-                                            $relation = str_replace('_id', '', $k);
-                                            $models = ['App\\Models\\Npc' . Str::studly($relation), 'App\\Models\\' . Str::studly($relation), 'App\\Models\\Product'];
-                                            foreach ($models as $m) {
-                                                if (class_exists($m)) {
-                                                    try {
-                                                        $rel = $m::find($val);
-                                                        if ($rel) {
-                                                            if (isset($rel->part_no)) {
-                                                                $modelName = optional($rel->vehicleModel)->name ?? '';
-                                                                $identifier = $modelName ? $modelName . ' - ' . $rel->part_no : $rel->part_no;
-                                                            } else {
-                                                                $nameAttr = $relation . '_name';
-                                                                if (isset($rel->$nameAttr)) {
-                                                                    $identifier = $rel->$nameAttr;
-                                                                } elseif (isset($rel->name)) {
-                                                                    $identifier = $rel->name;
-                                                                }
-                                                            }
-                                                            break;
-                                                        }
-                                                    } catch(\Exception $e) {}
-                                                }
-                                            }
+                                    if ($modelBasename === 'NpcEvent' && isset($combinedAttrs['po_no'])) {
+                                        $identifier = "PO: " . $combinedAttrs['po_no'];
+                                    } elseif ($modelBasename === 'NpcChecksheet' && isset($combinedAttrs['npc_part_id'])) {
+                                        $part = \App\Models\NpcPart::find($combinedAttrs['npc_part_id']);
+                                        if ($part && $part->product) {
+                                            $identifier = "Part: " . $part->product->part_no;
                                         } else {
-                                            $identifier = $val;
+                                            $identifier = "Part ID: " . $combinedAttrs['npc_part_id'];
                                         }
-                                        
-                                        if ($identifier) break;
-                                    }
-                                    }
-                                }
-                                
-                                // Fallback for manual logs where attribute_changes is empty but subject exists
-                                if (!$identifier && $log->subject) {
-                                    if (isset($log->subject->part_no)) {
-                                        $modelName = optional($log->subject->vehicleModel)->name ?? '';
-                                        $identifier = $modelName ? $modelName . ' - ' . $log->subject->part_no : $log->subject->part_no;
-                                    } elseif (isset($log->subject->name)) {
-                                        $identifier = $log->subject->name;
-                                    } elseif (isset($log->subject->po_no)) {
-                                        $identifier = "PO: " . $log->subject->po_no;
-                                    } elseif (isset($log->subject->point_check)) {
-                                        $identifier = "Point: " . $log->subject->point_check;
+                                    } elseif ($modelBasename === 'NpcPart' && isset($combinedAttrs['product_id'])) {
+                                        $prod = \App\Models\Product::find($combinedAttrs['product_id']);
+                                        if ($prod) {
+                                            $identifier = "Part: " . $prod->part_no;
+                                        }
+                                    } elseif (isset($combinedAttrs['product_id'])) {
+                                        $prod = \App\Models\Product::find($combinedAttrs['product_id']);
+                                        if ($prod) {
+                                            $identifier = "Part: " . $prod->part_no;
+                                        }
+                                    } else {
+                                        foreach(['part_no', 'customer_name', 'process_name', 'name', 'title', 'role_name', 'po_number', 'po_no', 'point_check'] as $k) {
+                                            if (isset($combinedAttrs[$k])) {
+                                                $identifier = $combinedAttrs[$k];
+                                                break;
+                                            }
+                                        }
                                     }
                                 }
                                 
