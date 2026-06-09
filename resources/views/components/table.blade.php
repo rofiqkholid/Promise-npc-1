@@ -48,7 +48,7 @@
                 $('.dataTables_paginate').addClass('inline-flex -space-x-px rounded-md shadow-sm');
                 $('.dataTables_paginate .paginate_button')
                     .removeClass('paginate_button current disabled') 
-                    .addClass('relative inline-flex items-center px-4 py-2 text-sm font-medium border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:z-20 cursor-pointer first:rounded-l-md last:rounded-r-md');
+                    .addClass('relative inline-flex items-center px-4 py-2 text-[13px] font-medium border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:z-20 cursor-pointer first:rounded-l-md last:rounded-r-md');
                 $('.dataTables_paginate .active')
                     .removeClass('bg-white text-gray-700 hover:bg-gray-50')
                     .addClass('z-10 bg-gray-100 border-gray-300 text-gray-900 font-bold');

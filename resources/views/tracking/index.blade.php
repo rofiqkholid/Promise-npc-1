@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
             <i class="fa-solid {{ $pageIcon ?? 'fa-list-check' }} text-blue-500"></i> {{ $pageTitle ?? 'Production Tracking (Routing)' }}
         </h2>
@@ -102,22 +102,22 @@
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
-                        <th scope="col" class="px-6 py-4 font-semibold w-16">No</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Event</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">PO Number</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Part Info</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Qty & Target</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-center" colspan="2">Overall Progress</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right">System Duration</th>
+                        <th scope="col" class="px-4 py-2 font-semibold w-16">No</th>
+                        <th scope="col" class="px-4 py-2 font-semibold">Event</th>
+                        <th scope="col" class="px-4 py-2 font-semibold">PO Number</th>
+                        <th scope="col" class="px-4 py-2 font-semibold">Part Info</th>
+                        <th scope="col" class="px-4 py-2 font-semibold">Qty & Target</th>
+                        <th scope="col" class="px-4 py-2 font-semibold text-center" colspan="2">Overall Progress</th>
+                        <th scope="col" class="px-4 py-2 font-semibold text-right">System Duration</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($parts as $part)
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group text-sm">
-                        <td class="px-6 py-4 text-slate-800 dark:text-slate-200 text-sm">
+                        <td class="px-4 py-2 text-slate-800 dark:text-slate-200 text-[13px]">
                             {{ ($parts->currentPage() - 1) * $parts->perPage() + $loop->iteration }}
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-4 py-2">
                             <div class="text-blue-600 dark:text-blue-400 font-bold text-xs uppercase tracking-wide border border-blue-100 dark:border-blue-900 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 inline-block mb-1">{{ optional(optional($part->event)->customerCategory)->name ?? 'Unknown Event' }}</div>
                             @if($part->has_ecn_update)
                             <div class="mt-1 text-[10px] font-bold text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-900/30 px-2 py-0.5 inline-flex items-center gap-1 shadow-sm">
@@ -129,14 +129,14 @@
                             </div>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-gray-700 dark:text-gray-300 font-semibold text-sm">
+                        <td class="px-4 py-2 text-gray-700 dark:text-gray-300 font-semibold text-[13px]">
                             {{ optional($part->event)->po_no }}
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-4 py-2">
                             <div class="text-gray-800 dark:text-gray-200 font-medium text-sm">{{ optional($part->product)->part_no }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ optional($part->product)->part_name }}</div>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-4 py-2">
                             <div class="text-gray-800 dark:text-gray-300 font-bold text-sm">{{ number_format($part->qty) }} PCS</div>
                             @if($part->delivered_qty > 0)
                             <div class="text-[11px] font-bold text-blue-600 dark:text-blue-400 mt-1">
@@ -145,7 +145,7 @@
                             @endif
                             <div class="text-xs text-red-500 font-medium mt-1"><i class="fa-regular fa-calendar md:mr-1"></i> {{ \Carbon\Carbon::parse($part->delivery_date)->format('d M y') }}</div>
                         </td>
-                        <td class="px-6 py-4 font-medium align-middle" colspan="2">
+                        <td class="px-4 py-2 font-medium align-middle" colspan="2">
                             <div class="flex items-start justify-center w-full max-w-sm pt-2">
                                 @php
                                     $phases = ['PO_REGISTERED', 'WAITING_DEPT_CONFIRM', 'WAITING_QE_CHECK', 'WAITING_MGM_CHECK', 'FINISHED', 'CLOSED'];
@@ -219,7 +219,7 @@
                                 </div>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-right align-top">
+                        <td class="px-4 py-2 text-right align-top">
                             <div class="text-[11px] font-medium text-gray-500 text-right w-full flex flex-col items-end gap-1">
                                 <span class="bg-gray-100 dark:bg-gray-700 px-2 py-1 border border-gray-200 dark:border-gray-600">IN: {{ $part->created_at->format('d M Y') }}</span>
                                 @if($part->status === 'CLOSED')
@@ -274,7 +274,7 @@
 {{-- Modal: Production Done --}}
 <div id="modal-complete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
     <div class="bg-white dark:bg-gray-800 shadow-2xl w-full max-w-md mx-4 border border-gray-200 dark:border-gray-700">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-base font-semibold text-gray-800 dark:text-white flex items-center gap-2">
                 <i class="fa-solid fa-flag-checkered text-amber-500"></i> Confirm Production Done
             </h3>
@@ -296,9 +296,9 @@
                         class="w-full text-sm border-gray-300 dark:border-gray-600 shadow-sm focus:border-amber-500 focus:ring-amber-500 dark:bg-gray-700 dark:text-white"></textarea>
                 </div>
             </div>
-            <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-                <button type="button" onclick="closeCompleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition">Cancel</button>
-                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 shadow-sm transition flex items-center gap-1">
+            <div class="flex justify-end gap-3 px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+                <button type="button" onclick="closeCompleteModal()" class="px-4 py-2 text-[13px] font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition">Cancel</button>
+                <button type="submit" class="px-4 py-2 text-[13px] font-medium text-white bg-amber-500 hover:bg-amber-600 shadow-sm transition flex items-center gap-1">
                     <i class="fa-solid fa-check"></i> Confirm Done
                 </button>
             </div>

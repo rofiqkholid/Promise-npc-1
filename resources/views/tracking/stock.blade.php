@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-between items-center">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50 flex justify-between items-center">
         <div>
             <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
                 <i class="fa-solid {{ $pageIcon ?? 'fa-boxes-stacked' }} text-blue-500"></i> {{ $pageTitle ?? 'Finished Goods Stock (FG)' }}
@@ -22,12 +22,12 @@
             <table id="stockTable" class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
-                        <th scope="col" class="px-6 py-4 font-semibold w-16">No</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Delivery Target & Time</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Part Info</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Qty</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Status Process</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right">Action</th>
+                        <th scope="col" class="px-4 py-2 font-semibold w-16">No</th>
+                        <th scope="col" class="px-4 py-2 font-semibold">Delivery Target & Time</th>
+                        <th scope="col" class="px-4 py-2 font-semibold">Part Info</th>
+                        <th scope="col" class="px-4 py-2 font-semibold">Qty</th>
+                        <th scope="col" class="px-4 py-2 font-semibold">Status Process</th>
+                        <th scope="col" class="px-4 py-2 font-semibold text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -41,7 +41,7 @@
 <!-- Deliver Modal -->
 <div id="deliverModal" class="fixed inset-0 z-50 hidden bg-gray-900/50 backdrop-blur-sm overflow-y-auto h-full w-full flex items-center justify-center">
     <div class="relative w-full max-w-md bg-white dark:bg-gray-800 shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden scale-95 opacity-0 transition-all duration-300" id="deliverModalContent">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex justify-between items-center">
+        <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 flex justify-between items-center">
             <h3 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
                 <i class="fa-solid fa-truck-ramp-box text-blue-500"></i> Parts Delivery Form
             </h3>
@@ -79,11 +79,11 @@
                 </div>
             </div>
             
-            <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
-                <button type="button" onclick="closeDeliverModal()" class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 shadow-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600 transition text-sm">
+            <div class="px-4 py-2 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+                <button type="button" onclick="closeDeliverModal()" class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 shadow-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-600 transition text-[13px]">
                     Cancel
                 </button>
-                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-bold transition flex items-center gap-2 text-sm">
+                <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white shadow-sm font-bold transition flex items-center gap-2 text-[13px]">
                     <i class="fa-solid fa-paper-plane"></i> Delivery Process
                 </button>
             </div>
@@ -98,12 +98,12 @@
         initPromiseDataTable('#stockTable', {
             ajax: "{{ route('tracking.stock') }}",
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'px-6 py-4 text-slate-800 dark:text-slate-200 text-sm' },
-                { data: 'delivery_target', name: 'delivery_target', className: 'px-6 py-4', orderable: false },
-                { data: 'part_info', name: 'part_info', className: 'px-6 py-4', orderable: false },
-                { data: 'qty_target', name: 'qty_target', className: 'px-6 py-4', orderable: false },
-                { data: 'approval_info', name: 'approval_info', className: 'px-6 py-4 align-top', orderable: false, searchable: false },
-                { data: 'action_stock', name: 'action_stock', orderable: false, searchable: false, className: 'px-6 py-4 text-right pointer-events-auto' }
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'px-4 py-2 text-slate-800 dark:text-slate-200 text-[13px]' },
+                { data: 'delivery_target', name: 'delivery_target', className: 'px-4 py-2', orderable: false },
+                { data: 'part_info', name: 'part_info', className: 'px-4 py-2', orderable: false },
+                { data: 'qty_target', name: 'qty_target', className: 'px-4 py-2', orderable: false },
+                { data: 'approval_info', name: 'approval_info', className: 'px-4 py-2 align-top', orderable: false, searchable: false },
+                { data: 'action_stock', name: 'action_stock', orderable: false, searchable: false, className: 'px-4 py-2 text-right pointer-events-auto' }
             ]
         });
     });

@@ -7,7 +7,7 @@
 <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
 
     {{-- Header --}}
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
             <div class="flex-1">
                 <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
@@ -55,7 +55,7 @@
                     </div>
 
                     @if(request('search') || request('customer_id') || request('model_id') || request('has_image'))
-                        <a href="{{ route('master.product-images.index') }}" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 transition text-sm flex items-center gap-2 shadow-sm rounded-none">
+                        <a href="{{ route('master.product-images.index') }}" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 transition text-[13px] flex items-center gap-2 shadow-sm rounded-none">
                             <i class="fa-solid fa-xmark"></i> Clear
                         </a>
                     @endif
@@ -79,7 +79,7 @@
 
     {{-- Alert --}}
     @if(session('success'))
-    <div class="px-6 py-3 bg-emerald-50 dark:bg-emerald-900/20 border-b border-emerald-200 dark:border-emerald-800 flex items-center gap-2 text-emerald-700 dark:text-emerald-400 text-sm">
+    <div class="px-4 py-2 bg-emerald-50 dark:bg-emerald-900/20 border-b border-emerald-200 dark:border-emerald-800 flex items-center gap-2 text-emerald-700 dark:text-emerald-400 text-sm">
         <i class="fa-solid fa-circle-check"></i>
         {{ session('success') }}
     </div>
@@ -90,30 +90,30 @@
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
-                        <th class="px-6 py-4 font-semibold w-12 text-center">No</th>
-                        <th class="px-6 py-4 font-semibold">Customer</th>
-                        <th class="px-6 py-4 font-semibold">Model</th>
-                        <th class="px-6 py-4 font-semibold">Part No</th>
-                        <th class="px-6 py-4 font-semibold">Part Name</th>
-                        <th class="px-6 py-4 font-semibold text-center">Label Image</th>
-                        <th class="px-6 py-4 font-semibold text-right">Action</th>
+                        <th class="px-4 py-2 font-semibold w-12 text-center">No</th>
+                        <th class="px-4 py-2 font-semibold">Customer</th>
+                        <th class="px-4 py-2 font-semibold">Model</th>
+                        <th class="px-4 py-2 font-semibold">Part No</th>
+                        <th class="px-4 py-2 font-semibold">Part Name</th>
+                        <th class="px-4 py-2 font-semibold text-center">Label Image</th>
+                        <th class="px-4 py-2 font-semibold text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($products as $index => $product)
                     <tr class="bg-white dark:bg-gray-800 hover:bg-emerald-50/30 dark:hover:bg-gray-700/30 transition group text-sm">
-                        <td class="px-6 py-4 text-center text-gray-500">{{ $products->firstItem() + $index }}</td>
-                        <td class="px-6 py-4 font-bold text-gray-800 dark:text-gray-200">
+                        <td class="px-4 py-2 text-center text-gray-500">{{ $products->firstItem() + $index }}</td>
+                        <td class="px-4 py-2 font-bold text-gray-800 dark:text-gray-200">
                             {{ optional($product->customer)->code ?? '-' }}
                         </td>
-                        <td class="px-6 py-4 text-gray-700 dark:text-gray-300">
+                        <td class="px-4 py-2 text-gray-700 dark:text-gray-300">
                             {{ optional($product->vehicleModel)->name ?? '-' }}
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-4 py-2">
                             <div class="text-blue-600 dark:text-blue-400 font-bold">{{ $product->part_no }}</div>
                         </td>
-                        <td class="px-6 py-4 text-gray-800 dark:text-gray-200">{{ $product->part_name }}</td>
-                        <td class="px-6 py-4 text-center">
+                        <td class="px-4 py-2 text-gray-800 dark:text-gray-200">{{ $product->part_name }}</td>
+                        <td class="px-4 py-2 text-center">
                             @if($product->productDetail && $product->productDetail->label_image_path)
                                 <div class="flex flex-col items-center gap-1">
                                     <img src="{{ Storage::url($product->productDetail->label_image_path) }}"
@@ -129,7 +129,7 @@
                                 </span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-right">
+                        <td class="px-4 py-2 text-right">
                             <div class="flex items-center justify-end gap-2">
                                 <a href="{{ route('master.product-images.edit', $product->hashed_id) }}"
                                    class="inline-flex px-3 py-1.5 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-600 hover:text-white font-medium transition items-center gap-1.5 text-xs shadow-sm border border-emerald-200 dark:border-emerald-800/50 hover:border-transparent">
@@ -164,7 +164,7 @@
             </table>
         </div>
 
-    <div class="px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+    <div class="px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
         {{ $products->links() }}
     </div>
 </div>

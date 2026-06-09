@@ -36,7 +36,7 @@
                         class="relative transform overflow-hidden bg-white dark:bg-gray-800 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl">
                         
                         <!-- Header -->
-                        <div class="bg-gray-50/80 dark:bg-gray-800 px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                        <div class="bg-gray-50/80 dark:bg-gray-800 px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
                             <h3 class="text-base font-bold text-gray-800 dark:text-white flex items-center gap-2">
                                 <i class="fa-solid fa-camera text-blue-500"></i> Production Report: {{ optional($part->product)->part_no }}
                             </h3>
@@ -113,8 +113,8 @@
                         </div>
                         
                         <!-- Footer -->
-                        <div class="bg-gray-50 dark:bg-gray-800 px-6 py-3 border-t border-gray-200 dark:border-gray-700 flex justify-end">
-                            <button type="button" @click="activePhotoModal = null" class="px-4 py-2 text-sm font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 transition">Close Report</button>
+                        <div class="bg-gray-50 dark:bg-gray-800 px-4 py-2 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+                            <button type="button" @click="activePhotoModal = null" class="px-4 py-2 text-[13px] font-medium border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 transition">Close Report</button>
                         </div>
                     </div>
                 </div>

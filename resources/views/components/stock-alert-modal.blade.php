@@ -15,7 +15,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden border border-slate-200 dark:border-gray-700 flex flex-col">
                 
                 <!-- Professional Header -->
-                <div class="px-6 py-4 border-b border-slate-100 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-gray-800">
+                <div class="px-4 py-2 border-b border-slate-100 dark:border-gray-700 flex items-center justify-between bg-white dark:bg-gray-800">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-rose-50 dark:bg-rose-900/20 text-rose-500 dark:text-rose-400 flex items-center justify-center border border-rose-100 dark:border-rose-900/30">
                             <i class="fa-solid fa-triangle-exclamation text-lg"></i>

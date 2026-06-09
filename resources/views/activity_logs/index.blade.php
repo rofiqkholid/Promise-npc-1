@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 max-w-7xl mx-auto">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
         <div>
             <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
                 <i class="fa-solid fa-clock-rotate-left text-blue-500 mr-2"></i> System Activity Logs
@@ -91,31 +91,31 @@
         <table id="activityTable" class="min-w-full table-fixed text-sm text-left">
             <thead class="bg-gray-50/80 text-gray-900 font-bold uppercase text-xs">
                 <tr>
-                    <th scope="col" class="px-6 py-3 font-semibold w-[5%] text-center">No.</th>
-                    <th scope="col" class="px-6 py-3 font-semibold w-[20%]">Date / Time</th>
-                    <th scope="col" class="px-6 py-3 font-semibold w-[25%]">User (Causer)</th>
-                    <th scope="col" class="px-6 py-3 font-semibold w-[20%] text-left">Action</th>
-                    <th scope="col" class="px-6 py-3 font-semibold w-[30%]">Subject</th>
+                    <th scope="col" class="px-4 py-2 font-semibold w-[5%] text-center">No.</th>
+                    <th scope="col" class="px-4 py-2 font-semibold w-[20%]">Date / Time</th>
+                    <th scope="col" class="px-4 py-2 font-semibold w-[25%]">User (Causer)</th>
+                    <th scope="col" class="px-4 py-2 font-semibold w-[20%] text-left">Action</th>
+                    <th scope="col" class="px-4 py-2 font-semibold w-[30%]">Subject</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                 @foreach($logs as $log)
                     <tr class="hover:bg-gray-100 transition">
-                        <td class="px-6 py-4 whitespace-nowrap text-center text-gray-500 dark:text-gray-400 font-medium">
+                        <td class="px-4 py-2 whitespace-nowrap text-center text-gray-500 dark:text-gray-400 font-medium">
                             {{ $loop->iteration }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-gray-900 dark:text-gray-200">
+                        <td class="px-4 py-2 whitespace-nowrap text-gray-900 dark:text-gray-200">
                             <div class="font-bold">{{ $log->created_at->timezone('Asia/Jakarta')->format('d M Y') }}</div>
                             <div class="text-xs text-gray-500">{{ $log->created_at->timezone('Asia/Jakarta')->format('H:i:s') }}</div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-gray-800 dark:text-gray-300 font-medium">
+                        <td class="px-4 py-2 whitespace-nowrap text-gray-800 dark:text-gray-300 font-medium">
                             @if($log->causer)
                                 <i class="fa-solid fa-user-circle text-gray-400 mr-1"></i> {{ $log->causer->name ?? 'System' }}
                             @else
                                 <span class="italic text-gray-500">System</span>
                             @endif
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-left">
+                        <td class="px-4 py-2 whitespace-nowrap text-left">
                             @php
                                 $badgeClass = 'bg-gray-100 text-gray-800';
                                 if($log->event === 'created') $badgeClass = 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400';
@@ -127,7 +127,7 @@
                                 {{ $log->event ?? $log->description }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-gray-600 dark:text-gray-400 text-xs">
+                        <td class="px-4 py-2 text-gray-600 dark:text-gray-400 text-xs">
                             @php
                                 $modelBasename = class_basename($log->subject_type);
                                 
@@ -326,7 +326,7 @@
                 // Reset native datatables styles and apply Tailwind classes to all buttons
                 $('.dataTables_paginate .paginate_button')
                     .removeClass('paginate_button current disabled') // Clean up existing
-                    .addClass('relative inline-flex items-center px-4 py-2 text-sm font-medium border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:z-20 cursor-pointer first:rounded-l-md last:rounded-r-md');
+                    .addClass('relative inline-flex items-center px-4 py-2 text-[13px] font-medium border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:z-20 cursor-pointer first:rounded-l-md last:rounded-r-md');
                 
                 // Style Active button (Page 1, 2, etc)
                 $('.dataTables_paginate .active')

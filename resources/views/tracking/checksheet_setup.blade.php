@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 max-w-6xl mx-auto">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
         <div>
             <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
                 <i class="fa-solid fa-list-check text-blue-500 mr-2"></i> Master Checksheet Configuration
@@ -143,10 +143,10 @@
                     <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                         <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                             <tr>
-                                <th scope="col" class="px-6 py-4 w-12 text-center font-semibold">Use</th>
-                                <th scope="col" class="px-6 py-4 font-semibold w-16 text-center">Sequence</th>
-                                <th scope="col" class="px-6 py-4 font-semibold">Point Check</th>
-                                <th scope="col" class="px-6 py-4 font-semibold w-[400px]">Standard / Parameter</th>
+                                <th scope="col" class="px-4 py-2 w-12 text-center font-semibold">Use</th>
+                                <th scope="col" class="px-4 py-2 font-semibold w-16 text-center">Sequence</th>
+                                <th scope="col" class="px-4 py-2 font-semibold">Point Check</th>
+                                <th scope="col" class="px-4 py-2 font-semibold w-[400px]">Standard / Parameter</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -159,7 +159,7 @@
                                 @if($currentCategory !== $point->category)
                                     @php $currentCategory = $point->category; @endphp
                                     <tr class="bg-slate-200/50 dark:bg-slate-700/50 border-b border-gray-200 dark:border-gray-700">
-                                        <td colspan="4" class="px-6 py-3 font-bold text-slate-800 dark:text-slate-200 uppercase text-xs">
+                                        <td colspan="4" class="px-4 py-2 font-bold text-slate-800 dark:text-slate-200 uppercase text-xs">
                                             {{ $currentCategory ?: 'General / Uncategorized' }}
                                         </td>
                                     </tr>
@@ -175,12 +175,12 @@
                                     $stdText = $mappedData[$point->id] ?? '';
                                 @endphp
                                 <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group">
-                                    <td class="px-6 py-4 text-center">
+                                    <td class="px-4 py-2 text-center">
                                         <input type="checkbox" name="points[{{ $point->id }}][is_checked]" value="1" {{ $isChecked ? 'checked' : '' }} class="row-checkbox w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                     </td>
-                                    <td class="px-6 py-4 font-bold text-center text-lg text-indigo-600 dark:text-indigo-400">{{ $rowCounter++ }}</td>
-                                    <td class="px-6 py-4 font-semibold text-slate-900 dark:text-white">{{ $point->check_item }}</td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-4 py-2 font-bold text-center text-lg text-indigo-600 dark:text-indigo-400">{{ $rowCounter++ }}</td>
+                                    <td class="px-4 py-2 font-semibold text-slate-900 dark:text-white">{{ $point->check_item }}</td>
+                                    <td class="px-4 py-2">
                                         <input type="text" name="points[{{ $point->id }}][custom_standard]" value="{{ $stdText }}" placeholder="Leave blank if no standard" class="w-full text-sm border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:text-white form-input p-2 {{ $isChecked ? '' : 'opacity-50' }}" {{ $isChecked ? '' : 'readonly' }} onfocus="this.select()">
                                     </td>
                                 </tr>
@@ -192,8 +192,8 @@
 
         </div>
 
-        <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
-            <a href="{{ route('master.checksheets.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition shadow-sm text-sm font-medium">
+        <div class="px-4 py-2 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+            <a href="{{ route('master.checksheets.index') }}" class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition shadow-sm text-[13px] font-medium">
                 Cancel
             </a>
             @if($product->mappedCheckpoints->isNotEmpty())

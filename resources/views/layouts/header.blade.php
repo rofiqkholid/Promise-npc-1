@@ -77,11 +77,11 @@
                         <p class="text-xs text-slate-500 dark:text-gray-400">{{ Auth::user()->roles->pluck('name')->join(', ') ?: 'User' }}</p>
                     </div>
 
-                    <a href="{{ route('profile.index') }}" class="block px-4 py-2 text-sm text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 flex items-center gap-2">
+                    <a href="{{ route('profile.index') }}" class="block px-4 py-2 text-[13px] text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 flex items-center gap-2">
                         <i class="fa-regular fa-user w-4"></i> Profile
                     </a>
                     
-                    <a href="#" class="block px-4 py-2 text-sm text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 flex items-center gap-2">
+                    <a href="#" class="block px-4 py-2 text-[13px] text-slate-600 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 flex items-center gap-2">
                         <i class="fa-solid fa-gear w-4"></i> Settings
                     </a>
                     
@@ -89,7 +89,7 @@
 
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
-                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2">
+                        <button type="submit" class="w-full text-left px-4 py-2 text-[13px] text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center gap-2">
                             <i class="fa-solid fa-arrow-right-from-bracket w-4"></i> Logout
                         </button>
                     </form>

@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
             <i class="fa-solid {{ $pageIcon ?? 'fa-industry' }} text-blue-500"></i> {{ $pageTitle ?? 'Process Production' }}
         </h2>
@@ -20,11 +20,11 @@
             <table id="productionTable" class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
-                        <th scope="col" class="px-6 py-4 font-semibold w-16">No</th>
-                        <th scope="col" class="px-6 py-4 font-semibold w-64">Part Info / PO</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-center w-32">Status PO</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-center">Routing Execution Overview</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right w-48">Action Production</th>
+                        <th scope="col" class="px-4 py-2 font-semibold w-16">No</th>
+                        <th scope="col" class="px-4 py-2 font-semibold w-64">Part Info / PO</th>
+                        <th scope="col" class="px-4 py-2 font-semibold text-center w-32">Status PO</th>
+                        <th scope="col" class="px-4 py-2 font-semibold text-center">Routing Execution Overview</th>
+                        <th scope="col" class="px-4 py-2 font-semibold text-right w-48">Action Production</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -38,7 +38,7 @@
 {{-- Modal: Production Done --}}
 <div id="modal-complete" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
     <div class="bg-white dark:bg-gray-800 shadow-2xl w-full max-w-md mx-4 border border-gray-200 dark:border-gray-700">
-        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center justify-between px-4 py-2 border-b border-gray-200 dark:border-gray-700">
             <h3 class="text-base font-semibold text-gray-800 dark:text-white flex items-center gap-2">
                 <i class="fa-solid fa-flag-checkered text-amber-500"></i> Completion Confirmation <span id="modal-process-name-title"></span>
             </h3>
@@ -87,9 +87,9 @@
                         class="w-full text-sm border-gray-300 dark:border-gray-600 shadow-sm focus:border-amber-500 focus:ring-amber-500 dark:bg-gray-700 dark:text-white"></textarea>
                 </div>
             </div>
-            <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
-                <button type="button" onclick="closeCompleteModal()" class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition">Cancel</button>
-                <button type="submit" class="px-4 py-2 text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 shadow-sm transition flex items-center gap-1">
+            <div class="flex justify-end gap-3 px-4 py-2 border-t border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+                <button type="button" onclick="closeCompleteModal()" class="px-4 py-2 text-[13px] font-medium text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition">Cancel</button>
+                <button type="submit" class="px-4 py-2 text-[13px] font-medium text-white bg-amber-500 hover:bg-amber-600 shadow-sm transition flex items-center gap-1">
                     <i class="fa-solid fa-check"></i> Complete Process
                 </button>
             </div>
@@ -145,18 +145,18 @@ $(document).ready(function() {
             }
         },
         columns: [
-            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'px-6 py-4 text-center text-slate-800 dark:text-slate-200 text-sm font-medium' },
-            { data: 'part_info', name: 'product.part_no', className: 'px-6 py-4 align-top', orderable: false, searchable: false },
-            { data: 'status_po', name: 'status', className: 'px-6 py-4 text-center align-middle', orderable: false, searchable: false },
-            { data: 'routing_execution', name: 'routing_execution', className: 'px-6 py-4', orderable: false, searchable: false },
-            { data: 'action_production', name: 'action', className: 'px-6 py-4 text-right align-middle pointer-events-auto', orderable: false, searchable: false }
+            { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'px-4 py-2 text-center text-slate-800 dark:text-slate-200 text-[13px] font-medium' },
+            { data: 'part_info', name: 'product.part_no', className: 'px-4 py-2 align-top', orderable: false, searchable: false },
+            { data: 'status_po', name: 'status', className: 'px-4 py-2 text-center align-middle', orderable: false, searchable: false },
+            { data: 'routing_execution', name: 'routing_execution', className: 'px-4 py-2', orderable: false, searchable: false },
+            { data: 'action_production', name: 'action', className: 'px-4 py-2 text-right align-middle pointer-events-auto', orderable: false, searchable: false }
         ],
         drawCallback: function() {
             // Style pagination buttons exactly like Activity Logs
             $('.dataTables_paginate').addClass('inline-flex -space-x-px rounded-md shadow-sm');
             $('.dataTables_paginate .paginate_button')
                 .removeClass('paginate_button current disabled')
-                .addClass('relative inline-flex items-center px-4 py-2 text-sm font-medium border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:z-20 cursor-pointer first:rounded-l-md last:rounded-r-md');
+                .addClass('relative inline-flex items-center px-4 py-2 text-[13px] font-medium border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:z-20 cursor-pointer first:rounded-l-md last:rounded-r-md');
             $('.dataTables_paginate .active')
                 .removeClass('bg-white text-gray-700 hover:bg-gray-50')
                 .addClass('z-10 bg-gray-100 border-gray-300 text-gray-900 font-bold');

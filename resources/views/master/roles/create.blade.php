@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 shadow border border-gray-200 dark:border-gray-700 max-w-2xl">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
             <i class="fa-solid fa-plus text-blue-500"></i> Add New Role
         </h2>

@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
             <i class="fa-solid {{ $pageIcon ?? 'fa-user-tie' }} text-blue-500"></i> {{ $pageTitle ?? 'Management Check' }}
         </h2>
@@ -53,25 +53,25 @@
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
-                        <th scope="col" class="px-6 py-4 font-semibold w-16">No</th>
-                        <th scope="col" class="px-6 py-4 font-semibold w-72">Product Identity</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-center">Quality Validation Status (QC)</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right w-48">Final Validation (MGM)</th>
+                        <th scope="col" class="px-4 py-2 font-semibold w-16">No</th>
+                        <th scope="col" class="px-4 py-2 font-semibold w-72">Product Identity</th>
+                        <th scope="col" class="px-4 py-2 font-semibold text-center">Quality Validation Status (QC)</th>
+                        <th scope="col" class="px-4 py-2 font-semibold text-right w-48">Final Validation (MGM)</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($parts as $part)
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition text-sm">
-                        <td class="px-6 py-4 text-slate-800 dark:text-slate-200 text-sm">
+                        <td class="px-4 py-2 text-slate-800 dark:text-slate-200 text-[13px]">
                             {{ ($parts->currentPage() - 1) * $parts->perPage() + $loop->iteration }}
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-4 py-2">
                             <div class="text-gray-800 dark:text-gray-200 font-bold text-sm">{{ optional($part->product)->part_no }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1.5">{{ optional($part->product)->part_name }}</div>
                             <div class="text-[10px] text-gray-400 uppercase tracking-widest bg-gray-50 dark:bg-gray-700 px-2 py-0.5 inline-block border border-gray-200 dark:border-gray-600 mb-2">PO: {{ optional($part->event)->po_no }} | CV: {{ optional($part->product->vehicleModel)->name ?? 'Unknown Model' }}</div>
                             <div class="text-gray-800 dark:text-gray-300 font-black flex items-center gap-1.5"><i class="fa-solid fa-boxes-stacked text-gray-400"></i> {{ number_format($part->qty) }} <span class="text-xs font-semibold text-gray-500">PCS</span></div>
                         </td>
-                        <td class="px-6 py-4 text-center align-middle">
+                        <td class="px-4 py-2 text-center align-middle">
                             @if(in_array($part->status, ['PO_REGISTERED', 'WAITING_DEPT_CONFIRM', 'WAITING_QE_CHECK']))
                                 <div class="inline-flex flex-col items-center gap-1.5 px-3 py-2 bg-slate-50 border border-slate-200 text-[10px] text-slate-500 italic">
                                     <i class="fa-solid fa-microscope text-sm"></i> Currently in QC Inspection
@@ -83,7 +83,7 @@
                                 </div>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-right align-middle pointer-events-auto">
+                        <td class="px-4 py-2 text-right align-middle pointer-events-auto">
                             <div class="flex flex-col items-end gap-2">
                                 @if(in_array($part->status, ['PO_REGISTERED', 'WAITING_DEPT_CONFIRM', 'WAITING_QE_CHECK']))
                                     <div class="px-3 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-[10px] text-gray-400 italic flex items-center justify-center gap-1.5 cursor-not-allowed w-full max-w-[150px]">

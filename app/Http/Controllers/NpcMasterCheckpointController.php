@@ -13,8 +13,9 @@ class NpcMasterCheckpointController extends Controller
             $query = NpcMasterCheckpoint::query();
             
             return \Yajra\DataTables\Facades\DataTables::of($query)
+                ->addIndexColumn()
                 ->editColumn('point_number', function ($cp) {
-                    return '<div class="font-bold text-center text-lg text-indigo-600 dark:text-indigo-400">' . $cp->point_number . '</div>';
+                    return '<div class="text-center font-semibold text-gray-700 dark:text-gray-300">' . $cp->point_number . '</div>';
                 })
                 ->editColumn('is_active', function ($cp) {
                     if ($cp->is_active) {

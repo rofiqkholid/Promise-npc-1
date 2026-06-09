@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="max-w-2xl bg-white dark:bg-gray-800 shadow border border-gray-200 dark:border-gray-700">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
             <i class="fa-solid fa-plus-circle text-blue-500"></i> Add Internal Category
         </h2>
@@ -28,7 +28,7 @@
             </div>
         </div>
 
-        <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+        <div class="px-4 py-2 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
             <a href="{{ route('master.internal-categories.index') }}" class="px-4 py-2 border border-slate-300 dark:border-gray-600 text-slate-700 dark:text-gray-300 hover:bg-slate-50 dark:hover:bg-gray-700 transition">Cancel</a>
             <button type="submit" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 shadow-md shadow-blue-500/20 transition">Save Category</button>
         </div>

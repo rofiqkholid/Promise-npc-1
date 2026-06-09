@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="mb-6 bg-white dark:bg-gray-800 shadow border border-gray-200 dark:border-gray-700 max-w-5xl">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
         <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
             <i class="fa-solid fa-pen-to-square text-blue-500"></i> Edit Role
         </h2>
@@ -58,7 +58,7 @@
                 <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                     <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                         <tr>
-                            <th scope="col" class="px-6 py-4 font-semibold">Menu Name</th>
+                            <th scope="col" class="px-4 py-2 font-semibold">Menu Name</th>
                             <th scope="col" class="px-4 py-4 text-center font-semibold">View (Show)</th>
                             <th scope="col" class="px-4 py-4 text-center font-semibold">Create (Add)</th>
                             <th scope="col" class="px-4 py-4 text-center font-semibold">Update (Edit/Finish)</th>
@@ -70,7 +70,7 @@
                         @foreach($menus as $menu)
                             {{-- Parent Menu Row --}}
                             <tr class="bg-gray-50 dark:bg-gray-800/80 hover:bg-blue-50/30 transition">
-                                <td class="px-6 py-3 font-bold text-slate-800 dark:text-slate-200">
+                                <td class="px-4 py-2 font-bold text-slate-800 dark:text-slate-200">
                                     <div class="flex items-center gap-2">
                                         @if($menu->icon) <i class="{{ $menu->icon }} w-5"></i> @endif
                                         {{ $menu->title }}
@@ -144,7 +144,7 @@
 
         </div>
 
-        <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+        <div class="px-4 py-2 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700 flex justify-end">
             <button type="submit" class="px-6 py-2.5 bg-blue-600 text-white hover:bg-blue-700 transition shadow-lg shadow-blue-500/30 font-bold flex items-center gap-2">
                 <i class="fa-solid fa-save"></i> Save Configuration
             </button>

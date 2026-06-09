@@ -8,7 +8,7 @@
     
     <!-- Profile Info Card -->
     <div class="bg-white dark:bg-gray-800 shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/50">
+        <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/50">
             <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
                 <i class="fa-solid fa-user-circle text-blue-600"></i>
                 Profile Information
@@ -56,7 +56,7 @@
 
     <!-- Change Password Card -->
     <div class="bg-white dark:bg-gray-800 shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/50">
+        <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/50">
             <h2 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
                 <i class="fa-solid fa-shield-halved text-amber-500"></i>
                 Account Security
@@ -127,8 +127,8 @@
                     </div>
                 </div>
             </div>
-            <div class="px-6 py-4 bg-gray-50 dark:bg-gray-700/30 border-t border-gray-200 dark:border-gray-700 flex justify-end">
-                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition flex items-center gap-2" onclick="confirmAction(event, 'Are you sure you want to update your password?')">
+            <div class="px-4 py-2 bg-gray-50 dark:bg-gray-700/30 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+                <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md shadow-blue-500/20 text-[13px] font-medium hover:from-blue-700 hover:to-cyan-700 transition flex items-center gap-2" onclick="confirmAction(event, 'Are you sure you want to update your password?')">
                     Update Password
                 </button>
             </div>

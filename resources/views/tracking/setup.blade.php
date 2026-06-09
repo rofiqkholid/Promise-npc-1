@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
             <i class="fa-solid {{ $pageIcon ?? 'fa-route' }} text-blue-500"></i> {{ $pageTitle ?? 'Production Routing Setup' }}
         </h2>
@@ -53,34 +53,34 @@
             <table class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
-                        <th scope="col" class="px-6 py-4 font-semibold w-16">No</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Event / PO</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Part Info</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Qty / Delivery Target</th>
-                        <th scope="col" class="px-6 py-4 font-semibold">Routing Info</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right w-48">Action Setup</th>
+                        <th scope="col" class="px-4 py-2 font-semibold w-16">No</th>
+                        <th scope="col" class="px-4 py-2 font-semibold">Event / PO</th>
+                        <th scope="col" class="px-4 py-2 font-semibold">Part Info</th>
+                        <th scope="col" class="px-4 py-2 font-semibold">Qty / Delivery Target</th>
+                        <th scope="col" class="px-4 py-2 font-semibold">Routing Info</th>
+                        <th scope="col" class="px-4 py-2 font-semibold text-right w-48">Action Setup</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($parts as $part)
                     <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-blue-50/50 dark:hover:bg-gray-700/30 transition group text-sm">
-                        <td class="px-6 py-4 text-slate-800 dark:text-slate-200 text-sm">
+                        <td class="px-4 py-2 text-slate-800 dark:text-slate-200 text-[13px]">
                             {{ ($parts->currentPage() - 1) * $parts->perPage() + $loop->iteration }}
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-4 py-2">
                             <div class="text-blue-600 dark:text-blue-400 font-bold text-sm">{{ optional($part->event)->po_no }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">{{ optional(optional($part->event)->customerCategory)->name ?? 'Unknown Event' }}</div>
                             <div class="text-[10px] text-gray-400 mt-1"><i class="fa-regular fa-clock"></i> Login: {{ $part->created_at->format('d M Y') }}</div>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-4 py-2">
                             <div class="text-gray-800 dark:text-gray-200 font-bold text-sm">{{ optional($part->product)->part_no }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">{{ optional($part->product)->part_name }}</div>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-4 py-2">
                             <div class="text-gray-800 dark:text-gray-300 font-black text-lg mb-0.5">{{ number_format($part->qty) }} <span class="text-xs font-semibold text-gray-500">PCS</span></div>
                             <div class="text-xs text-red-500 font-medium"><i class="fa-regular fa-calendar md:mr-1"></i> {{ \Carbon\Carbon::parse($part->delivery_date)->format('d M y') }}</div>
                         </td>
-                        <td class="px-6 py-4">
+                        <td class="px-4 py-2">
                             @if($part->processes->count() > 0)
                                 <div class="flex flex-wrap gap-1 mb-1.5">
                                     @foreach($part->processes as $process)
@@ -97,7 +97,7 @@
                                 </div>
                             @endif
                         </td>
-                        <td class="px-6 py-4 text-right align-middle pointer-events-auto">
+                        <td class="px-4 py-2 text-right align-middle pointer-events-auto">
                             @if($part->status === 'PO_REGISTERED')
                                 <a href="{{ route('parts.routing.edit', $part->hashed_id) }}" class="inline-flex px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm font-medium transition items-center gap-2 text-xs" style="background-color: #4f46e5;">
                                     <i class="fa-solid fa-route"></i> Set Routing Schedule

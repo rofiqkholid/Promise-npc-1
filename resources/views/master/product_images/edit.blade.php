@@ -7,7 +7,7 @@
 <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 max-w-2xl">
 
     {{-- Header --}}
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50">
         <div>
             <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
                 <i class="fa-solid fa-image text-emerald-500"></i> Upload Label Image
@@ -69,7 +69,7 @@
                         <p class="text-sm text-gray-600 dark:text-gray-300 mb-1" id="upload-hint">Click or drag image file here</p>
                         <p class="text-xs text-gray-400 mb-4">Format: JPG, PNG, GIF, WebP — Max. 4 MB</p>
                         <label for="label_image"
-                               class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded transition">
+                               class="cursor-pointer inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-[13px] font-semibold rounded transition">
                             <i class="fa-solid fa-folder-open"></i> Choose File
                         </label>
                         <input type="file" id="label_image" name="label_image" class="hidden" accept="image/*" onchange="previewImage(this)">
@@ -85,7 +85,7 @@
 
                 <div class="mt-4 flex gap-3 justify-end">
                     <a href="{{ route('master.product-images.index') }}"
-                       class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition shadow-sm text-sm font-medium">
+                       class="px-4 py-2 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition shadow-sm text-[13px] font-medium">
                         Cancel
                     </a>
                     <button type="submit" id="submit-btn" disabled

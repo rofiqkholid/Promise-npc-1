@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 shadow border border-gray-200 dark:border-gray-700 max-w-3xl mx-auto">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white">
             <i class="fa-solid fa-file-excel text-green-600 mr-2"></i> Import PO / Data Excel
         </h2>
@@ -77,11 +77,11 @@
 
         </div>
 
-        <div class="px-6 py-4 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
-            <a href="{{ route('events.index') }}" class="px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+        <div class="px-4 py-2 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700 flex justify-end gap-3">
+            <a href="{{ route('events.index') }}" class="px-4 py-2 border border-gray-300 shadow-sm text-[13px] font-medium text-gray-700 bg-white hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 Cancel
             </a>
-            <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md shadow-blue-500/20 text-sm font-medium hover:from-blue-700 hover:to-cyan-700 transition flex items-center gap-2" onclick="confirmAction(event, 'Start import process to database? This will create an Event and insert Parts in it.')">
+            <button type="submit" class="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white shadow-md shadow-blue-500/20 text-[13px] font-medium hover:from-blue-700 hover:to-cyan-700 transition flex items-center gap-2" onclick="confirmAction(event, 'Start import process to database? This will create an Event and insert Parts in it.')">
                 <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Eksekusi
             </button>
         </div>

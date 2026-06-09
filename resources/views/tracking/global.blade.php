@@ -5,7 +5,7 @@
 
 @section('content')
 <div class="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
+    <div class="px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
         <h2 class="text-xl font-semibold text-gray-800 dark:text-white flex items-center gap-2">
             <i class="fa-solid {{ $pageIcon ?? 'fa-list-check' }} text-blue-500"></i> {{ $pageTitle ?? 'Global Tracking' }}
         </h2>
@@ -70,12 +70,12 @@
             <table id="globalTrackingTable" class="w-full text-sm text-left text-slate-600 dark:text-slate-400">
                 <thead class="bg-gray-100 dark:bg-gray-700/50 text-slate-800 dark:text-slate-200 border-b border-gray-200 dark:border-gray-600 uppercase text-xs tracking-wider">
                     <tr>
-                        <th scope="col" class="px-6 py-4 font-semibold w-16">No</th>
-                        <th scope="col" class="px-6 py-4 font-semibold w-1/4">Event & PO Number</th>
-                        <th scope="col" class="px-6 py-4 font-semibold w-1/12 text-center">Part Count</th>
-                        <th scope="col" class="px-6 py-4 font-semibold w-1/12">Nearest</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-center w-5/12">Overall Progress</th>
-                        <th scope="col" class="px-6 py-4 font-semibold text-right w-1/6">System Duration</th>
+                        <th scope="col" class="px-4 py-2 font-semibold w-16">No</th>
+                        <th scope="col" class="px-4 py-2 font-semibold w-1/4">Event & PO Number</th>
+                        <th scope="col" class="px-4 py-2 font-semibold w-1/12 text-center">Part Count</th>
+                        <th scope="col" class="px-4 py-2 font-semibold w-1/12">Nearest</th>
+                        <th scope="col" class="px-4 py-2 font-semibold text-center w-5/12">Overall Progress</th>
+                        <th scope="col" class="px-4 py-2 font-semibold text-right w-1/6">System Duration</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -93,12 +93,12 @@
         initPromiseDataTable('#globalTrackingTable', {
             ajax: "{{ route('tracking.index') }}",
             columns: [
-                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'px-6 py-4 text-center text-slate-800 dark:text-slate-200 text-sm font-medium' },
-                { data: 'po_info', name: 'po_no', className: 'px-6 py-4 align-top', orderable: false },
-                { data: 'part_count', name: 'part_count', className: 'px-6 py-4 text-center align-middle', orderable: false, searchable: false },
-                { data: 'nearest', name: 'nearest', className: 'px-6 py-4 align-middle', orderable: false, searchable: false },
-                { data: 'overall_progress', name: 'overall_progress', className: 'px-6 py-4 align-middle', orderable: false, searchable: false },
-                { data: 'system_duration', name: 'system_duration', className: 'px-6 py-4 text-right align-top', orderable: false, searchable: false }
+                { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'px-4 py-2 text-center text-slate-800 dark:text-slate-200 text-[13px] font-medium' },
+                { data: 'po_info', name: 'po_no', className: 'px-4 py-2 align-top', orderable: false },
+                { data: 'part_count', name: 'part_count', className: 'px-4 py-2 text-center align-middle', orderable: false, searchable: false },
+                { data: 'nearest', name: 'nearest', className: 'px-4 py-2 align-middle', orderable: false, searchable: false },
+                { data: 'overall_progress', name: 'overall_progress', className: 'px-4 py-2 align-middle', orderable: false, searchable: false },
+                { data: 'system_duration', name: 'system_duration', className: 'px-4 py-2 text-right align-top', orderable: false, searchable: false }
             ]
         });
     });
