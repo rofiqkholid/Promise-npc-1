@@ -122,7 +122,7 @@ class DashboardController extends Controller
             ];
             
             $totalItems = $ev->parts->count();
-            $finishedItems = $ev->parts->whereIn('status', ['FINISHED', 'CLOSED', 'OUTSTANDING'])->count();
+            $finishedItems = $ev->parts->whereIn('status', ['CLOSED', 'OUTSTANDING'])->count();
             $inProgressItems = $totalItems - $finishedItems;
             $rate = $totalItems > 0 ? round(($finishedItems / $totalItems) * 100) : 0;
             

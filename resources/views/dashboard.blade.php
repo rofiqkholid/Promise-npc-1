@@ -19,7 +19,7 @@
         <!-- Total PO -->
         <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex justify-between items-center">
             <div>
-                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Total Active Projects</p>
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">PO On Hand</p>
                 <h3 class="text-2xl font-bold text-slate-800 dark:text-white leading-none">{{ $metrics['total_po'] }}</h3>
             </div>
             <div class="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 text-lg">
@@ -30,7 +30,7 @@
         <!-- PO on hand -->
         <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex justify-between items-center">
             <div>
-                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">PO on hand</p>
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Total Active Projects</p>
                 <h3 class="text-2xl font-bold text-slate-800 dark:text-white leading-none">{{ $metrics['po_on_hand'] }}</h3>
             </div>
             <div class="w-10 h-10 bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 text-lg">
@@ -52,7 +52,7 @@
         <!-- Stock -->
         <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex justify-between items-center">
             <div>
-                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Stock</p>
+                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Remain PO</p>
                 <h3 class="text-2xl font-bold text-slate-800 dark:text-white leading-none">{{ $metrics['stock'] }}</h3>
             </div>
             <div class="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-lg">
@@ -275,7 +275,7 @@
                         <table class="w-full text-left border-collapse">
                             <thead class="sticky top-0 bg-slate-50 dark:bg-slate-800 z-10 border-b border-slate-200 dark:border-slate-700">
                                 <tr>
-                                    <th class="py-1 px-3 text-[9px] font-semibold text-slate-500 uppercase">PO / Model</th>
+                                    <th class="py-1 px-3 text-[9px] font-semibold text-slate-500 uppercase">Model</th>
                                     <th class="py-1 px-3 text-[9px] font-semibold text-slate-500 uppercase text-right">Remain Qty</th>
                                 </tr>
                             </thead>
@@ -283,9 +283,9 @@
                                 @foreach($remainDeliveries as $deliv)
                                     <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
                                         <td class="py-1.5 px-3">
-                                            <p class="text-[10px] font-bold text-slate-800 dark:text-white">{{ $deliv->event->po_no ?? '-' }}</p>
+                                            <p class="text-[10px] font-bold text-slate-800 dark:text-white">{{ $deliv->product->vehicleModel->name ?? '-' }}</p>
                                             <div class="flex items-center gap-1.5 mt-0.5">
-                                                <span class="text-[9px] font-medium text-indigo-600 dark:text-indigo-400">{{ $deliv->product->vehicleModel->name ?? '-' }}</span>
+                                                <span class="text-[9px] font-medium text-slate-500 dark:text-slate-400">PO: {{ $deliv->event->po_no ?? '-' }}</span>
                                                 <span class="text-[8px] text-slate-400">&bull;</span>
                                                 <p class="text-[8px] text-slate-500">{{ \Carbon\Carbon::parse($deliv->delivery_date)->format('d M y') }}</p>
                                             </div>
