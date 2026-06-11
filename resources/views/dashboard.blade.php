@@ -373,6 +373,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     tooltip: {
                         mode: 'index',
+                        axis: 'y',
                         intersect: false,
                         backgroundColor: isDark ? '#1e293b' : '#ffffff',
                         titleColor: isDark ? '#f8fafc' : '#0f172a',

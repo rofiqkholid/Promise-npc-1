@@ -70,7 +70,7 @@
                         <td class="px-4 py-2">
                             <div class="text-blue-600 dark:text-blue-400 font-bold text-sm">{{ optional($part->event)->po_no }}</div>
                             <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-medium">{{ optional(optional($part->event)->customerCategory)->name ?? 'Unknown Event' }}</div>
-                            <div class="text-[10px] text-gray-400 mt-1"><i class="fa-regular fa-clock"></i> Login: {{ $part->created_at->format('d M Y') }}</div>
+                            <div class="text-[10px] text-gray-400 mt-1"><i class="fa-regular fa-clock"></i> Registered: {{ $part->created_at->format('d M Y') }}</div>
                         </td>
                         <td class="px-4 py-2">
                             <div class="text-gray-800 dark:text-gray-200 font-bold text-sm">{{ optional($part->product)->part_no }}</div>
@@ -78,7 +78,10 @@
                         </td>
                         <td class="px-4 py-2">
                             <div class="text-gray-800 dark:text-gray-300 font-black text-lg mb-0.5">{{ number_format($part->qty) }} <span class="text-xs font-semibold text-gray-500">PCS</span></div>
-                            <div class="text-xs text-red-500 font-medium"><i class="fa-regular fa-calendar md:mr-1"></i> {{ \Carbon\Carbon::parse($part->delivery_date)->format('d M y') }}</div>
+                            @php
+                                $isOverdue = \Carbon\Carbon::now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($part->delivery_date)->startOfDay(), false) < 0;
+                            @endphp
+                            <div class="text-xs {{ $isOverdue ? 'text-red-500' : 'text-gray-500 dark:text-gray-400' }} font-medium"><i class="fa-regular fa-calendar md:mr-1"></i> {{ \Carbon\Carbon::parse($part->delivery_date)->format('d M y') }}</div>
                         </td>
                         <td class="px-4 py-2">
                             @if($part->processes->count() > 0)
