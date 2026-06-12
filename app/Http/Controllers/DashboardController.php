@@ -38,22 +38,44 @@ class DashboardController extends Controller
         };
 
         // 1. Top Level Metrics (KPI Cards)
-        $totalPO = NpcEvent::where($applyEventFilters)->count();
+        $totalPOQuery = NpcEvent::where($applyEventFilters);
+        $totalPO = $totalPOQuery->count();
+        $totalPOList = $totalPOQuery->select('id', 'po_no')->get();
 
         // A PO is complete if it has parts and NONE of its parts are in an active status or just finished
-        $poComplete = NpcEvent::where($applyEventFilters)->whereHas('parts')->whereDoesntHave('parts', function($q) {
+        $poCompleteQuery = NpcEvent::where($applyEventFilters)->whereHas('parts')->whereDoesntHave('parts', function($q) {
             $q->whereNotIn('status', ['CLOSED', 'OUTSTANDING']);
-        })->count();
+        });
+        $poComplete = $poCompleteQuery->count();
+        $poCompleteList = $poCompleteQuery->select('id', 'po_no')->get();
 
-        $poOnHand = $totalPO - $poComplete;
+        $poOnHandList = clone $totalPOQuery;
+        // Get POs that are NOT complete
+        $poOnHandList = NpcEvent::where($applyEventFilters)->where(function($q) {
+            $q->whereDoesntHave('parts')
+              ->orWhereHas('parts', function($q2) {
+                  $q2->whereNotIn('status', ['CLOSED', 'OUTSTANDING']);
+              });
+        })->select('id', 'po_no')->get();
+        $poOnHand = $poOnHandList->count();
 
-        $stock = NpcPart::where('status', 'FINISHED')->whereHas('event', $applyEventFilters)->count();
+        $stockQuery = NpcPart::where('status', 'FINISHED')->whereHas('event', $applyEventFilters);
+        $stock = $stockQuery->count();
+        $stockList = $stockQuery->with(['event' => function($q) {
+            $q->select('id', 'po_no');
+        }, 'product' => function($q) {
+            $q->select('id', 'part_no');
+        }])->select('id', 'npc_event_id', 'product_id')->get();
 
         $metrics = [
             'total_po' => $totalPO,
             'po_on_hand' => $poOnHand,
             'po_complete' => $poComplete,
             'stock' => $stock,
+            'total_po_list' => $totalPOList,
+            'po_on_hand_list' => $poOnHandList,
+            'po_complete_list' => $poCompleteList,
+            'stock_list' => $stockList,
         ];
 
         // 2. Nearest Events

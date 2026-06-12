@@ -17,46 +17,146 @@
     <!-- KPI Cards (Row 1) -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 flex-none">
         <!-- Total PO -->
-        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex justify-between items-center">
-            <div>
-                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">PO On Hand</p>
-                <h3 class="text-2xl font-bold text-slate-800 dark:text-white leading-none">{{ $metrics['total_po'] }}</h3>
+        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+            <div @click="open = !open" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex justify-between items-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors h-full">
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">PO On Hand</p>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white leading-none">{{ $metrics['total_po'] }}</h3>
+                </div>
+                <div class="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 text-lg">
+                    <i class="fa-solid fa-file-invoice"></i>
+                </div>
             </div>
-            <div class="w-10 h-10 bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 text-lg">
-                <i class="fa-solid fa-file-invoice"></i>
+            <!-- Popover -->
+            <div x-show="open" x-transition.opacity class="absolute top-full left-0 mt-1 w-full max-h-56 overflow-y-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg z-50 p-2 custom-scrollbar" style="display: none;">
+                @if(count($metrics['total_po_list'] ?? []) > 0)
+                    <table class="w-full text-left text-xs">
+                        <thead class="sticky top-0 bg-white dark:bg-slate-800 z-10">
+                            <tr class="text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                                <th class="pb-1 px-1 w-8">No</th>
+                                <th class="pb-1 px-1">PO No.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($metrics['total_po_list'] ?? [] as $idx => $item)
+                            <tr class="border-b border-slate-100 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-1.5 px-1 text-slate-500">{{ $idx + 1 }}</td>
+                                <td class="py-1.5 px-1 font-medium text-slate-800 dark:text-slate-200">{{ $item->po_no ?? '-' }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <p class="text-xs text-center text-slate-500 py-2">No data</p>
+                @endif
             </div>
         </div>
 
         <!-- PO on hand -->
-        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex justify-between items-center">
-            <div>
-                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Total Active Projects</p>
-                <h3 class="text-2xl font-bold text-slate-800 dark:text-white leading-none">{{ $metrics['po_on_hand'] }}</h3>
+        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+            <div @click="open = !open" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex justify-between items-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors h-full">
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Total Active Projects</p>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white leading-none">{{ $metrics['po_on_hand'] }}</h3>
+                </div>
+                <div class="w-10 h-10 bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 text-lg">
+                    <i class="fa-solid fa-clipboard-list"></i>
+                </div>
             </div>
-            <div class="w-10 h-10 bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 text-lg">
-                <i class="fa-solid fa-clipboard-list"></i>
+            <!-- Popover -->
+            <div x-show="open" x-transition.opacity class="absolute top-full left-0 mt-1 w-full max-h-56 overflow-y-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg z-50 p-2 custom-scrollbar" style="display: none;">
+                @if(count($metrics['po_on_hand_list'] ?? []) > 0)
+                    <table class="w-full text-left text-xs">
+                        <thead class="sticky top-0 bg-white dark:bg-slate-800 z-10">
+                            <tr class="text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                                <th class="pb-1 px-1 w-8">No</th>
+                                <th class="pb-1 px-1">PO No.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($metrics['po_on_hand_list'] ?? [] as $idx => $item)
+                            <tr class="border-b border-slate-100 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-1.5 px-1 text-slate-500">{{ $idx + 1 }}</td>
+                                <td class="py-1.5 px-1 font-medium text-slate-800 dark:text-slate-200">{{ $item->po_no ?? '-' }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <p class="text-xs text-center text-slate-500 py-2">No data</p>
+                @endif
             </div>
         </div>
 
         <!-- PO Complete -->
-        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex justify-between items-center">
-            <div>
-                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">PO Complete</p>
-                <h3 class="text-2xl font-bold text-slate-800 dark:text-white leading-none">{{ $metrics['po_complete'] }}</h3>
+        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+            <div @click="open = !open" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex justify-between items-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors h-full">
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">PO Complete</p>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white leading-none">{{ $metrics['po_complete'] }}</h3>
+                </div>
+                <div class="w-10 h-10 bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 text-lg">
+                    <i class="fa-solid fa-file-circle-check"></i>
+                </div>
             </div>
-            <div class="w-10 h-10 bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 text-lg">
-                <i class="fa-solid fa-file-circle-check"></i>
+            <!-- Popover -->
+            <div x-show="open" x-transition.opacity class="absolute top-full left-0 mt-1 w-full max-h-56 overflow-y-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg z-50 p-2 custom-scrollbar" style="display: none;">
+                @if(count($metrics['po_complete_list'] ?? []) > 0)
+                    <table class="w-full text-left text-xs">
+                        <thead class="sticky top-0 bg-white dark:bg-slate-800 z-10">
+                            <tr class="text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                                <th class="pb-1 px-1 w-8">No</th>
+                                <th class="pb-1 px-1">PO No.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($metrics['po_complete_list'] ?? [] as $idx => $item)
+                            <tr class="border-b border-slate-100 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-1.5 px-1 text-slate-500">{{ $idx + 1 }}</td>
+                                <td class="py-1.5 px-1 font-medium text-slate-800 dark:text-slate-200">{{ $item->po_no ?? '-' }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <p class="text-xs text-center text-slate-500 py-2">No data</p>
+                @endif
             </div>
         </div>
 
         <!-- Stock -->
-        <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex justify-between items-center">
-            <div>
-                <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Remain PO</p>
-                <h3 class="text-2xl font-bold text-slate-800 dark:text-white leading-none">{{ $metrics['stock'] }}</h3>
+        <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+            <div @click="open = !open" class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 shadow-sm flex justify-between items-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors h-full">
+                <div>
+                    <p class="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">Remain PO</p>
+                    <h3 class="text-2xl font-bold text-slate-800 dark:text-white leading-none">{{ $metrics['stock'] }}</h3>
+                </div>
+                <div class="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-lg">
+                    <i class="fa-solid fa-boxes-stacked"></i>
+                </div>
             </div>
-            <div class="w-10 h-10 bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center text-emerald-600 dark:text-emerald-400 text-lg">
-                <i class="fa-solid fa-boxes-stacked"></i>
+            <!-- Popover -->
+            <div x-show="open" x-transition.opacity class="absolute top-full left-0 mt-1 w-full max-h-56 overflow-y-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-lg z-50 p-2 custom-scrollbar" style="display: none;">
+                @if(count($metrics['stock_list'] ?? []) > 0)
+                    <table class="w-full text-left text-xs">
+                        <thead class="sticky top-0 bg-white dark:bg-slate-800 z-10">
+                            <tr class="text-slate-500 border-b border-slate-200 dark:border-slate-700">
+                                <th class="pb-1 px-1 w-8">No</th>
+                                <th class="pb-1 px-1">PO No.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($metrics['stock_list'] ?? [] as $idx => $item)
+                            <tr class="border-b border-slate-100 dark:border-slate-700/50 last:border-0 hover:bg-slate-50 dark:hover:bg-slate-700/30">
+                                <td class="py-1.5 px-1 text-slate-500">{{ $idx + 1 }}</td>
+                                <td class="py-1.5 px-1 font-medium text-slate-800 dark:text-slate-200">{{ $item->event->po_no ?? '-' }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <p class="text-xs text-center text-slate-500 py-2">No data</p>
+                @endif
             </div>
         </div>
     </div>
@@ -315,8 +415,6 @@
                     @endif
                 </div>
             </div>
-
-        </div> <!-- End Right Column -->
 
     </div>
 </div>
